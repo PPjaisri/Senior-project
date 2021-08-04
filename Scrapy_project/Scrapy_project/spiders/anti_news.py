@@ -14,7 +14,7 @@ class anti_news(scrapy.Spider):
 
     def fetch(self):
         f = open(
-            'C:/Coding/Senior project/senior_project/senior_project/result_json/anti.json', encoding='utf-8',)
+            'C:/Coding/Senior project/Scrapy_project/Scrapy_project/result_json/anti.json', encoding='utf-8',)
         data = json.load(f)
         
         for obj in data:
