@@ -1,9 +1,12 @@
 import json
 from pymongo import MongoClient 
-  
-  
+
+Pass_link = ""
+with open('MongoPassword.txt') as Passfile:
+    Pass_link = Passfile.read()
+
 # Making Connection
-myclient = MongoClient("mongodb+srv://lion:dulyawat@senior-project.agl3o.mongodb.net/test?authSource=admin&replicaSet=atlas-ofhdrm-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true") 
+myclient = MongoClient(Pass_link) 
    
 # database 
 db = myclient["JSON_News"]
@@ -13,7 +16,7 @@ db = myclient["JSON_News"]
 Collection = db["ImportTest"]
   
 # Loading or Opening the json file
-with open('news_text.json',encoding="utf8") as file:
+with open('Senior-project/EasyOCR/news_text.json',encoding="utf8") as file:
     file_data = json.load(file)
       
 # Inserting the loaded data in the Collection
