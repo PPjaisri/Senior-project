@@ -20,6 +20,8 @@ class anti_news(scrapy.Spider):
         for obj in data:
             self.fetch_urls.append(list(obj.values())[2])
 
+        f.close()
+
     def parse(self, response):
         self.fetch()
         self.index += 1
