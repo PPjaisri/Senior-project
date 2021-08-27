@@ -1,0 +1,29 @@
+# ignore pycache in Spiders
+
+Scrapy/Scrapy_project/spiders/__pycache__/__init__.cpython-39.pyc
+Scrapy/Scrapy_project/spiders/__pycache__/anti_(detail).cpython-39.pyc
+Scrapy/Scrapy_project/spiders/__pycache__/anti_(getLink).cpython-39.pyc
+Scrapy/Scrapy_project/spiders/__pycache__/anti_news.cpython-39.pyc
+Scrapy/Scrapy_project/spiders/__pycache__/antifake.cpython-39.pyc
+Scrapy/Scrapy_project/spiders/__pycache__/face.cpython-39.pyc
+Scrapy/Scrapy_project/spiders/__pycache__/prd.cpython-39.pyc
+Scrapy/Scrapy_project/spiders/__pycache__/sure_(detail).cpython-39.pyc
+Scrapy/Scrapy_project/spiders/__pycache__/sure_(getLink).cpython-39.pyc
+Scrapy/Scrapy_project/spiders/__pycache__/sure.cpython-39.pyc
+
+# ignore test file
+
+Scrapy/Scrapy_project/spiders/test/count.py
+
+# ignore result folder
+
+Scrapy/result_json/anti_news_2.json
+Scrapy/result_json/anti_news.json
+Scrapy/result_json/anti_test.json
+Scrapy/result_json/anti.json
+Scrapy/result_json/nnt.json
+Scrapy/result_json/sure_detail.json
+Scrapy/result_json/sure_link.txt
+Scrapy/result_json/sure.json
+
+# 
