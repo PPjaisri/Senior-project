@@ -1,0 +1,27 @@
+{
+    "name": "Tnews matcher",
+    "version": "0.1.0",
+    "manifest_version": 2,
+    "description": "Browser extension for matching Thai news from trusted sources on Facebook",
+    "icons": {
+        "16": "icons/magnifier.png",
+        "32": "icons/magnifier.png",
+        "48": "icons/magnifier.png",
+        "128": "icons/magnifier.png"
+    },
+    "browser_action": {
+        "default_popup": "popup/pages/popup.html"
+    },
+    "background": {
+        "scripts": [
+            "popup/JS/popup.js",
+            "popup/JS/content.js",
+            "popup/JS/image.js",
+            "popup/JS/result.js"
+        ]
+    },
+    "content_security_policy": "script-src 'self' https://code.jquery.com/jquery-3.6.0.js; object-src 'self'",
+    "permissions": [
+        "storage"
+    ]
+}
