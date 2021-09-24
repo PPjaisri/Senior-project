@@ -4,10 +4,11 @@ import scrapy
 
 class national_subLink(scrapy.Spider):
     name = 'national_subLink'
+    path = 'C:/Coding/Senior project/Scrapy/result_json/national.json'
 
     def start_requests(self):
         urls = []
-        with open('C:/Coding/Senior project/Scrapy/result_json/national.json', encoding='utf-8') as fp:
+        with open(self.path, encoding='utf-8') as fp:
             data = json.load(fp)
 
             for obj in data:

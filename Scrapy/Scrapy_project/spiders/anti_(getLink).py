@@ -4,6 +4,7 @@ import scrapy
 class crawlFakeNews(scrapy.Spider):
     name = 'anti'
     add = False
+    
 
     start_urls = [
         'https://www.antifakenewscenter.com/?s&order_by=date'

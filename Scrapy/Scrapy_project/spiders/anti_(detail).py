@@ -5,6 +5,7 @@ class anti_news(scrapy.Spider):
     name = 'anti_news'
     count = -1
     index = -1
+    path = 'C:/Coding/Senior project/Scrapy_project/Scrapy_project/result_json/anti.json'
 
     start_urls = [
         'https://www.antifakenewscenter.com'
@@ -13,8 +14,7 @@ class anti_news(scrapy.Spider):
     fetch_urls = []
 
     def fetch(self):
-        f = open(
-            'C:/Coding/Senior project/Scrapy_project/Scrapy_project/result_json/anti.json', encoding='utf-8',)
+        f = open(self.path, encoding='utf-8',)
         data = json.load(f)
         
         for obj in data:

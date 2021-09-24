@@ -4,6 +4,7 @@ import json
 class sure_detail(scrapy.Spider):
     name = 'sure_detail'
     index = -1
+    path = 'C:\Coding\Senior project\Scrapy_project\sure.json'
 
     start_urls = [
         'https://tna.mcot.net'
@@ -13,7 +14,7 @@ class sure_detail(scrapy.Spider):
 
     def fetch(self):
         temp = []
-        with open('C:\Coding\Senior project\Scrapy_project\sure.json', encoding='utf-8') as f:
+        with open(self.path, encoding='utf-8') as f:
             # f.read()
 
             # for i in f:

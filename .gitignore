@@ -1,15 +1,14 @@
 # ignore pycache in Spiders
 
-Scrapy/Scrapy_project/spiders/__pycache__/*
-Scrapy/Scrapy_project/__pycache__/*
+Scrapy/Scrapy_project/spiders/__pycache__/
 
 # ignore test file
 
-Scrapy/Scrapy_project/spiders/test/*
+Scrapy/Scrapy_project/spiders/test/
 
 # ignore result folder
 
-Scrapy/result_json/*
+Scrapy/Scrapy_project/spiders/result_json/
 
 # Edge extension vscode config
 
