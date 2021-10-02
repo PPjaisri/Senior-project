@@ -6,18 +6,19 @@ import os
 class cofact_subLink(scrapy.Spider):
     name = 'cofact_subLink'
     path = os.getcwd()
-    path = os.path.join(path, 'spiders\\result_json\\Cofact\\cofact.json')
+    file_path = os.path.join(path, "spiders\\fetch file\\cofact_getLink.json")
+    save_path = os.path.join(path, "spiders\\fetch file\\cofact_detail.json")
     output = []
     length = 0
     count = 1
 
     def start_requests(self):
         urls = []
-        with open(self.path, 'r', encoding = 'utf-8') as fp:
+        with open(self.file_path, 'r', encoding = 'utf-8') as fp:
             data = fp.read()
             data_list = json.loads(data)
 
-            for data_dict in data_list[:len(data_list) - 1]:
+            for data_dict in data_list[1:len(data_list) - 1]:
                 urls.append(data_dict['link'])
 
         self.length = len(urls)
@@ -51,10 +52,8 @@ class cofact_subLink(scrapy.Spider):
 
         if self.count == self.length:
             json_object = json.dumps(self.output, indent=4, ensure_ascii=False)
-            save_path = os.getcwd()
-            save_path = os.path.join(save_path, "spiders\\result_json\\test.json")
 
-            with open(save_path, 'a', encoding='utf-8') as f:
+            with open(self.save_path, 'a', encoding='utf-8') as f:
                 f.write(json_object)
 
         self.count += 1

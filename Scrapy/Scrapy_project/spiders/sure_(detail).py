@@ -1,35 +1,37 @@
 import scrapy
 import json
+import os
 
 class sure_detail(scrapy.Spider):
     name = 'sure_detail'
     index = -1
-    path = 'C:\Coding\Senior project\Scrapy_project\sure.json'
+    add = False
+    path = os.getcwd()
+    file_path = os.path.join(path, 'spiders\\fetch file\\sure_getLink.json')
+    save_path = os.path.join(path, 'spiders\\fetch file\\sure_detail.json')
 
     start_urls = [
         'https://tna.mcot.net'
     ]
 
     next_urls = []
+    fetch_data = []
 
     def fetch(self):
-        temp = []
-        with open(self.path, encoding='utf-8') as f:
-            # f.read()
-
-            # for i in f:
-            #     self.next_urls.append(i)
+        with open(self.file_path, encoding='utf-8') as f:
 
             data = json.load(f)
 
-            for obj in data:
-                temp.append(list(obj.values()))
-            for item in temp:
-                self.next_urls.append(item[1])
+            for obj in data[1:]:
+                self.next_urls.append(obj['link'])
 
     def parse(self, response):
-        self.fetch()
+        if not self.add:
+            self.fetch()
+            self.add = True
+        
         self.index += 1
+
         for item in response.css('article'):
             header = item.css('header').css('h1::text').get()
 
@@ -41,13 +43,19 @@ class sure_detail(scrapy.Spider):
                 detail = news.css('p').getall()
                 # detail2 = news.css('p').css('strong::text').get()
 
-                yield {
+                self.fetch_data.append({
                     'category': category,
                     'header': header,
                     'detail': detail,
                     'link': response.url
-                }
+                })
 
-        if self.index <= len(self.next_urls) - 1:
+        print(self.index, len(self.next_urls))
+        if self.index < len(self.next_urls) - 1:
             next_page = self.next_urls[self.index]
             yield response.follow(next_page, callback=self.parse)
+        elif self.index >= len(self.next_urls) - 1:
+            json_data = json.dumps(
+                self.fetch_data, indent=4, ensure_ascii=False)
+            with open(self.save_path, 'a', encoding='utf-8') as fp:
+                fp.write(json_data)

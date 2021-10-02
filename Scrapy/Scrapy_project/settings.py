@@ -89,4 +89,4 @@ CONCURRENT_REQUESTS = 32
 
 FEED_EXPORT_ENCODING = 'utf-8'
 
-# DUPEFILTER_CLASS = 'scrapy.dupefilters.BaseDupeFilter'
+DUPEFILTER_CLASS = 'scrapy.dupefilters.BaseDupeFilter'

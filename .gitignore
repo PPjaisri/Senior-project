@@ -6,10 +6,14 @@ Scrapy/Scrapy_project/spiders/__pycache__/
 
 Scrapy/Scrapy_project/spiders/test/
 
-# ignore result folder
+# ignore fetch file folder
 
-Scrapy/Scrapy_project/spiders/result_json/
+Scrapy/Scrapy_project/spiders/fetch file/
 
 # Edge extension vscode config
 
 Edge Extension/.vscode
+
+# Playground folder
+
+Playground/
