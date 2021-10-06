@@ -40,16 +40,17 @@ class cofact_subLink(scrapy.Spider):
                 reference.append(section.css('div.bubble').css('a::attr("href")').get())
 
             data = {
-                'label': label,
-                'link': link,
-                'title': title,
-                'img': img,
+                'category': label,
+                'header': title,
                 'content': content,
+                'link': link,
+                'img': img,
                 'reference': reference,
             }
 
             self.output.append(data)
 
+        print(self.count, self.length)
         if self.count == self.length:
             json_object = json.dumps(self.output, indent=4, ensure_ascii=False)
 

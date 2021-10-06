@@ -3,7 +3,7 @@ import json
 import os
 
 class anti_news(scrapy.Spider):
-    name = 'anti_news'
+    name = 'anti_detail'
     count = -1
     index = -1
     add = False
@@ -34,6 +34,8 @@ class anti_news(scrapy.Spider):
             self.add = True
 
         self.index += 1
+        header = response.css('div.title-post-news').css('p::text').get()
+        image = response.css('div.gray-image').css('img::attr("src")').get()
 
         for item in response.css('div.-detail'):
             category = item.css('p').css('span').css('strong::text').get()
@@ -45,27 +47,35 @@ class anti_news(scrapy.Spider):
                 if len(detail) != 0:
                     self.fetch_data.append({
                         'category': category,
-                        'detail': detail,
-                        'link': response.url
+                        'header': header,
+                        'content': detail,
+                        'link': response.url,
+                        'img': image
                     })
                 else:
                     self.fetch_data.append({
                         'category': category,
-                        'detail': detail2,
-                        'link': response.url
+                        'header': header,
+                        'content': detail2,
+                        'link': response.url,
+                        'img': image
                     })
             else:
                 if len(detail) != 0:
                     self.fetch_data.append({
                         'category': category2,
-                        'detail': detail,
-                        'link': response.url
+                        'header': header,
+                        'content': detail,
+                        'link': response.url,
+                        'img': image
                     })
                 else:
                     self.fetch_data.append({
                         'category': category2,
-                        'detail': detail2,
-                        'link': response.url
+                        'header': header,
+                        'content': detail2,
+                        'link': response.url,
+                        'img': image
                     })
         
         print(self.index, len(self.fetch_urls))
