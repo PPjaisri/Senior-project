@@ -1,3 +1,0 @@
-*.json filter=lfs diff=lfs merge=lfs -text
-cofact_refer.json filter=lfs diff=lfs merge=lfs -text
-Scrapy\Scrapy_project\spiders\fetch file\cofact_refer.json filter=lfs diff=lfs merge=lfs -text
