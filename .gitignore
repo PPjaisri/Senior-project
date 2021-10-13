@@ -1,3 +1,4 @@
+# folder Scrapy
 # ignore pycache in Spiders
 
 Scrapy/Scrapy_project/spiders/__pycache__/
@@ -6,14 +7,12 @@ Scrapy/Scrapy_project/spiders/__pycache__/
 
 Scrapy/Scrapy_project/spiders/test/
 
-# ignore fetch file folder
-
-Scrapy/Scrapy_project/spiders/fetch file/
-
+# folder Extension
 # Edge extension vscode config
 
 Edge Extension/.vscode
 
+# folder Playground
 # Playground folder
 
 Playground/

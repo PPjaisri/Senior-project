@@ -32,6 +32,8 @@ class sure_detail(scrapy.Spider):
         
         self.index += 1
 
+        image = response.css('div.thumb').css('img::attr("src")').get()
+
         for item in response.css('article'):
             header = item.css('header').css('h1::text').get()
 
@@ -46,8 +48,9 @@ class sure_detail(scrapy.Spider):
                 self.fetch_data.append({
                     'category': category,
                     'header': header,
-                    'detail': detail,
-                    'link': response.url
+                    'content': detail,
+                    'link': response.url,
+                    'img': image
                 })
 
         print(self.index, len(self.next_urls))
