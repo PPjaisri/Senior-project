@@ -1,21 +1,25 @@
-import scrapy
+from scrapy import signals, Spider, Request
 import json
 import os
 import re
 
-
-class cofact_reference(scrapy.Spider):
+class cofact_reference(Spider):
     name = 'cofact_refer'
 
     path = os.getcwd()
-    file_path = os.path.join(path, 'Scrapy_project\\spiders\\fetch file\\cofact_detail.json')
-    save_path = os.path.join(path, 'Scrapy_project\\spiders\\fetch file\\cofact_refer.json')
-    test_path = os.path.join(path, 'Scrapy_project\\spiders\\fetch file\\cofact_refer_test.json')
+    file_path = os.path.join(path, 'spiders\\fetch file\\cofact_detail.json')
+    save_path = os.path.join(path, 'spiders\\fetch file\\cofact_refer.json')
+    test_path = os.path.join(path, 'spiders\\fetch file\\cofact_refer_test.json')
 
     fetch_data = []
     refer_link = ''
-    count = 0
-    size = 0
+
+    @classmethod
+    def from_crawler(cls, crawler, *args, **kwargs):
+        spider = super(cofact_reference, cls).from_crawler(crawler, *args, **kwargs)
+        crawler.signals.connect(spider.spider_closed,
+                                signal=signals.spider_closed)
+        return spider
 
     def start_requests(self):
         with open(self.file_path, 'r', encoding='utf_8') as fp:
@@ -29,10 +33,15 @@ class cofact_reference(scrapy.Spider):
                 if each_url != None:
                     urls.append((link, each_url))
 
-        self.size = len(urls[:15]) - 1
-        for url in urls[:15]:
+        for url in urls:
             self.refer_link = url[0]
-            yield scrapy.Request(url[1], callback=self.parse)
+            yield Request(
+                url[1],
+                callback=self.parse,
+                meta={
+                    "handle_httpstatus_list": [200]
+                    }
+                )
 
     def check_domain(self, link):
         # url start at 'https://' or 'http://'
@@ -108,19 +117,6 @@ class cofact_reference(scrapy.Spider):
         }
 
         return data
-
-    # def parse_bangkokbiznews(self, response): # 403 forbidden
-    #     link = response.url
-
-    #     # data = {
-    #     #     "category": "ข่าวจริง",
-    #     #     "header": header,
-    #     #     "content": content,
-    #     #     "link": link,
-    #     #     "img": image
-    #     # }
-
-    #     # return data
 
     def parse_thairath(self, response, refer_link):
         link = response.url
@@ -237,63 +233,45 @@ class cofact_reference(scrapy.Spider):
 
         return data
 
+    def spider_closed(self, spider):
+        with open(self.save_path, 'a', encoding='utf-8') as fp:
+            data = json.dumps(self.fetch_data, indent=4, ensure_ascii=False)
+            fp.write(data)
+        spider.logger.info('Spider closed: %s', spider.name)
 
     def parse(self, response):
-        self.count += 1
-        print('1', 'count: ', self.count, 'size', self.size, self.count == self.size)
-        # status = response.status
         link = self.check_domain(response.url)
         refer_link = self.refer_link
-        # print(link)
 
         if link == 'prachachat.net':
-            # print('prachachat.net')
-            res = self.fetch_data.append(self.parse_prachachat(response, refer_link))
+            res = self.parse_prachachat(response, refer_link)
             if res != None:
                 self.fetch_data.append(res)
         elif link == 'matichon.co.th':
-            # print('matichon.co.th')
-            res = self.fetch_data.append(self.parse_matichon(response, refer_link)) # some 502 bad gateway and som 200 success
+            res = self.parse_matichon(response, refer_link) # some 502 bad gateway and som 200 success
             if res != None:
                 self.fetch_data.append(res)
         elif link == 'thansettakij.com':
-            # print('thansetthakij')
-            res = self.fetch_data.append(self.parse_thansettakij(response, refer_link))
+            res = self.parse_thansettakij(response, refer_link)
             if res != None:
                 self.fetch_data.append(res)
-        # elif link == 'bangkokbiznews.com':
-        #     res = self.fetch_data.append(self.parse_bangkokbiznews(response, refer_link)) # 403 forbidden
-            #if res != None:      
-            # self.fetch_data.append(res)
         elif link == 'thairath.co.th':
-            # print('thairath.co.th')
-            res = self.fetch_data.append(self.parse_thairath(response, refer_link))
+            res = self.parse_thairath(response, refer_link)
             if res != None:
                 self.fetch_data.append(res)
         elif link == 'tnnthailand.com':
-            # print('tnnthailand.com')
-            res = self.fetch_data.append(self.parse_tnn(response, refer_link))
+            res = self.parse_tnn(response, refer_link)
             if res != None:
                 self.fetch_data.append(res)
         elif link == 'mgronline.com':
-            # print('mgronline.com')
-            res = self.fetch_data.append(self.parse_mgronline(response, refer_link))
+            res = self.parse_mgronline(response, refer_link)
             if res != None:
                 self.fetch_data.append(res)
         elif link == 'news.thaipbs.or.th':
-            # print('news.thaipbs.ro.th')
-            res = self.fetch_data.append(self.parse_thaipbs(response, refer_link))
+            res = self.parse_thaipbs(response, refer_link)
             if res != None:
                 self.fetch_data.append(res)
         elif link == 'antifakenewscenter.com':
-            # print('antifakenewscenter.com')
-            res = self.fetch_data.append(self.parse_antifakenews(response, refer_link))
+            res = self.parse_antifakenews(response, refer_link)
             if res != None:
                 self.fetch_data.append(res)
-
-        print('2', 'count: ', self.count, 'size', self.size, self.count == self.size)
-        if self.count == self.size:
-            # print('Finish')
-            with open(self.test_path, 'a', encoding='utf-8') as fp:
-                data = json.dumps(self.fetch_data, indent=4, ensure_ascii=False)
-                fp.write(data)
