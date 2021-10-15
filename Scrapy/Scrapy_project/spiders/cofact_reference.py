@@ -122,8 +122,7 @@ class cofact_reference(Spider):
         link = response.url
 
         header = response.css('h1::text').get()
-        content = response.css('div[itemprop]').css(
-            'div').css('div').css('p::text').getall()
+        content = response.css('div[itemprop]').css('p::text').getall()
 
         image = response.css('picture').css('img::attr("src")').get()
 
@@ -145,10 +144,12 @@ class cofact_reference(Spider):
             'picture.tnn--thumbnail').css('img::attr("src")').get()
 
         content = []
-        for paragraph in response.css('div.fr-view').css('div'):
-            p = paragraph.css('p').css('span::text').get()
+        for paragraph in response.css('div.tnn--article__textwrap').css('p'):
+            p = paragraph.css('p::text').get()
 
-            if p != None:
+            if p == None:
+                p = paragraph.css('p').css('span::text').get()
+            else:
                 content.append(p)
 
         data = {
@@ -166,10 +167,8 @@ class cofact_reference(Spider):
         link = response.url
         header = response.css('article').css('h1::text').get()
 
-        content = []
-        for paragraph in response.css('div.detail::text').getall():
-            text = paragraph.strip()
-            content.append(text)
+        content = response.css('div.detail').css(
+            'div::text, span::text, strong::text').getall()
 
         image =  response.css('div.photo-gallery').css('img::attr("src")').getall()
 
@@ -190,7 +189,7 @@ class cofact_reference(Spider):
         image = response.css('article').css('img::attr("src")').get()
 
         content = []
-        for paragraph in response.css('article'):
+        for paragraph in response.css('article').css('p'):
             p = paragraph.css('p::text').get()
 
             if p != None:
@@ -212,7 +211,7 @@ class cofact_reference(Spider):
 
         header = response.css('div.title-post-news').css('p::text').get()
         content = []
-        for element in response.css('div.-detail'):
+        for element in response.css('div.-detail').css('p'):
             paragraph = element.css('p::text').get()
 
             if paragraph == None:
