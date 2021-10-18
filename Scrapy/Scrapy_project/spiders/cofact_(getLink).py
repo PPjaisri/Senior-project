@@ -26,26 +26,24 @@ class cofact_link(scrapy.Spider):
                                 signal=signals.spider_closed)
         return spider
 
-    def spider_closed(self, spider):
-        self.fetch_data.insert(0, {'total': self.amount})
-        json_data = json.dumps(
-            self.fetch_data, indent=4, ensure_ascii=False)
-        with open(self.save_path, 'a', encoding='utf-8') as fp:
-            fp.write(json_data)
 
     def parse(self, response):
         domain = response.url[0:18]
         article = response.url[0:27]
         self.amount = response.css('div.text-muted::text').get()
-        li = response.css('li')
+        li = response.css('ul.article-list').css('li')
 
         for element in li:
             header = element.css('div.item-title::text').get()
             link = element.css('a::attr("href")').get()
             content = element.css('div.item-text::text').get()
             image = element.css('img::attr("src")').get()
-            print(element.css('div.meter-tag').css('div::text'))
-            status = element.css('div.meter-tag').css('div::text').getall()[1]
+            status_set = element.css('div.meter-tag').css('div::text').getall()
+
+            if len(status_set) > 0:
+                status = element.css('div.meter-tag').css('div::text').getall()[1]
+            else:
+                status = None
 
             data = {
                 "category": status,
@@ -62,3 +60,10 @@ class cofact_link(scrapy.Spider):
         if next_link is not None:
             next_page = article + next_link
             yield response.follow(next_page, callback=self.parse)
+
+    def spider_closed(self, spider):
+        self.fetch_data.insert(0, {'total': self.amount})
+        json_data = json.dumps(
+            self.fetch_data, indent=4, ensure_ascii=False)
+        with open(self.save_path, 'a', encoding='utf-8') as fp:
+            fp.write(json_data)
