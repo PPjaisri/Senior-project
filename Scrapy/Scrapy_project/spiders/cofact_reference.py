@@ -274,3 +274,5 @@ class cofact_reference(Spider):
             res = self.parse_antifakenews(response, refer_link)
             if res != None:
                 self.fetch_data.append(res)
+        else:
+            return

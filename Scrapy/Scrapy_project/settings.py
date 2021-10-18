@@ -21,6 +21,7 @@ ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 CONCURRENT_REQUESTS = 32
+CONCURRENT_ITEMS = 200
 
 # Configure a delay for requests for the same website (default: 0)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
@@ -31,7 +32,7 @@ DOWNLOAD_DELAY = 2
 #CONCURRENT_REQUESTS_PER_IP = 16
 
 # Disable cookies (enabled by default)
-COOKIES_ENABLED = True
+COOKIES_ENABLED = False
 
 # Disable Telnet Console (enabled by default)
 #TELNETCONSOLE_ENABLED = False
@@ -62,9 +63,9 @@ COOKIES_ENABLED = True
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
+# ITEM_PIPELINES = {
 #    'Scrapy_project.pipelines.ScrapyProjectPipeline': 300,
-#}
+# }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
@@ -91,3 +92,5 @@ FEED_EXPORT_ENCODING = 'utf-8'
 
 DUPEFILTER_CLASS = 'scrapy.dupefilters.BaseDupeFilter'
 RETRY_TIMES = 0
+
+LOG_LEVEL = 'INFO'
