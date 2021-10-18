@@ -7,7 +7,7 @@ from scrapy import signals
 # -*- coding: utf-8 -*-
 
 class cofact_link(scrapy.Spider):
-    name = 'cofact'
+    name = 'cofact_link'
     path = os.getcwd()
     save_path = os.path.join(path, 'spiders\\fetch file\\cofact_getLink.json')
 
@@ -39,11 +39,7 @@ class cofact_link(scrapy.Spider):
             content = element.css('div.item-text::text').get()
             image = element.css('img::attr("src")').get()
             status_set = element.css('div.meter-tag').css('div::text').getall()
-
-            if len(status_set) > 0:
-                status = element.css('div.meter-tag').css('div::text').getall()[1]
-            else:
-                status = None
+            status = status_set[1] if len(status_set > 0) else None
 
             data = {
                 "category": status,

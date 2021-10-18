@@ -12,7 +12,6 @@ Scrapy/Scrapy_project/spiders/test/
 
 Edge Extension/.vscode
 
-# folder Playground
-# Playground folder
+# test file and folder
 
-Playground/
+Scrapy\Scrapy_project\spiders\scrapy_test.py
