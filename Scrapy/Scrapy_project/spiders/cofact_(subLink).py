@@ -13,12 +13,6 @@ class cofact_subLink(scrapy.Spider):
     count = 0
     text = 0
 
-    # COUNT_MAX = 30
-
-    # custom_settings = {
-    #     'CLOSESPIDER_PAGECOUNT': COUNT_MAX
-    # }
-
     @classmethod
     def from_crawler(cls, crawler, *args, **kwargs):
         spider = super(cofact_subLink, cls).from_crawler(
@@ -38,7 +32,7 @@ class cofact_subLink(scrapy.Spider):
         
         for url in urls:
             self.text += 1
-            print(self.text)
+            # print(self.text)
             yield scrapy.Request(url, callback=self.parse)
 
     def spider_closed(self, spider):
@@ -66,6 +60,8 @@ class cofact_subLink(scrapy.Spider):
             for refer in comment.css('div.bubble').css('section.links'):
                 refer_link = refer.css('a::attr("href")').getall()
 
+            refer_link = [ref for ref in refer_link if ref != '']
+
             reference_data = {
                 "category": label,
                 "content": comment_content,
@@ -81,7 +77,7 @@ class cofact_subLink(scrapy.Spider):
             'reference': reference,
         }
 
-        print(self.count)
+        # print(self.count)
 
         self.output.append(data)
         if self.count == self.amount:

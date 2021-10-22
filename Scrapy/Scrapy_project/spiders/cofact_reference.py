@@ -25,23 +25,29 @@ class cofact_reference(Spider):
         with open(self.file_path, 'r', encoding='utf_8') as fp:
             data = json.load(fp)
 
-        web = [(website['link'], website['reference']) for website in data]
-        
         urls = []
-        for (link, refer) in web:
-            for each_url in refer:
-                if each_url != None:
-                    urls.append((link, each_url))
+        for i in data:
+            link = i['link']
+            refer = [reference['ref-link'] for reference in i['reference']]
+            urls.append((link, refer))
+        
+        # urls = []
+        # for (link, refer) in web:
+        #     for each_url in refer:
+        #         if each_url != None:
+        #             urls.append((link, each_url))
 
         for url in urls:
             self.refer_link = url[0]
-            yield Request(
-                url[1],
-                callback=self.parse,
-                meta={
-                    "handle_httpstatus_list": [200]
-                    }
-                )
+            for ref in url[1]:
+                for link in ref:
+                    yield Request(
+                        link,
+                        callback=self.parse,
+                        meta={
+                            "handle_httpstatus_list": [200]
+                            }
+                        )
 
     def check_domain(self, link):
         # url start at 'https://' or 'http://'
