@@ -14,8 +14,6 @@ class national_subLink(scrapy.Spider):
             for obj in data:
                 urls.append(obj['link'])
 
-        # for url in urls:
-        #     yield scrapy.Request(url=url, callback=self.parse)
         yield scrapy.Request(url=urls[16], callback=self.parse)
 
     def parse(self, response):
