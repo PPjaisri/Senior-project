@@ -14,6 +14,8 @@ class cofact_reference(Spider):
     fetch_data = []
     refer_link = ''
 
+    count1, count2 = 0, 0
+
     @classmethod
     def from_crawler(cls, crawler, *args, **kwargs):
         spider = super(cofact_reference, cls).from_crawler(crawler, *args, **kwargs)
@@ -28,7 +30,8 @@ class cofact_reference(Spider):
         urls = []
         for i in data:
             link = i['link']
-            refer = [reference['ref-link'] for reference in i['reference']]
+            for reference in i['reference']:
+                refer = reference['ref-link']
             urls.append((link, refer))
         
         # urls = []
@@ -36,18 +39,12 @@ class cofact_reference(Spider):
         #     for each_url in refer:
         #         if each_url != None:
         #             urls.append((link, each_url))
-
+        
         for url in urls:
-            self.refer_link = url[0]
+            self.count1 += 1
+            print('count1 =', self.count1)
             for ref in url[1]:
-                for link in ref:
-                    yield Request(
-                        link,
-                        callback=self.parse,
-                        meta={
-                            "handle_httpstatus_list": [200]
-                            }
-                        )
+                yield Request(ref, meta={'reference': url[0]}, callback=self.parse)
 
     def check_domain(self, link):
         # url start at 'https://' or 'http://'
@@ -246,7 +243,9 @@ class cofact_reference(Spider):
 
     def parse(self, response):
         link = self.check_domain(response.url)
-        refer_link = self.refer_link
+        refer_link = response.meta['reference']
+        self.count2 += 1
+        print('count2 =', self.count2)
 
         if link == 'prachachat.net':
             res = self.parse_prachachat(response, refer_link)
