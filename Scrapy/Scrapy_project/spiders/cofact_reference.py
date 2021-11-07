@@ -14,8 +14,6 @@ class cofact_reference(Spider):
     fetch_data = []
     refer_link = ''
 
-    count1, count2 = 0, 0
-
     @classmethod
     def from_crawler(cls, crawler, *args, **kwargs):
         spider = super(cofact_reference, cls).from_crawler(crawler, *args, **kwargs)
@@ -41,10 +39,11 @@ class cofact_reference(Spider):
         #             urls.append((link, each_url))
         
         for url in urls:
-            self.count1 += 1
-            print('count1 =', self.count1)
             for ref in url[1]:
-                yield Request(ref, meta={'reference': url[0]}, callback=self.parse)
+                try:
+                    yield Request(ref, meta={'reference': url[0]}, dont_filter=True, callback=self.parse)
+                except:
+                    continue
 
     def check_domain(self, link):
         # url start at 'https://' or 'http://'
@@ -235,6 +234,31 @@ class cofact_reference(Spider):
 
         return data
 
+    def parse_sure_oryor(self, response, refer_link):
+        link = response.url
+
+        header = response.css('h3::text').get()
+
+        content = []
+        for detail in response.css('div.content-detail'):
+            content.append(detail.css('p::text').get().strip())
+
+        image = []
+        for url in response.css('img::attr("src")').getall():
+            if re.search('db.oryor.com', url) != None:
+                image.append(url)
+
+        data = {
+            "category": "ข่าวจริง",
+            "header": header,
+            "content": content,
+            "link": link,
+            "img": image,
+            "reference": refer_link
+        }
+
+        return data
+
     def spider_closed(self, spider):
         with open(self.save_path, 'a', encoding='utf-8') as fp:
             data = json.dumps(self.fetch_data, indent=4, ensure_ascii=False)
@@ -244,8 +268,6 @@ class cofact_reference(Spider):
     def parse(self, response):
         link = self.check_domain(response.url)
         refer_link = response.meta['reference']
-        self.count2 += 1
-        print('count2 =', self.count2)
 
         if link == 'prachachat.net':
             res = self.parse_prachachat(response, refer_link)
@@ -277,6 +299,10 @@ class cofact_reference(Spider):
                 self.fetch_data.append(res)
         elif link == 'antifakenewscenter.com':
             res = self.parse_antifakenews(response, refer_link)
+            if res != None:
+                self.fetch_data.append(res)
+        elif link == 'sure.oryor.com':
+            res = self.parse_sure_oryor(response, refer_link)
             if res != None:
                 self.fetch_data.append(res)
         else:

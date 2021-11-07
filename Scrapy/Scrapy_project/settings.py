@@ -94,4 +94,5 @@ FEED_EXPORT_ENCODING = 'utf-8'
 DUPEFILTER_CLASS = 'scrapy.dupefilters.BaseDupeFilter'
 RETRY_TIMES = 0
 
-LOG_LEVEL = 'INFO'
+# LOG_LEVEL = 'INFO'
+LOG_LEVEL = 'DEBUG'

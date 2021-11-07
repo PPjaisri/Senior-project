@@ -39,7 +39,8 @@ class cofact_link(scrapy.Spider):
             content = element.css('div.item-text::text').get()
             image = element.css('img::attr("src")').get()
             status_set = element.css('div.meter-tag').css('div::text').getall()
-            status = status_set[1] if len(status_set > 0) else None
+            # print(status_set)
+            status = status_set[1] if len(status_set) > 0 else None
 
             data = {
                 "category": status,
