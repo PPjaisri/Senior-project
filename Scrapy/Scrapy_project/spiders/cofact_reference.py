@@ -7,12 +7,12 @@ class cofact_reference(Spider):
     name = 'cofact_refer'
 
     path = os.getcwd()
+    input_path = os.path.join(path, 'spiders\\fetch file\\test.json') # test specifics json input
     file_path = os.path.join(path, 'spiders\\fetch file\\cofact_detail.json')
     save_path = os.path.join(path, 'spiders\\fetch file\\cofact_refer.json')
-    test_path = os.path.join(path, 'spiders\\fetch file\\cofact_refer_test.json')
+    test_path = os.path.join(path, 'spiders\\fetch file\\cofact_refer_test.json') # test output
 
     fetch_data = []
-    refer_link = ''
 
     @classmethod
     def from_crawler(cls, crawler, *args, **kwargs):
@@ -31,12 +31,6 @@ class cofact_reference(Spider):
             for reference in i['reference']:
                 refer = reference['ref-link']
             urls.append((link, refer))
-        
-        # urls = []
-        # for (link, refer) in web:
-        #     for each_url in refer:
-        #         if each_url != None:
-        #             urls.append((link, each_url))
         
         for url in urls:
             for ref in url[1]:
@@ -57,6 +51,131 @@ class cofact_reference(Spider):
             domain = re.sub('www.', '', domain)
         return domain
 
+    def parse_pptv(self, response, refer_link):
+        link = response.url
+        header = response.css('h1::text').get()
+
+        content = []
+        for paragraph in response.css('section[class^="content-"]').css('p::text, strong::text'):
+            res = paragraph.get().strip()
+            if res != "":
+                content.append(res)
+
+        image = response.css('a[itemprop="contentUrl"]').css(
+            'img::attr("src")').getall()
+
+        data = {
+            "category": "ข่าวจริง",
+            "header": header,
+            "content": content,
+            "link": link,
+            "img": image,
+            "reference": refer_link
+        }
+
+        return data
+    
+    def parse_dailynews(self, response, refer_link):
+        link = response.url
+        header = response.css('h1::text').get()
+
+        content = []
+        for paragraph in response.css('div.elementor-widget-container').css('p::text'):
+            res = paragraph.get().strip()
+            if res != "":
+                content.append(res)
+
+        image = []
+        for url in response.css('div.elementor-widget-container').css('img.attachment-full::attr("src")').getall():
+            if re.search('dailynews', url) != None:
+                image.append(url)
+
+        data = {
+            "category": "ข่าวจริง",
+            "header": header,
+            "content": content,
+            "link": link,
+            "img": image,
+            "reference": refer_link
+        }
+
+        return data
+
+    def parse_komchadluek(self, response, refer_link):
+        link = response.url
+        header = response.css('h1::text').getall()[1]
+
+        content = []
+        for paragraph in response.css('div.jAUvMO').css('div[id^="section-"]').css('p::text'):
+            res = paragraph.get().strip()
+            if res != "":
+                content.append(res)
+
+        image = []
+        for url in response.css('img::attr("src")').getall():
+            if re.search('media.komchadluek.net', url) != None:
+                image.append(url)
+
+        data = {
+            "category": "ข่าวจริง",
+            "header": header,
+            "content": content,
+            "link": link,
+            "img": image,
+            "reference": refer_link
+        }
+
+        return data
+
+    def parse_oryor(self, response, refer_link):
+        link = response.url
+        header = response.css('div.col-sm-9').css('h3::text').get()
+
+        content = []
+        for paragraph in response.css('div.content-detail').css('p::text'):
+            content.append(paragraph.get().strip())
+
+        image = []
+        for url in response.css('img::attr("src")').getall():
+            if re.search('db.oryor.com', url) != None:
+                image.append(url)
+
+        data = {
+            "category": "ข่าวจริง",
+            "header": header,
+            "content": content,
+            "link": link,
+            "img": image,
+            "reference": refer_link
+        }
+
+        return data
+
+    def parse_sure_oryor(self, response, refer_link):
+        link = response.url
+
+        header = response.css('h3::text').get()
+
+        content = []
+        for detail in response.css('div.content-detail'):
+            content.append(detail.css('p::text').get().strip())
+
+        image = []
+        for url in response.css('img::attr("src")').getall():
+            if re.search('db.oryor.com', url) != None:
+                image.append(url)
+
+        data = {
+            "category": "ข่าวจริง",
+            "header": header,
+            "content": content,
+            "link": link,
+            "img": image,
+            "reference": refer_link
+        }
+
+        return data
+
     def parse_prachachat(self, response, refer_link):
         link = response.url
 
@@ -76,7 +195,7 @@ class cofact_reference(Spider):
 
         return data
 
-    def parse_matichon(self, response, refer_link): # some 502 bad gateway and some 200 success
+    def parse_matichon(self, response, refer_link):
         link = response.url
 
         header = response.css('h1::text').get()
@@ -234,31 +353,6 @@ class cofact_reference(Spider):
 
         return data
 
-    def parse_sure_oryor(self, response, refer_link):
-        link = response.url
-
-        header = response.css('h3::text').get()
-
-        content = []
-        for detail in response.css('div.content-detail'):
-            content.append(detail.css('p::text').get().strip())
-
-        image = []
-        for url in response.css('img::attr("src")').getall():
-            if re.search('db.oryor.com', url) != None:
-                image.append(url)
-
-        data = {
-            "category": "ข่าวจริง",
-            "header": header,
-            "content": content,
-            "link": link,
-            "img": image,
-            "reference": refer_link
-        }
-
-        return data
-
     def spider_closed(self, spider):
         with open(self.save_path, 'a', encoding='utf-8') as fp:
             data = json.dumps(self.fetch_data, indent=4, ensure_ascii=False)
@@ -269,12 +363,32 @@ class cofact_reference(Spider):
         link = self.check_domain(response.url)
         refer_link = response.meta['reference']
 
-        if link == 'prachachat.net':
+        if link == 'pptvhd36.com':
+            res = self.parse_pptv(response, refer_link)
+            if res != None:
+                self.fetch_data.append(res)
+        elif link == 'dailynews.co.th':
+            res = self.parse_dailynews(response, refer_link)
+            if res != None:
+                self.fetch_data.append(res)
+        elif link == 'komchadluek.net':
+            res = self.parse_komchadluek(response, refer_link)
+            if res != None:
+                self.fetch_data.append(res)
+        elif link == 'oryor.com':
+            res = self.parse_oryor(response, refer_link)
+            if res != None:
+                self.fetch_data.append(res)
+        elif link == 'sure.oryor.com':
+            res = self.parse_sure_oryor(response, refer_link)
+            if res != None:
+                self.fetch_data.append(res)
+        elif link == 'prachachat.net':
             res = self.parse_prachachat(response, refer_link)
             if res != None:
                 self.fetch_data.append(res)
         elif link == 'matichon.co.th':
-            res = self.parse_matichon(response, refer_link) # some 502 bad gateway and som 200 success
+            res = self.parse_matichon(response, refer_link)
             if res != None:
                 self.fetch_data.append(res)
         elif link == 'thansettakij.com':
@@ -299,10 +413,6 @@ class cofact_reference(Spider):
                 self.fetch_data.append(res)
         elif link == 'antifakenewscenter.com':
             res = self.parse_antifakenews(response, refer_link)
-            if res != None:
-                self.fetch_data.append(res)
-        elif link == 'sure.oryor.com':
-            res = self.parse_sure_oryor(response, refer_link)
             if res != None:
                 self.fetch_data.append(res)
         else:

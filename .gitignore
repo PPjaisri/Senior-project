@@ -15,4 +15,5 @@ Edge Extension/.vscode
 # test file and folder
 
 Scrapy/Scrapy_project/spiders/fetch file/cofact_refer_test.json
+Scrapy/Scrapy_project/spiders/fetch file/test.json
 Playground
