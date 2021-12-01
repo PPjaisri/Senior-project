@@ -1,5 +1,5 @@
 from scrapy import Spider, Request, signals
-import json
+import csv
 import os
 
 
@@ -8,9 +8,9 @@ class anti_news(Spider):
 
     path = os.getcwd()
     input_path = os.path.join(
-        path, 'spiders\\fetch file\\anti_fetch_thread.json')
+        path, 'spiders\\results\\anti_fetch_thread.csv')
     save_path = os.path.join(
-        path, 'spiders\\fetch file\\anti_info.json')
+        path, 'spiders\\results\\anti_info.csv')
 
     fetch_data = []
 
@@ -26,16 +26,18 @@ class anti_news(Spider):
         urls = []
 
         with open(self.input_path, 'r', encoding='utf-8') as fp:
-            data = json.load(fp)
+            data = fp.readlines()
 
-            for obj in data[1:]:
-                urls.append(obj['link'])
+            for obj in data:
+                if obj != '\n':
+                    obj = obj.split(',')
+                    urls.append(obj[2])
 
         for url in urls:
             try:
                 yield Request(url, callback=self.parse)
             except:
-                pass
+                continue
 
     def parse(self, response):
         header = response.css('div.title-post-news').css('p::text').get()
@@ -65,9 +67,10 @@ class anti_news(Spider):
 
     def spider_closed(self, spider):
 
-        with open(self.save_path, 'r+', encoding='utf-8') as fp:
-            json_data = json.dumps(
-                self.fetch_data, indent=4, ensure_ascii=False)
-            fp.write(json_data)
+        with open(self.save_path, 'a+', encoding='utf-8', newline='') as fp:
+            fieldnames = ['category', 'header', 'content', 'link', 'image']
+            writer = csv.DictWriter(fp, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(self.fetch_data)
 
         spider.logger.info('Spider closed: %s', spider.name)
