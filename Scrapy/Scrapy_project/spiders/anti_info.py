@@ -8,9 +8,9 @@ class anti_news(Spider):
 
     path = os.getcwd()
     input_path = os.path.join(
-        path, 'spiders\\results\\anti_fetch_thread.csv')
+        path, 'spiders\\results\\anti\\anti_thread.csv')
     save_path = os.path.join(
-        path, 'spiders\\results\\anti_info.csv')
+        path, 'spiders\\results\\anti\\anti_info.csv')
 
     fetch_data = []
 
