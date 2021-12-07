@@ -1,7 +1,8 @@
 from scrapy import Spider, Request, signals
+from scrapy.exceptions import CloseSpider
+import pandas as pd
 import csv
 import os
-
 
 class anti_news(Spider):
     name = 'anti_info'
@@ -13,6 +14,8 @@ class anti_news(Spider):
         path, 'spiders\\results\\anti\\anti_info.csv')
 
     fetch_data = []
+    add = False
+    last_link = ''
 
     @classmethod
     def from_crawler(cls, crawler, *args, **kwargs):
@@ -33,13 +36,42 @@ class anti_news(Spider):
                     obj = obj.split(',')
                     urls.append(obj[2])
 
-        for url in urls:
+        new_urls = []
+        for url in range(len(urls) - 1, 0, -1):
+            new_urls.append(urls[url])
+
+        for url in new_urls:
             try:
                 yield Request(url, callback=self.parse)
             except:
                 continue
 
+    def read_latest_save(self):
+        try:
+            data = pd.read_csv(self.save_path, encoding='utf-8')
+            last_link = data.iloc[-1]['link']
+            return last_link
+        except:
+            return ''
+
+    def spider_closed(self):
+
+        with open(self.save_path, 'a+', encoding='utf-8', newline='') as fp:
+            fieldnames = ['category', 'header', 'content', 'link', 'image']
+            writer = csv.DictWriter(fp, fieldnames=fieldnames)
+            if self.last_link != '':
+                writer.writerows(self.fetch_data)
+            else:
+                writer.writeheader()
+                writer.writerows(self.fetch_data)
+
+        # Spider.logger.info('Spider closed: %s', Spider.name)
+
     def parse(self, response):
+        if not self.add:
+            self.last_link = self.read_latest_save()
+            self.add = True
+
         header = response.css('div.title-post-news').css('p::text').get()
 
         image = response.css(
@@ -55,6 +87,12 @@ class anti_news(Spider):
             if paragraph != None:
                 content.append(paragraph)
 
+        print(response.url)
+        print(self.last_link)
+        if response.url == self.last_link:
+            print(True)
+            raise CloseSpider('finished')
+
         data = {
             'category': category,
             'header': header,
@@ -63,14 +101,4 @@ class anti_news(Spider):
             'image': image
         }
 
-        self.fetch_data.append(data)
-
-    def spider_closed(self, spider):
-
-        with open(self.save_path, 'a+', encoding='utf-8', newline='') as fp:
-            fieldnames = ['category', 'header', 'content', 'link', 'image']
-            writer = csv.DictWriter(fp, fieldnames=fieldnames)
-            writer.writeheader()
-            writer.writerows(self.fetch_data)
-
-        spider.logger.info('Spider closed: %s', spider.name)
+        self.fetch_data.insert(0, data)

@@ -1,18 +1,24 @@
 from scrapy import Spider, signals, Request
+from scrapy.exceptions import CloseSpider
+import pandas as pd
 import csv
 import os
+
 
 # -*- coding: utf-8 -*-
 class cofact_info(Spider):
     name = 'cofact_info'
+
     path = os.getcwd()
     file_path = os.path.join(path, 'spiders\\results\\cofact\\cofact_thread.csv')
     save_path = os.path.join(path, 'spiders\\results\\cofact\\cofact_info.csv')
     save_path_ref = os.path.join(path, 'spiders\\results\\cofact\\cofact_info_ref.csv')
+
     fetch_data = []
     fetch_data_ref = []
-    count = 0
     text = 0
+    last_link = ''
+    add = False
 
     @classmethod
     def from_crawler(cls, crawler, *args, **kwargs):
@@ -29,13 +35,25 @@ class cofact_info(Spider):
 
         for data_dict in data:
             urls.append(data_dict.split(',')[2])
+
+        new_urls = []
+        for url in range(len(urls) - 1, -1, -1):
+            new_urls.append(urls[url])
         
-        for url in urls[1:]:
+        for url in new_urls[1:]:
             self.text += 1
             try:
                 yield Request(url, callback=self.parse)
             except:
                 continue
+
+    def read_latest_save(self):
+        try:
+            data = pd.read_csv(self.save_path, encoding='utf-8')
+            last_link = data.iloc[-1]['link']
+            return last_link
+        except:
+            return ''
 
     def spider_closed(self):
         fieldnames = ['header', 'content', 'image', 'link']
@@ -52,7 +70,9 @@ class cofact_info(Spider):
             writer.writerows(self.fetch_data_ref)
 
     def parse(self, response):
-        self.count += 1
+        if not self.add:
+            self.last_link = self.read_latest_save()
+            self.add = True
         
         # Thread content
         link = response.url
@@ -78,7 +98,7 @@ class cofact_info(Spider):
                 'ref-link': refer_link
             }
 
-            self.fetch_data_ref.append(reference_data)
+            self.fetch_data_ref.insert(0, reference_data)
 
         data = {
             'header': title,
@@ -87,6 +107,7 @@ class cofact_info(Spider):
             'link': link,
         }
 
-        self.fetch_data.append(data)
-        # if self.count == self.amount:
-        #     yield self.spider_closed()
+        if self.last_link == link:
+            raise CloseSpider('finished')
+
+        self.fetch_data.insert(0, data)

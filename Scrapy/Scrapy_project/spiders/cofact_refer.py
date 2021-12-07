@@ -1,8 +1,11 @@
 from scrapy import signals, Spider, Request
+from scrapy.exceptions import CloseSpider
 from ast import literal_eval
+import pandas as pd
 import csv
 import os
 import re
+
 
 class cofact_reference(Spider):
     name = 'cofact_refer'
@@ -12,6 +15,8 @@ class cofact_reference(Spider):
     save_path = os.path.join(path, 'spiders\\results\\cofact\\cofact_refer.csv')
 
     fetch_data = []
+    last_link = ''
+    add = False
 
     @classmethod
     def from_crawler(cls, crawler, *args, **kwargs):
@@ -32,12 +37,25 @@ class cofact_reference(Spider):
             refer_link = literal_eval(refer)
             urls.append((link, refer_link))
         
-        for url in urls:
+        new_urls = []
+        for url in range(len(urls) - 1, -1, -1):
+            new_urls.append(urls[url])
+
+        for url in new_urls:
             for ref in url[1]:
                 try:
                     yield Request(ref, meta={'reference': url[0]}, dont_filter=True, callback=self.parse)
                 except:
                     continue
+
+    def read_latest_save(self):
+        try:
+            data = pd.read_csv(self.save_path, encoding='utf-8')
+            last_link = data.iloc[-1]['link']
+            return last_link
+        except:
+            return ''
+
 
     def check_domain(self, link):
         # url start at 'https://' or 'http://'
@@ -288,8 +306,12 @@ class cofact_reference(Spider):
         link = response.url
         header = response.css('article').css('h1::text').get()
 
-        content = response.css('div.detail').css(
-            'div::text, span::text, strong::text').getall()
+        content = []
+        for paragraph in response.css('div.detail').css(
+            'div::text, span::text, strong::text').getall():
+            temp = paragraph.strip()
+            if temp != '':
+                content.append(temp)
 
         image =  response.css('div.photo-gallery').css('img::attr("src")').getall()
 
@@ -358,65 +380,75 @@ class cofact_reference(Spider):
         print(len(self.fetch_data))
         with open(self.save_path, 'a+', encoding='utf-8', newline='') as fp:
             writer = csv.DictWriter(fp, fieldnames=fieldnames)
-            writer.writeheader()
-            writer.writerows(self.fetch_data)
+            if self.last_link != '':
+                writer.writerows(self.fetch_data)
+            else:
+                writer.writeheader()
+                writer.writerows(self.fetch_data)
         spider.logger.info('Spider closed: %s', spider.name)
 
     def parse(self, response):
         link = self.check_domain(response.url)
         refer_link = response.meta['reference']
 
+        if not self.add:
+            self.last_link = self.read_latest_save()
+            self.add = True
+
         if link == 'pptvhd36.com':
             res = self.parse_pptv(response, refer_link)
             if res != None:
-                self.fetch_data.append(res)
+                self.fetch_data.insert(0, res)
         elif link == 'dailynews.co.th':
             res = self.parse_dailynews(response, refer_link)
             if res != None:
-                self.fetch_data.append(res)
+                self.fetch_data.insert(0, res)
         elif link == 'komchadluek.net':
             res = self.parse_komchadluek(response, refer_link)
             if res != None:
-                self.fetch_data.append(res)
+                self.fetch_data.insert(0, res)
         elif link == 'oryor.com':
             res = self.parse_oryor(response, refer_link)
             if res != None:
-                self.fetch_data.append(res)
+                self.fetch_data.insert(0, res)
         elif link == 'sure.oryor.com':
             res = self.parse_sure_oryor(response, refer_link)
             if res != None:
-                self.fetch_data.append(res)
+                self.fetch_data.insert(0, res)
         elif link == 'prachachat.net':
             res = self.parse_prachachat(response, refer_link)
             if res != None:
-                self.fetch_data.append(res)
+                self.fetch_data.insert(0, res)
         elif link == 'matichon.co.th':
             res = self.parse_matichon(response, refer_link)
             if res != None:
-                self.fetch_data.append(res)
+                self.fetch_data.insert(0, res)
         elif link == 'thansettakij.com':
             res = self.parse_thansettakij(response, refer_link)
             if res != None:
-                self.fetch_data.append(res)
+                self.fetch_data.insert(0, res)
         elif link == 'thairath.co.th':
             res = self.parse_thairath(response, refer_link)
             if res != None:
-                self.fetch_data.append(res)
+                self.fetch_data.insert(0, res)
         elif link == 'tnnthailand.com':
             res = self.parse_tnn(response, refer_link)
             if res != None:
-                self.fetch_data.append(res)
+                self.fetch_data.insert(0, res)
         elif link == 'mgronline.com':
             res = self.parse_mgronline(response, refer_link)
             if res != None:
-                self.fetch_data.append(res)
+                self.fetch_data.insert(0, res)
         elif link == 'news.thaipbs.or.th':
             res = self.parse_thaipbs(response, refer_link)
             if res != None:
-                self.fetch_data.append(res)
+                self.fetch_data.insert(0, res)
         elif link == 'antifakenewscenter.com':
             res = self.parse_antifakenews(response, refer_link)
             if res != None:
-                self.fetch_data.append(res)
+                self.fetch_data.insert(0, res)
         else:
             return
+
+        if self.last_link == refer_link:
+            raise CloseSpider('finished')
