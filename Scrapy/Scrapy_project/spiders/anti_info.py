@@ -3,6 +3,7 @@ from scrapy.exceptions import CloseSpider
 import pandas as pd
 import csv
 import os
+import time
 
 class anti_news(Spider):
     name = 'anti_info'
@@ -16,6 +17,10 @@ class anti_news(Spider):
     fetch_data = []
     add = False
     last_link = ''
+
+    custom_settings = {
+        'DOWNLOAD_DELAY': 3
+    }
 
     @classmethod
     def from_crawler(cls, crawler, *args, **kwargs):
@@ -42,6 +47,7 @@ class anti_news(Spider):
 
         for url in new_urls:
             try:
+                time.sleep(1)
                 yield Request(url, callback=self.parse)
             except:
                 continue
@@ -72,6 +78,10 @@ class anti_news(Spider):
             self.last_link = self.read_latest_save()
             self.add = True
 
+        if response.url == self.last_link:
+            print(True)
+            raise CloseSpider('finished')
+
         header = response.css('div.title-post-news').css('p::text').get()
 
         image = response.css(
@@ -86,12 +96,6 @@ class anti_news(Spider):
 
             if paragraph != None:
                 content.append(paragraph)
-
-        print(response.url)
-        print(self.last_link)
-        if response.url == self.last_link:
-            print(True)
-            raise CloseSpider('finished')
 
         data = {
             'category': category,

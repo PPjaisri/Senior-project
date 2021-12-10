@@ -3,7 +3,7 @@ from scrapy.exceptions import CloseSpider
 import pandas as pd
 import csv
 import os
-
+import time
 
 # -*- coding: utf-8 -*-
 class cofact_info(Spider):
@@ -43,6 +43,7 @@ class cofact_info(Spider):
         for url in new_urls[1:]:
             self.text += 1
             try:
+                time.sleep(1)
                 yield Request(url, callback=self.parse)
             except:
                 continue

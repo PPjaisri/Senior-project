@@ -5,7 +5,7 @@ import pandas as pd
 import csv
 import os
 import re
-
+import time
 
 class cofact_reference(Spider):
     name = 'cofact_refer'
@@ -17,6 +17,10 @@ class cofact_reference(Spider):
     fetch_data = []
     last_link = ''
     add = False
+
+    custom_settings = {
+        'DOWNLOAD_DELAY': 3
+    }
 
     @classmethod
     def from_crawler(cls, crawler, *args, **kwargs):
@@ -34,16 +38,20 @@ class cofact_reference(Spider):
         for item in data[1:]:
             link = item[2]
             refer = item[3]
-            refer_link = literal_eval(refer)
-            urls.append((link, refer_link))
+            try:
+                refer_link = literal_eval(refer)
+                urls.append((link, refer_link))
+            except:
+                continue
         
         new_urls = []
-        for url in range(len(urls) - 1, -1, -1):
+        for url in range(len(urls) - 1, 0, -1):
             new_urls.append(urls[url])
 
         for url in new_urls:
             for ref in url[1]:
                 try:
+                    time.sleep(1)
                     yield Request(ref, meta={'reference': url[0]}, dont_filter=True, callback=self.parse)
                 except:
                     continue
@@ -377,7 +385,6 @@ class cofact_reference(Spider):
 
     def spider_closed(self, spider):
         fieldnames = ['category', 'header', 'content', 'link', 'img', 'reference']
-        print(len(self.fetch_data))
         with open(self.save_path, 'a+', encoding='utf-8', newline='') as fp:
             writer = csv.DictWriter(fp, fieldnames=fieldnames)
             if self.last_link != '':
@@ -450,5 +457,6 @@ class cofact_reference(Spider):
         else:
             return
 
-        if self.last_link == refer_link:
+        if self.last_link == response.url:
+            print(True)
             raise CloseSpider('finished')

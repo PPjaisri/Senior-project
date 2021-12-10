@@ -7,6 +7,7 @@ import pandas as pd
 class anti_thread(Spider):
     name = 'anti_thread'
     add = False
+    skip = False
 
     path = os.getcwd()
     save_path = os.path.join(
@@ -56,6 +57,14 @@ class anti_thread(Spider):
         self.index += 1
         page = response.css('div.pagination').css('a::text').getall()
         self.page_size = int(page[len(page) - 1])
+
+        # print(response.url.split('/'))
+        if not self.skip:
+            if len(response.url.split('/')) > 4:
+                page_num = int(response.url.split('/')[4])
+                if page_num > self.page_size - 5:
+                    self.skip = True
+                    return
 
         if not self.add:
             self.last_link = self.read_latest_save()
