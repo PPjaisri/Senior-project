@@ -37,10 +37,10 @@ class cofact_info(Spider):
             urls.append(data_dict.split(',')[2])
 
         new_urls = []
-        for url in range(len(urls) - 1, -1, -1):
+        for url in range(len(urls) - 1, 0, -1):
             new_urls.append(urls[url])
         
-        for url in new_urls[1:]:
+        for url in new_urls[:3]:
             self.text += 1
             try:
                 time.sleep(1)
@@ -62,21 +62,30 @@ class cofact_info(Spider):
 
         with open(self.save_path, 'a+', encoding='utf-8', newline='') as fp:
             writer = csv.DictWriter(fp, fieldnames=fieldnames)
-            writer.writeheader()
-            writer.writerows(self.fetch_data)
+            if self.last_link != '':
+                writer.writerows(self.fetch_data)
+            else:
+                writer.writeheader()
+                writer.writerows(self.fetch_data)
 
         with open(self.save_path_ref, 'a+', encoding='utf-8', newline='') as fp:
             writer = csv.DictWriter(fp, fieldnames=fieldnames_ref)
-            writer.writeheader()
-            writer.writerows(self.fetch_data_ref)
+            if self.last_link != '':
+                writer.writerows(self.fetch_data_ref)
+            else:
+                writer.writeheader()
+                writer.writerows(self.fetch_data_ref)
 
     def parse(self, response):
         if not self.add:
             self.last_link = self.read_latest_save()
             self.add = True
+
+        link = response.url
+        if self.last_link == link:
+            raise CloseSpider('finished')
         
         # Thread content
-        link = response.url
         title = response.css('div.item-title::text').get()
         content = response.css('article.content').css('div::text').get()
         image = response.css('img.image-content::attr("src")').get()
@@ -107,8 +116,5 @@ class cofact_info(Spider):
             'image': image,
             'link': link,
         }
-
-        if self.last_link == link:
-            raise CloseSpider('finished')
 
         self.fetch_data.insert(0, data)
