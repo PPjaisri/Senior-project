@@ -7,12 +7,16 @@ import os
 import re
 import time
 
+
 class cofact_reference(Spider):
     name = 'cofact_refer'
 
     path = os.getcwd()
-    file_path = os.path.join(path, 'spiders\\results\\cofact\\cofact_info_ref.csv')
-    save_path = os.path.join(path, 'spiders\\results\\cofact\\cofact_refer.csv')
+    file_path = os.path.join(
+        path, 'spiders\\results\\cofact\\cofact_info_ref.csv')
+    save_path = os.path.join(
+        path, 'spiders\\results\\cofact\\cofact_refer.csv')
+    test_path = os.path.join(path, 'spiders\\test\\test.csv')
 
     fetch_data = []
     last_link = ''
@@ -24,7 +28,8 @@ class cofact_reference(Spider):
 
     @classmethod
     def from_crawler(cls, crawler, *args, **kwargs):
-        spider = super(cofact_reference, cls).from_crawler(crawler, *args, **kwargs)
+        spider = super(cofact_reference, cls).from_crawler(
+            crawler, *args, **kwargs)
         crawler.signals.connect(spider.spider_closed,
                                 signal=signals.spider_closed)
         return spider
@@ -43,7 +48,7 @@ class cofact_reference(Spider):
                 urls.append((link, refer_link))
             except:
                 continue
-        
+
         new_urls = []
         for url in range(len(urls) - 1, 0, -1):
             new_urls.append(urls[url])
@@ -64,7 +69,6 @@ class cofact_reference(Spider):
         except:
             return ''
 
-
     def check_domain(self, link):
         # url start at 'https://' or 'http://'
         if len(link.split('//')) > 1:
@@ -76,6 +80,57 @@ class cofact_reference(Spider):
             domain = link.split('/')[0]
             domain = re.sub('www.', '', domain)
         return domain
+
+    def parse_sanook(self, response, refer_link):
+        link = response.url
+        header = response.css('h1::text').get()
+
+        content = []
+        for paragraph in response.css('div#EntryReader_0').css('p *::text'):
+            res = paragraph.get().strip()
+            if res != '':
+                content.append(res)
+
+        image = response.css('div.EntryContent').css(
+            'div.thumbnail').css('img::attr("src")').getall()
+
+        data = {
+            "category": "ข่าวจริง",
+            "header": header,
+            "content": content,
+            "link": link,
+            "img": image,
+            "reference": refer_link
+        }
+
+        return data
+
+    def parse_bbc(self, response, refer_link):
+        link = response.url
+        header = response.css('h1::text').get()
+
+        content = []
+        for paragraph in response.css('main').css('p[class^="bbc-"]::text'):
+            res = paragraph.get().strip()
+            if res != '':
+                content.append(res)
+
+        image = []
+        for picture in response.css('img::attr("src")').getall():
+            res = re.search('bbci', picture)
+            if res:
+                image.append(res)
+
+        data = {
+            "category": "ข่าวจริง",
+            "header": header,
+            "content": content,
+            "link": link,
+            "img": image,
+            "reference": refer_link
+        }
+
+        return data
 
     def parse_pptv(self, response, refer_link):
         link = response.url
@@ -100,7 +155,7 @@ class cofact_reference(Spider):
         }
 
         return data
-    
+
     def parse_dailynews(self, response, refer_link):
         link = response.url
         header = response.css('h1::text').get()
@@ -316,12 +371,13 @@ class cofact_reference(Spider):
 
         content = []
         for paragraph in response.css('div.detail').css(
-            'div::text, span::text, strong::text').getall():
+                'div::text, span::text, strong::text').getall():
             temp = paragraph.strip()
             if temp != '':
                 content.append(temp)
 
-        image =  response.css('div.photo-gallery').css('img::attr("src")').getall()
+        image = response.css(
+            'div.photo-gallery').css('img::attr("src")').getall()
 
         data = {
             "category": "ข่าวจริง",
@@ -384,7 +440,8 @@ class cofact_reference(Spider):
         return data
 
     def spider_closed(self, spider):
-        fieldnames = ['category', 'header', 'content', 'link', 'img', 'reference']
+        fieldnames = ['category', 'header',
+                      'content', 'link', 'img', 'reference']
         with open(self.save_path, 'a+', encoding='utf-8', newline='') as fp:
             writer = csv.DictWriter(fp, fieldnames=fieldnames)
             if self.last_link != '':
@@ -402,7 +459,15 @@ class cofact_reference(Spider):
             self.last_link = self.read_latest_save()
             self.add = True
 
-        if link == 'pptvhd36.com':
+        if link == 'sanook.com':
+            res = self.parse_sanook(response, refer_link)
+            if res != None:
+                self.fetch_data.insert(0, res)
+        elif link == 'bbc.com':
+            res = self.parse_bbc(response, refer_link)
+            if res != None:
+                self.fetch_data.insert(0, res)
+        elif link == 'pptvhd36.com':
             res = self.parse_pptv(response, refer_link)
             if res != None:
                 self.fetch_data.insert(0, res)
@@ -458,5 +523,4 @@ class cofact_reference(Spider):
             return
 
         if self.last_link == response.url:
-            print(True)
             raise CloseSpider('finished')
