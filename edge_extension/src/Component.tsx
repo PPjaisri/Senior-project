@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Tabs,
   Tab,
@@ -9,7 +9,7 @@ import {
 } from 'react-bootstrap';
 import './Component.css';
 import './Barloader.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 function SearchBar() {
   return (
@@ -40,13 +40,15 @@ function LinkSearch() {
       type: 'link',
       data: link
     };
-    navigate("/result", { state: data });
+    navigate("/load", { state: data });
   };
 
   function onKeyPress(code: string) {
     if (code === 'Enter') {
       passLink();
-    };
+    } else if (code === 'NumpadEnter') {
+      passLink();
+    }
   };
 
   return (
@@ -81,7 +83,7 @@ function ContentSearch() {
       type: 'content',
       data: content
     };
-    navigate('/result', { state: data });
+    navigate('/load', { state: data });
   };
 
   return (
@@ -117,7 +119,7 @@ function ImageSearch() {
       type: 'image',
       data: image
     };
-    navigate('/result', { state: data });
+    navigate('/load', { state: data });
   };
 
   return (
@@ -143,20 +145,6 @@ function ImageSearch() {
   );
 }
 
-function Wait() {
-  console.log('Wait');
-  return (
-    <div>
-      <Spinner
-        animation='border'
-        variant='info'
-        role='load'
-        className='spinner'
-      />
-    </div>
-  )
-};
-
 function Starter() {
   return (
     <div>
@@ -172,10 +160,28 @@ function Starter() {
 };
 
 function BarLoader() {
+  let { state }: any = useLocation();
+  let navigate = useNavigate();
+
+  function loading() {
+    console.log('loading');
+    setTimeout(() => {
+      navigate('/result', {
+        state: {
+          type: state.type,
+          data: state.data
+        }
+      });
+    }, 2000);
+  };
+
+  useEffect(() => { 
+    loading()
+  }, []);
 
   return (
     <div className="spinner-container">
-
+      
       <svg width="87" height="50" viewBox="0 0 87 50" fill="none" xmlns="http://www.w3.org/2000/svg">
         <g id="loader_bars">
           <g id="upperbar">
@@ -190,7 +196,6 @@ function BarLoader() {
         </g>
       </svg>
 
-
       <p>Loading</p>
     </div>
 
@@ -199,7 +204,6 @@ function BarLoader() {
 
 export {
   SearchBar,
-  Wait,
   Starter,
   BarLoader
 };
