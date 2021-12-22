@@ -50,13 +50,6 @@ function Result() {
   let navigate = useNavigate();
   const { state }: any = useLocation();
 
-  function onKeyPress(code: string) {
-    console.log(code);
-    if (code === 'Enter') {
-      navigate('/');
-    };
-  };
-
   return (
     <div>
       <Container>
@@ -71,7 +64,6 @@ function Result() {
         variant='success'
         className='full'
         onClick={() => navigate('/')}
-        onKeyPress={(event) => onKeyPress(event.code)}
       >
         Back
       </Button>
