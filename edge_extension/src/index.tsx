@@ -3,11 +3,8 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { MemoryRouter, BrowserRouter, Router } from 'react-router-dom';
-import { createMemoryHistory } from 'history';
+import { MemoryRouter } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
-const history = createMemoryHistory();
 
 ReactDOM.render(
   <React.StrictMode>

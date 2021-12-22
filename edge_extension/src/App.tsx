@@ -1,15 +1,16 @@
 import {
   RouteObject,
-  useRoutes
+  useRoutes,
+  useNavigate,
+  useLocation
 } from 'react-router-dom';
-import { useState } from 'react';
 import {
   Button,
   Container
 } from 'react-bootstrap';
 import { Starter, SearchBar, BarLoader } from './Component'
 
-function App(): JSX.Element {
+function App() {
 
   let routes: RouteObject[] = [
     {
@@ -43,29 +44,38 @@ function Search() {
     </Container>
   );
 }
-interface props {
-  type?: string | null,
-  data?: string | null
-}
 
-function Result(props: props) {
-  const [link, getLink] = useState('https://www.example.com/');
+function Result() {
+  let link = 'https://www.example.com/';
+  let navigate = useNavigate();
+  const { state }: any = useLocation();
+
+  function onKeyPress(code: string) {
+    console.log(code);
+    if (code === 'Enter') {
+      navigate('/');
+    };
+  };
 
   return (
-    <Container>
-      <Starter />
-      <p>
-        Link: <a href={link} target='_blank'>{link}</a>
-      </p>
-      <h4>{props.type}</h4>
-      <p>{props.data}</p>
+    <div>
+      <Container>
+        <Starter />
+        <p>
+          Link: <a href={link} target='_blank'>{link}</a>
+        </p>
+        <h4>{state.type}</h4>
+        <p>{state.data}</p>
+      </Container>
       <Button
         variant='success'
         className='full'
+        onClick={() => navigate('/')}
+        onKeyPress={(event) => onKeyPress(event.code)}
       >
         Back
       </Button>
-    </Container>
+    </div>
   )
 }
 

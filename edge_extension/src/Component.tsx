@@ -1,5 +1,4 @@
-import { render } from '@testing-library/react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   Tabs,
   Tab,
@@ -10,7 +9,7 @@ import {
 } from 'react-bootstrap';
 import './Component.css';
 import './Barloader.css';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function SearchBar() {
   return (
@@ -37,9 +36,17 @@ function LinkSearch() {
   let navigate = useNavigate();
 
   function passLink() {
-    // sessionStorage.setItem('link', link);
-    console.log(link);
-    navigate("/load");
+    const data = {
+      type: 'link',
+      data: link
+    };
+    navigate("/result", { state: data });
+  };
+
+  function onKeyPress(code: string) {
+    if (code === 'Enter') {
+      passLink();
+    };
   };
 
   return (
@@ -51,15 +58,16 @@ function LinkSearch() {
           placeholder="Paste link here"
           aria-label="News link"
           onChange={(event: any) => getLink(event.target.value)}
+          onKeyPress={(event: any) => onKeyPress(event.code)}
         />
-        <Button
-          variant="outline-primary"
-          id="link_submit"
-          onClick={passLink}
-        >
-          Search
-        </Button>
       </InputGroup>
+      <Button
+        variant="primary"
+        id="content_submit"
+        onClick={passLink}
+      >
+        Search
+      </Button>
     </div>
   );
 };
@@ -69,9 +77,11 @@ function ContentSearch() {
   let navigate = useNavigate();
 
   function passContent() {
-    // sessionStorage.setItem('content', content);
-    console.log(content);
-    navigate('/load');
+    const data = {
+      type: 'content',
+      data: content
+    };
+    navigate('/result', { state: data });
   };
 
   return (
@@ -88,7 +98,7 @@ function ContentSearch() {
         />
       </InputGroup> <br />
       <Button
-        variant="outline-secondary"
+        variant="primary"
         id="content_submit"
         onClick={passContent}
       >
@@ -103,9 +113,11 @@ function ImageSearch() {
   let navigate = useNavigate();
 
   function passImage() {
-    // sessionStorage.setItem('image', image);
-    console.log(image);
-    navigate('/load');
+    const data = {
+      type: 'image',
+      data: image
+    };
+    navigate('/result', { state: data });
   };
 
   return (
@@ -119,14 +131,14 @@ function ImageSearch() {
           accept='image/*'
           onChange={(event: any) => getImage(event.target.value)}
         />
-        <Button
-          variant="outline-secondary"
-          id="file_submit"
-          onClick={passImage}
-        >
-          Search
-        </Button>
       </InputGroup>
+      <Button
+        variant="primary"
+        id="content_submit"
+        onClick={passImage}
+      >
+        Search
+      </Button>
     </div>
   );
 }
