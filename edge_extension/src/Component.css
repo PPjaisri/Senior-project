@@ -1,0 +1,19 @@
+.spinner {
+    width: 100px;
+    height: 100px;
+}
+
+#content_form {
+    height: 200px;
+}
+
+#content_submit {
+    display: block;
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+}
+
+.full {
+    width: 100%;
+}

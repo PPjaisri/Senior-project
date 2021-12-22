@@ -3,13 +3,18 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { BrowserRouter } from 'react-router-dom';
+import { MemoryRouter, BrowserRouter, Router } from 'react-router-dom';
+import { createMemoryHistory } from 'history';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+const history = createMemoryHistory();
+
 ReactDOM.render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>,
+  <React.StrictMode>
+    <MemoryRouter>
+      <App />
+    </MemoryRouter>
+  </React.StrictMode>,
   document.getElementById('root')
 );
 
