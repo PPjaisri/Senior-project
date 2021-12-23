@@ -42,7 +42,6 @@ class UserExtension(Resource):
         if not query:
             abort(404, message="ไม่พบข้อมูล Input ที่คุณร้องขอ")
         query.pop('_id')
-        print(query)
         return query, 200
     
     # To insert a single document into the database,

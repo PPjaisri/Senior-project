@@ -20,3 +20,6 @@ Playground
 
 # ignore database password
 db.py
+
+#ignore main folder pycache
+__pycache__/
