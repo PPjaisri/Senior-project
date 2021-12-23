@@ -97,3 +97,14 @@ RETRY_TIMES = 0
 # LOG_LEVEL = 'INFO'
 LOG_LEVEL = 'DEBUG'
 # LOG_LEVEL = None
+
+# Selenium driver
+from shutil import which
+  
+SELENIUM_DRIVER_NAME = 'edge'
+SELENIUM_DRIVER_EXECUTABLE_PATH = which('edgedriver')
+SELENIUM_DRIVER_ARGUMENTS=['--headless']  
+  
+DOWNLOADER_MIDDLEWARES = {
+     'scrapy_selenium.SeleniumMiddleware': 800
+     }

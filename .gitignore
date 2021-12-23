@@ -18,6 +18,9 @@ Scrapy/Scrapy_project/spiders/fetch file/cofact_refer_test.json
 Scrapy/Scrapy_project/spiders/fetch file/test.json
 Playground
 
+# ignore node modules
+edge_extension/node_modules/
+
 # ignore database password
 db.py
 

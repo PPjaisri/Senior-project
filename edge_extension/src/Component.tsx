@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react';
 import {
-  Tabs,
-  Tab,
+  Tabs, Tab,
   InputGroup,
   FormControl,
-  Button,
-  Spinner
+  Button
 } from 'react-bootstrap';
 import './Component.css';
 import './Barloader.css';
@@ -164,7 +162,6 @@ function BarLoader() {
   let navigate = useNavigate();
 
   function loading() {
-    console.log('loading');
     setTimeout(() => {
       navigate('/result', {
         state: {
@@ -175,30 +172,52 @@ function BarLoader() {
     }, 2000);
   };
 
-  useEffect(() => { 
+  useEffect(() => {
     loading()
   }, []);
 
   return (
     <div className="spinner-container">
-      
-      <svg width="87" height="50" viewBox="0 0 87 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg
+        width="87"
+        height="50"
+        viewBox="0 0 87 50"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
         <g id="loader_bars">
           <g id="upperbar">
-            <rect id="1_2" width="67" height="14" rx="7" fill="#FF72C6" />
+            <rect
+              id="1_2"
+              width="67"
+              height="14"
+              rx="7"
+              fill="#FF72C6"
+            />
           </g>
           <g id="middlebar">
-            <rect id="Rectangle 2" x="20" y="18" width="67" height="14" rx="7" fill="#FF3AB0" />
+            <rect
+              id="Rectangle 2"
+              x="20" y="18"
+              width="67"
+              height="14"
+              rx="7"
+              fill="#FF3AB0"
+            />
           </g>
           <g id="bottombar">
-            <rect id="3_2" y="36" width="67" height="14" rx="7" fill="#FD0098" />
+            <rect
+              id="3_2" y="36"
+              width="67"
+              height="14"
+              rx="7"
+              fill="#FD0098"
+            />
           </g>
         </g>
       </svg>
-
       <p>Loading</p>
     </div>
-
   )
 }
 

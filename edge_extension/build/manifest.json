@@ -1,0 +1,28 @@
+{
+  "short_name": "Thai news matcher",
+  "name": "Thai news matcher",
+  "description": "",
+  "version": "1.0.0",
+  
+  "manifest_version": 2,
+  "browser_action": {
+    "default_icon": "logo512.png",
+    "default_popup": "index.html",
+    "default_title": "Thai news matcher"
+  },
+
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+  "optional_permissions": [
+    "<all_urls>"
+  ],
+
+  "permission": [
+    "tabs"
+  ],
+
+  "icons": {
+    "64": "favicon.ico",
+    "192": "logo192.png",
+    "512": "logo512.png"
+  }
+}
