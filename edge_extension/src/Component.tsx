@@ -8,6 +8,7 @@ import {
 import './Component.css';
 import './Barloader.css';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { sendLink } from './Service';
 
 function SearchBar() {
   return (
@@ -33,19 +34,29 @@ function LinkSearch() {
   const [link, getLink] = useState('');
   let navigate = useNavigate();
 
-  function passLink() {
-    const data = {
-      type: 'link',
-      data: link
+  function click() {
+    passLink('link', link);
+  };
+
+  async function passLink(type: string, data: string) {
+    const passData = {
+      message_type: 'link',
+      message: link
     };
-    navigate("/load", { state: data });
+
+    const res = await sendLink(passData);
+    if (res) {
+      navigate('/load');
+    } else {
+      console.log('failed');
+    }
   };
 
   function onKeyPress(code: string) {
     if (code === 'Enter') {
-      passLink();
+      passLink('link', link);
     } else if (code === 'NumpadEnter') {
-      passLink();
+      passLink('link', link);
     }
   };
 
@@ -64,7 +75,7 @@ function LinkSearch() {
       <Button
         variant="primary"
         id="content_submit"
-        onClick={passLink}
+        onClick={click}
       >
         Search
       </Button>

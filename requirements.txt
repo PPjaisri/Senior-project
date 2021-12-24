@@ -17,3 +17,5 @@ Werkzeug==1.0.1
 dnspython
 Flask-PyMongo
 flask_cors
+scrapy
+selenium

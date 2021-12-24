@@ -1,5 +1,6 @@
 from flask import Flask, jsonify
 from flask_restful import Api, Resource, abort, reqparse, marshal_with, fields
+from flask_cors import CORS, cross_origin
 from flask_sqlalchemy import SQLAlchemy, Model
 from flask_mongoengine import MongoEngine
 import pymongo
@@ -8,10 +9,13 @@ import os
 import db
 
 # Replace your URL here. Don't forget to replace the password.
-connection_url = 'mongodb+srv://lion:tigerlion007@cluster0.uojms.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
+connection_url = 'mongodb+srv://pp:DcDuOKtZ56iFKsq6@cluster0.uojms.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
 app = Flask(__name__)
 api = Api(app)
 client = pymongo.MongoClient(connection_url)
+
+cors = CORS(app, resources={r"/*": {"origins": "*"}})
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 # Database
 Database = client.get_database('Example')
@@ -30,6 +34,7 @@ resource_field = {
 } #นิยามกฎเกณฑ์สำหรับเตรียมบันทึกข้อมูล
 
 #design
+# @cross_origin()
 class UserExtension(Resource):
     
     # To find the first document that matches a defined query,
