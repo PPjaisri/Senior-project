@@ -4,7 +4,7 @@ import { post_body } from "./types";
 const baseUrl = config.baseUrl;
 
 async function sendLink(body: post_body) {
-    const res = await fetch(`${baseUrl}/2`, {
+    const res = await fetch(`${baseUrl}2`, {
         method: 'post',
         headers: {
             "Content-Type": "application/json"
@@ -24,7 +24,7 @@ async function sendLink(body: post_body) {
 };
 
 async function getLink() {
-    const res = await fetch(`$(baseUrl)/2`);
+    const res = await fetch(`$(baseUrl)2`);
     const result = res.json();
 
     return result;

@@ -25,4 +25,4 @@ edge_extension/node_modules/
 db.py
 
 #ignore main folder pycache
-__pycache__/
+__pycache__

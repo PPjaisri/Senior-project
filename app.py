@@ -11,11 +11,11 @@ import db
 # Replace your URL here. Don't forget to replace the password.
 connection_url = 'mongodb+srv://pp:DcDuOKtZ56iFKsq6@cluster0.uojms.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
+
 api = Api(app)
 client = pymongo.MongoClient(connection_url)
-
-cors = CORS(app, resources={r"/*": {"origins": "*"}})
-app.config['CORS_HEADERS'] = 'Content-Type'
 
 # Database
 Database = client.get_database('Example')
