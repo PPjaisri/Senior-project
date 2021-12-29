@@ -8,19 +8,25 @@ import json
 import os
 import db
 
+from Preprocess.tf_idf_all_headline_news_similarity import cosine_similarity_T
+
 # Replace your URL here. Don't forget to replace the password.
-connection_url = 'mongodb+srv://pp:DcDuOKtZ56iFKsq6@cluster0.uojms.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
+# Pass_link = ""
+# with open('MongoPassword.txt') as Passfile:
+#     Pass_link = Passfile.read()
+# connection_url = Pass_link
+
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 api = Api(app)
-client = pymongo.MongoClient(connection_url)
+# client = pymongo.MongoClient(connection_url)
 
 # Database
-Database = client.get_database('Example')
+# Database = client.get_database('Example')
 # Table
-TestUserInput = Database.TestUserInput
+# TestUserInput = Database.TestUserInput
 
 #Request Parser สำหรับเพิ่มข้อมูลลง db (ใน post method)
 input_add_args = reqparse.RequestParser()
@@ -31,6 +37,7 @@ resource_field = {
     "input_id":fields.Integer,
     "message":fields.String,
     "message_type":fields.String,
+    "result":fields.String
 } #นิยามกฎเกณฑ์สำหรับเตรียมบันทึกข้อมูล
 
 #design
@@ -41,38 +48,45 @@ class UserExtension(Resource):
     # find_one function is used and the query to match is passed
     # as an argument.
     @marshal_with(resource_field)
-    def get(self, input_id):
-        queryObject = {"input_id": input_id}
-        query = TestUserInput.find_one(queryObject)
-        if not query:
-            abort(404, message="ไม่พบข้อมูล Input ที่คุณร้องขอ")
-        query.pop('_id')
-        return query, 200
+    def post(self):
+        args = input_add_args.parse_args() #ข้อมูลที่ได้รับอยู่ในนี้
+        
+        if not args["message"]:
+            abort(422, message="กรุณาใส่ข้อความ , ลิงค์ หรือ รูปภาพ")
+    
+        result = cosine_similarity_T(10, args["message"])
+        # print("This is result : ",result)
+        
+        queryObject = {
+        'result': result
+    }
+    
+        return queryObject
     
     # To insert a single document into the database,
     # insert_one() function is used
-    @marshal_with(resource_field)
-    def post(self,input_id):
-        queryObject = {"input_id": input_id}
-        result = TestUserInput.find_one(queryObject)
-        if result:
-            abort(409, message="รหัส Input นี้เคยบันทึกไปแล้ว")
+    # @marshal_with(resource_field)
+    # def post(self,input_id):
+    #     queryObject = {"input_id": input_id}
+    #     result = TestUserInput.find_one(queryObject)
+    #     if result:
+    #         abort(409, message="รหัส Input นี้เคยบันทึกไปแล้ว")
         
-        args = input_add_args.parse_args() #ข้อมูลที่ได้รับอยู่ในนี้
-        if not args["message"]:
-            abort(422, message="กรุณาใส่ข้อความ , ลิงค์ หรือ รูปภาพ")
+    #     args = input_add_args.parse_args() #ข้อมูลที่ได้รับอยู่ในนี้
+    #     if not args["message"]:
+    #         abort(422, message="กรุณาใส่ข้อความ , ลิงค์ หรือ รูปภาพ")
         
-        queryObject = {
-        'input_id': input_id,
-        'message': args["message"],
-        'message_type': args["message_type"],
-    }
+    #     queryObject = {
+    #     'input_id': input_id,
+    #     'message': args["message"],
+    #     'message_type': args["message_type"],
+    # }
         
-        input = TestUserInput.insert_one(queryObject)
-        return queryObject, 201
+    #     input = TestUserInput.insert_one(queryObject)
+    #     return queryObject, 201
         
 #call
-api.add_resource(UserExtension,"/extension/<int:input_id>")
+api.add_resource(UserExtension,"/extension")
 
 if __name__ == "__main__":
     app.run(debug=True)

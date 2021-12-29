@@ -22,7 +22,7 @@ Playground
 edge_extension/node_modules/
 
 # ignore database password
-db.py
+MongoPassword.txt
 
 #ignore main folder pycache
 __pycache__
