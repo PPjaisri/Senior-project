@@ -19,3 +19,5 @@ Flask-PyMongo
 flask_cors
 scrapy
 selenium
+nltk
+pythainlp
