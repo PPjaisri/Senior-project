@@ -46,7 +46,7 @@ function LinkSearch() {
 
     const res = await sendLink(passData);
     if (res) {
-      navigate('/load');
+      navigate('/load', { state: passData });
     } else {
       console.log('failed');
     }

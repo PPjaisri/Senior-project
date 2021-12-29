@@ -55,26 +55,27 @@ function Result() {
   const [type, setType] = useState('');
   const [data, setData] = useState('');
 
-  async function fetchLink() {
-    const res = await getLink();
+  // async function fetchLink() {
+  //   const res = await getLink();
 
-    setType(res.message_type);
-    setData(res.message);
-  };
+  //   setType(res.message_type);
+  //   setData(res.message);
+  // };
 
-  useEffect(() => { 
-    fetchLink()
-  }, []);
+  // useEffect(() => { 
+  //   fetchLink()
+  // }, []);
 
   return (
     <div>
+      { console.dir(state) }
       <Container>
         <Starter />
         <p>
           Link: <a href={link} target='_blank'>{link}</a>
         </p>
-        <h4>{type}</h4>
-        <p>{data}</p>
+        {/* <h4>{type}</h4>
+        <p>{data}</p> */}
       </Container>
       <Button
         variant='success'

@@ -164,7 +164,7 @@ def create_df_for_backtrack(all_refer_text_list):
         all_refer_url.append(all_refer_text_list[i][1]) #list ของ url เท่านั้น
         
     #ทำ list ให้เป็น dataframe
-    all_original_text_and_headline_news_df = pd.DataFrame(list(zip(all_refer_text, all_refer_url)), columns=["หัวข้อข่าวอ้างอิงของ ทุกแหล่งข่าว", "URL ของ ทุกแหล่งข่าว"])
+    all_original_text_and_headline_news_df = pd.DataFrame(list(zip(all_refer_text, all_refer_url)), columns=["All headline from every reference", "URL ของ ทุกแหล่งข่าว"])
         
     return all_original_text_and_headline_news_df, all_refer_text
 
@@ -248,8 +248,8 @@ def cosine_similarity_T(k, query):
     a = pd.DataFrame()
     for i in out:
         a.loc[i,'index'] = str(i)
-        a.loc[i,'Subject'] = all_original_text_and_headline_news_df['หัวข้อข่าวอ้างอิงของ ทุกแหล่งข่าว'][i]
-
+        a.loc[i,'Subject'] = all_original_text_and_headline_news_df['All headline from every reference'][i]
+        
     list_d_cosines.sort(reverse=True)
     
     for j in range(k):
@@ -280,7 +280,8 @@ def preprocess():
     norm_original_c_feat = norm_original_c_feat.T
     
     return None
-    
+
+# if __name__ == '__main__':
 # Main
 all_refer_text_list = []
 all_refer_text = []

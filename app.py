@@ -8,7 +8,7 @@ import json
 import os
 import db
 
-from Preprocess.tf_idf_all_headline_news_similarity import cosine_similarity_T
+from Preprocess.tf_idf_all_headline_news_similarity import cosine_similarity_T, preprocess
 
 # Replace your URL here. Don't forget to replace the password.
 # Pass_link = ""
@@ -17,7 +17,7 @@ from Preprocess.tf_idf_all_headline_news_similarity import cosine_similarity_T
 # connection_url = Pass_link
 
 app = Flask(__name__)
-cors = CORS(app)
+cors = CORS(app, support_credentials=True)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 api = Api(app)
@@ -48,6 +48,7 @@ class UserExtension(Resource):
     # find_one function is used and the query to match is passed
     # as an argument.
     @marshal_with(resource_field)
+    @cross_origin(supports_credentials=True)
     def post(self):
         args = input_add_args.parse_args() #ข้อมูลที่ได้รับอยู่ในนี้
         
@@ -58,10 +59,13 @@ class UserExtension(Resource):
         # print("This is result : ",result)
         
         queryObject = {
-        'result': result
-    }
+            'result': result
+        }
     
-        return queryObject
+        # return queryObject
+        response = jsonify(queryObject)
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        return response
     
     # To insert a single document into the database,
     # insert_one() function is used
@@ -89,4 +93,5 @@ class UserExtension(Resource):
 api.add_resource(UserExtension,"/extension")
 
 if __name__ == "__main__":
+    preprocess()
     app.run(debug=True)

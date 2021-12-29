@@ -19,3 +19,11 @@ Flask-PyMongo
 flask_cors
 scrapy
 selenium
+nltk
+pythainlp
+wheel
+numpy
+pandas
+scipy
+scikit-learn
+stop_words
