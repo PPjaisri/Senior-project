@@ -17,7 +17,7 @@ from Preprocess.tf_idf_all_headline_news_similarity import cosine_similarity_T, 
 # connection_url = Pass_link
 
 app = Flask(__name__)
-cors = CORS(app, support_credentials=True)
+CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 api = Api(app)
@@ -56,16 +56,18 @@ class UserExtension(Resource):
             abort(422, message="กรุณาใส่ข้อความ , ลิงค์ หรือ รูปภาพ")
     
         result = cosine_similarity_T(10, args["message"])
-        # print("This is result : ",result)
+        print("This is result : ",result)
         
         queryObject = {
-            'result': result
+            "input_id": 1,
+            "message": args["message"],
+            "message_type": args["message_type"],
+            "result": result
         }
     
         # return queryObject
-        response = jsonify(queryObject)
-        response.headers.add('Access-Control-Allow-Origin', '*')
-        return response
+
+        return queryObject, 200
     
     # To insert a single document into the database,
     # insert_one() function is used
@@ -93,5 +95,5 @@ class UserExtension(Resource):
 api.add_resource(UserExtension,"/extension")
 
 if __name__ == "__main__":
-    preprocess()
+    # preprocess()
     app.run(debug=True)
