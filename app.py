@@ -1,7 +1,6 @@
 from flask import Flask, jsonify
-from flask_restful import Api, Resource, abort, reqparse, marshal_with, fields
+from flask_restful import Api, Resource, abort, reqparse
 from flask_cors import CORS, cross_origin
-from flask_sqlalchemy import SQLAlchemy, Model
 from flask_mongoengine import MongoEngine
 import pymongo
 import json
@@ -17,7 +16,7 @@ from Preprocess.tf_idf_all_headline_news_similarity import cosine_similarity_T, 
 # connection_url = Pass_link
 
 app = Flask(__name__)
-CORS(app)
+cors = CORS(app, support_credentials=True)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 api = Api(app)
@@ -33,21 +32,12 @@ input_add_args = reqparse.RequestParser()
 input_add_args.add_argument("message", type=str, help="กรุณาป้อนข้อความเป็นตัวอักษรและมีความยาวไม่เกิน 1000 ตัวอักษร")
 input_add_args.add_argument("message_type", type=str, help="กรุณาระบุประเภท Input เป็นตัวอักษร")
 
-resource_field = {
-    "input_id":fields.Integer,
-    "message":fields.String,
-    "message_type":fields.String,
-    "result":fields.String
-} #นิยามกฎเกณฑ์สำหรับเตรียมบันทึกข้อมูล
-
 #design
-# @cross_origin()
 class UserExtension(Resource):
     
     # To find the first document that matches a defined query,
     # find_one function is used and the query to match is passed
     # as an argument.
-    @marshal_with(resource_field)
     @cross_origin(supports_credentials=True)
     def post(self):
         args = input_add_args.parse_args() #ข้อมูลที่ได้รับอยู่ในนี้
@@ -56,18 +46,20 @@ class UserExtension(Resource):
             abort(422, message="กรุณาใส่ข้อความ , ลิงค์ หรือ รูปภาพ")
     
         result = cosine_similarity_T(10, args["message"])
-        print("This is result : ",result)
         
         queryObject = {
-            "input_id": 1,
+            # "input_id": 1,
             "message": args["message"],
             "message_type": args["message_type"],
             "result": result
         }
     
-        # return queryObject
+        print("This is queryObject : ", queryObject)
+        response = jsonify(queryObject)
+        print("This is response : ", response)
+        response.headers.add('Access-Control-Allow-Origin', '*')
 
-        return queryObject, 200
+        return queryObject
     
     # To insert a single document into the database,
     # insert_one() function is used
@@ -95,5 +87,4 @@ class UserExtension(Resource):
 api.add_resource(UserExtension,"/extension")
 
 if __name__ == "__main__":
-    # preprocess()
     app.run(debug=True)
