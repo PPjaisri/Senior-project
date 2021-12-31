@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import {
   RouteObject,
   useRoutes,
@@ -10,7 +9,6 @@ import {
   Container
 } from 'react-bootstrap';
 import { Starter, SearchBar, BarLoader } from './Component'
-import { getLink } from './Service';
 
 function App() {
 
@@ -48,34 +46,30 @@ function Search() {
 }
 
 function Result() {
-  let link = 'https://www.example.com/';
   let navigate = useNavigate();
   const { state }: any = useLocation();
-
-  const [type, setType] = useState('');
-  const [data, setData] = useState('');
-
-  // async function fetchLink() {
-  //   const res = await getLink();
-
-  //   setType(res.message_type);
-  //   setData(res.message);
-  // };
-
-  // useEffect(() => { 
-  //   fetchLink()
-  // }, []);
+  const res = state.result;
 
   return (
     <div>
-      { console.dir(state) }
       <Container>
         <Starter />
-        <p>
-          Link: <a href={link} target='_blank'>{link}</a>
-        </p>
-        {/* <h4>{type}</h4>
-        <p>{data}</p> */}
+        {
+          Object.keys(res).map(function (key, index) {
+            const data = res[key];
+            console.log(data)
+            return (
+              <div id={data.index}>
+                <p>
+                  <span>Link: </span>
+                  <a href={data.url}>{data.url}</a>
+                </p>
+                <hr />
+                <p>{data.text}</p>
+              </div>
+            );
+          })
+        }
       </Container>
       <Button
         variant='success'

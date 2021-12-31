@@ -12,15 +12,8 @@ async function sendLink(body: post_body) {
         body: JSON.stringify(body)
     });
 
-    
-    console.log('res', res);
-
     const result = res.json();
-    if (result) {
-        return result
-    } else {
-        return null;
-    }
+    return result
 };
 
 async function getLink() {

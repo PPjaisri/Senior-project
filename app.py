@@ -54,9 +54,9 @@ class UserExtension(Resource):
             "result": result
         }
     
-        print("This is queryObject : ", queryObject)
+        # print("This is queryObject : ", queryObject)
         response = jsonify(queryObject)
-        print("This is response : ", response)
+        # print("This is response : ", response)
         response.headers.add('Access-Control-Allow-Origin', '*')
 
         return queryObject

@@ -46,7 +46,7 @@ function LinkSearch() {
 
     const res = await sendLink(passData);
     if (res) {
-      navigate('/load', { state: passData });
+      navigate('/load', { state: res });
     } else {
       console.log('failed');
     }
@@ -87,12 +87,19 @@ function ContentSearch() {
   const [content, getContent] = useState('');
   let navigate = useNavigate();
 
-  function passContent() {
-    const data = {
-      type: 'content',
-      data: content
+  async function passContent() {
+    const passContent = {
+      message_type: 'content',
+      message: content
     };
-    navigate('/load', { state: data });
+    
+    let res = await sendLink(passContent);
+    res.result = JSON.parse(res.result)
+    if (res) {
+      navigate('/load', { state: res });
+    } else {
+      console.log('failed');
+    };
   };
 
   return (
@@ -176,8 +183,9 @@ function BarLoader() {
     setTimeout(() => {
       navigate('/result', {
         state: {
-          type: state.type,
-          data: state.data
+          type: state.message_type,
+          search: state.message,
+          result: state.result
         }
       });
     }, 2000);
