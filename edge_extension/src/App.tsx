@@ -6,9 +6,12 @@ import {
 } from 'react-router-dom';
 import {
   Button,
-  Container
+  Container,
+  Badge
 } from 'react-bootstrap';
 import { Starter, SearchBar, BarLoader } from './Component'
+import './App.css';
+import { useState } from 'react'
 
 function App() {
 
@@ -40,6 +43,7 @@ function Search() {
   return (
     <Container>
       <Starter />
+      <hr />
       <SearchBar />
     </Container>
   );
@@ -50,26 +54,59 @@ function Result() {
   const { state }: any = useLocation();
   const res = state.result;
 
+  const [show, showElement] = useState(false)
+  const [buttonName, setButtonName] = useState('Show Content')
+
+  function showContent() {
+    showElement(!show)
+  };
+
   return (
     <div>
       <Container>
         <Starter />
         {
-          Object.keys(res).map(function (key, index) {
-            const data = res[key];
-            console.log(data)
+          // Object.keys(res).map(function (key, index) {
+          //   const data = res[key];
+          //   return (
+          //     <div id={data.index}>
+          //       <hr />
+          //       <div className='jumbotron'>
+          //         <p>
+          //           <span>Link: </span>
+          //           <a href={data.url}><Badge>CLICK HERE</Badge></a>
+          //         </p>
+          //         <p>{data.text}</p>
+          //       </div>
+          //     </div>
+          //   );
+          // })
+          res.map((obj: any) => {
             return (
-              <div id={data.index}>
-                <p>
-                  <span>Link: </span>
-                  <a href={data.url}>{data.url}</a>
-                </p>
+              <div id={obj.index}>
                 <hr />
-                <p>{data.text}</p>
+                <div className='jumbotron'>
+                  <p>
+                    <span>Link: </span>
+                    <a href={obj.url}><Badge>CLICK HERE</Badge></a>
+                  </p>
+                  <p>{obj.headline}</p>
+                  <Button
+                    onClick={showContent}
+                    className='show_content'
+                  >
+                    {buttonName}
+                  </Button>
+                  {show ? <div>
+                    <br />
+                    <p>{obj.content}</p>
+                  </div> : null}
+                </div>
               </div>
             );
           })
         }
+        <br />
       </Container>
       <Button
         variant='success'

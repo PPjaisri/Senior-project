@@ -39,17 +39,17 @@ function LinkSearch() {
   };
 
   async function passLink(type: string, data: string) {
-    const passData = {
+    const passLink = {
       message_type: 'link',
       message: link
     };
 
-    const res = await sendLink(passData);
+    let res = await sendLink(passLink);
     if (res) {
       navigate('/load', { state: res });
     } else {
       console.log('failed');
-    }
+    };
   };
 
   function onKeyPress(code: string) {
@@ -94,7 +94,6 @@ function ContentSearch() {
     };
     
     let res = await sendLink(passContent);
-    res.result = JSON.parse(res.result)
     if (res) {
       navigate('/load', { state: res });
     } else {
@@ -170,7 +169,6 @@ function Starter() {
           --- Thai news matcher ---
         </strong>
       </h4>
-      <hr />
     </div>
   );
 };

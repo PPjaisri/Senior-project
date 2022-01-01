@@ -1,3 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;500;700&display=swap');
+
+html {
+  font-family: 'Nunito', sans-serif;
+}
+
 .App {
   text-align: center;
 }
@@ -35,4 +41,37 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.jumbotron {
+  background-color: #CFF4FC;
+  border: none;
+  border-radius: 10px;
+  padding: 5px;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 20px;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 40px;
+  margin-right: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+}
+
+.show_content {
+  display: block;
 }

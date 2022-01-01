@@ -26,6 +26,8 @@ class cofact_reference(Spider):
         'DOWNLOAD_DELAY': 3
     }
 
+    saved_data = pd.read_csv(save_path, encoding='utf-8')
+
     @classmethod
     def from_crawler(cls, crawler, *args, **kwargs):
         spider = super(cofact_reference, cls).from_crawler(
@@ -60,14 +62,6 @@ class cofact_reference(Spider):
                     yield Request(ref, meta={'reference': url[0]}, dont_filter=True, callback=self.parse)
                 except:
                     continue
-
-    def read_latest_save(self):
-        try:
-            data = pd.read_csv(self.save_path, encoding='utf-8')
-            last_link = data.iloc[-1]['link']
-            return last_link
-        except:
-            return ''
 
     def check_domain(self, link):
         # url start at 'https://' or 'http://'
@@ -451,13 +445,37 @@ class cofact_reference(Spider):
                 writer.writerows(self.fetch_data)
         spider.logger.info('Spider closed: %s', spider.name)
 
+    def read_latest_save(self):
+        try:
+            last_link = self.saved_data.iloc[-1]['link']
+            return last_link
+        except:
+            return ''
+
+    def checkDuplicate(self, refer_link):
+        result = False
+        refer_data = self.saved_data['reference'].array
+        if refer_link in refer_data:
+            result = True
+        return result
+
     def parse(self, response):
         link = self.check_domain(response.url)
         refer_link = response.meta['reference']
+        isDuplicate = self.checkDuplicate(refer_link)
+        isLatest = (self.last_link == response.url)
 
         if not self.add:
             self.last_link = self.read_latest_save()
             self.add = True
+
+        print('Latest', isLatest)
+        if isLatest:
+            raise CloseSpider('finished')
+
+        print('Duplicate:', isDuplicate)
+        if isDuplicate:
+            return
 
         if link == 'sanook.com':
             res = self.parse_sanook(response, refer_link)
@@ -521,6 +539,3 @@ class cofact_reference(Spider):
                 self.fetch_data.insert(0, res)
         else:
             return
-
-        if self.last_link == response.url:
-            raise CloseSpider('finished')

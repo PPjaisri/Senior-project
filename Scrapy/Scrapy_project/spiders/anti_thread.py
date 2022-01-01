@@ -1,27 +1,27 @@
+import os
+import csv
+import pandas as pd
 from scrapy import Spider, signals
 from scrapy.exceptions import CloseSpider
-import csv
-import os
-import pandas as pd
+from selenium.webdriver import Edge
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 
 class anti_thread(Spider):
     name = 'anti_thread'
-    add = False
-    skip = False
 
     path = os.getcwd()
     save_path = os.path.join(
         path, 'spiders\\results\\anti\\anti_thread.csv')
 
+    binary_location = os.path.join(path, 'msedgedriver.exe')
     start_urls = [
-        'https://www.antifakenewscenter.com/?s&order_by=date'
+        'https://www.antifakenewscenter.com/allcontent/'
     ]
 
-    next_urls = []
-    fetch_data = []
-    page_size = 0
-    index = 0
-    last_link = ''
+    def __init__(self):
+        self.browser = Edge(self.binary_location)
 
     @classmethod
     def from_crawler(cls, crawler, *args, **kwargs):
@@ -30,6 +30,7 @@ class anti_thread(Spider):
         crawler.signals.connect(spider.spider_closed,
                                 signal=signals.spider_closed)
         return spider
+
     def spider_closed(self):
         fieldnames = ['category', 'header', 'link']
         with open(self.save_path, 'a', encoding='utf-8', newline='') as fp:
@@ -40,11 +41,6 @@ class anti_thread(Spider):
                 writer.writeheader()
                 writer.writerows(self.fetch_data)
 
-    def fetch_page(self, page_size):
-        for i in range(2, page_size):
-            link = f'https://www.antifakenewscenter.com/page/{i}/??s&order_by=date'
-            self.next_urls.append(link)
-
     def read_latest_save(self):
         try:
             data = pd.read_csv(self.save_path, encoding='utf-8')
@@ -53,42 +49,27 @@ class anti_thread(Spider):
         except:
             return ''
 
+    def nextPage(self):
+        self.browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        next_page_button = self.browser.find_element_by_class_name('paginationjs-next')
+        next_page_button.click()
+        return
+
+    # def getContentBlock(self):
+
     def parse(self, response):
-        self.index += 1
-        page = response.css('div.pagination').css('a::text').getall()
-        self.page_size = int(page[len(page) - 1])
+        self.browser.get(response.url)
 
-        # print(response.url.split('/'))
-        if not self.skip:
-            if len(response.url.split('/')) > 4:
-                page_num = int(response.url.split('/')[4])
-                if page_num > self.page_size - 5:
-                    self.skip = True
-                    return
+        blog_container = response.css('div.blog-container')
 
-        if not self.add:
-            self.last_link = self.read_latest_save()
-            self.fetch_page(self.page_size)
-            self.add = True
+        for blog in blog_container:
+            blog_content = blog.css('div.blog-content')
+            for content in blog_content:
+                header = content.css('div.blog-title::text').get()
+                link = content.css('a::attr("href")').get()
 
-        for item in response.css('div.h-zoom'):
-            category = item.css('div.-excerpt').css('a::text').get().strip()
-            header = item.css('p::text').get().strip()
-            link = item.css('a').attrib['href']
-
-            if link == self.last_link:
-                raise CloseSpider('finished')
-
-            data = {
-                'category': category,
-                'header': header,
-                'link': link
-            }
-
-            self.fetch_data.insert(0, data)
-            
-        if self.index < self.page_size:
-            next_page = self.next_urls[self.index - 2]
-            yield response.follow(next_page, callback=self.parse)
-        else:
-            raise CloseSpider('finished')
+        data = {
+            'category': category,
+            'header': header,
+            'link': link
+        }
