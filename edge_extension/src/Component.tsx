@@ -3,7 +3,8 @@ import {
   Tabs, Tab,
   InputGroup,
   FormControl,
-  Button
+  Button,
+  Badge
 } from 'react-bootstrap';
 import './Component.css';
 import './Barloader.css';
@@ -238,8 +239,49 @@ function BarLoader() {
   )
 }
 
+function ReturnResult(obj: any) {
+
+  const [show, showElement] = useState(false)
+  const [buttonName, setButtonName] = useState('Show')
+
+  function showContent() {
+    showElement(!show)
+    if (buttonName == 'Show') {
+      setButtonName('Close')
+    } else {
+      setButtonName('Show')
+    };
+  };
+
+  console.log(obj)
+
+  return (
+    <div id={obj.index}>
+      <hr />
+      <div className='jumbotron'>
+        <p>
+          <span>Link: </span>
+          <a href={obj.obj.url}><Badge>CLICK HERE</Badge></a>
+        </p>
+        <p>{obj.obj.headline}</p>
+        <Button
+          onClick={showContent}
+          className='show_content'
+        >
+          {buttonName} Content
+        </Button>
+        {show ? <div>
+          <br />
+          <p>{obj.obj.content}</p>
+        </div> : null}
+      </div>
+    </div>
+  );
+}
+
 export {
   SearchBar,
   Starter,
-  BarLoader
+  BarLoader,
+  ReturnResult
 };
