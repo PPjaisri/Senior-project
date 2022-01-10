@@ -1,11 +1,9 @@
+import os
 from flask import Flask, jsonify
 from flask_restful import Api, Resource, abort, reqparse
 from flask_cors import CORS, cross_origin
-from flask_mongoengine import MongoEngine
-import pymongo
-import json
-import os
-import db
+# from flask_mongoengine import MongoEngine
+
 
 from Preprocess.tf_idf_all_headline_news_similarity import cosine_similarity_T, preprocess
 
