@@ -1,4 +1,5 @@
 import os
+import re
 import csv
 import pandas as pd
 from bs4 import BeautifulSoup
@@ -77,6 +78,7 @@ class anti_thread(object):
                 link = element.find_all('a', href=True)[0]['href']
                 time = element.find_all('div', class_='blog-datetime')[0].text
                 header = element.find_all('div', class_='blog-title')[0].text
+                header = re.sub(',', '', header)
 
                 if element.find_all('div', class_='tag-status'):
                     status = element.find_all('div', class_='tag-status')[0].text.strip()
@@ -98,6 +100,7 @@ class anti_thread(object):
 
         self.current_page += 1
 
-url = 'https://www.antifakenewscenter.com/allcontent/'
-anti = anti_thread()
-anti.fetch_page(url)
+if __name__ == '__main__':
+    url = 'https://www.antifakenewscenter.com/allcontent/'
+    anti = anti_thread()
+    anti.fetch_page(url)
