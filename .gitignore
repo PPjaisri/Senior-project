@@ -26,3 +26,6 @@ MongoPassword.txt
 
 #ignore main folder pycache
 __pycache__
+
+# hbdscan model (1.04 GB)
+output

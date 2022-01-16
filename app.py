@@ -5,7 +5,8 @@ from flask_cors import CORS, cross_origin
 # from flask_mongoengine import MongoEngine
 
 
-from Preprocess.tf_idf_all_headline_news_similarity import cosine_similarity_T, preprocess
+from Preprocess.tf_idf_all_headline_news_similarity import cosine_similarity_T
+from Preprocess.similarity_check import result_similarity_check
 
 # Replace your URL here. Don't forget to replace the password.
 # Pass_link = ""
@@ -39,23 +40,30 @@ class UserExtension(Resource):
     @cross_origin(supports_credentials=True)
     def post(self):
         args = input_add_args.parse_args() #ข้อมูลที่ได้รับอยู่ในนี้
-        
-        if not args["message"]:
-            abort(422, message="กรุณาใส่ข้อความ , ลิงค์ หรือ รูปภาพ")
+            
+        if (args["message_type"] != "link") and (args["message_type"] != "content") and (args["message_type"] != "image"):
+            abort(400 ,message = "กรุณาระบุประเภทของ input เป็น link , content หรือ image")
     
-        result = cosine_similarity_T(10, args["message"])
-        
-        queryObject = {
-            # "input_id": 1,
-            "message": args["message"],
-            "message_type": args["message_type"],
-            "result": result
-        }
+        if (args["message_type"] == "content" or args["message_type"] == "link") and (not args["message"]):
+            abort(422, message = "กรุณาใส่ข้อความ , ลิงค์ หรือ รูปภาพ")
     
-        # print("This is queryObject : ", queryObject)
-        response = jsonify(queryObject)
-        # print("This is response : ", response)
-        response.headers.add('Access-Control-Allow-Origin', '*')
+        #เพิ่ม if-condition กรณี search ผ่านรูป + ลิงค์ 
+
+        if args["message_type"] == "content":
+            all_result_with_url = cosine_similarity_T(30, args["message"])
+            result = result_similarity_check(all_result_with_url)
+            
+            queryObject = {
+                # "input_id": 1,
+                "message": args["message"],
+                "message_type": args["message_type"],
+                "result": result
+            }
+    
+        # # print("This is queryObject : ", queryObject)
+        # response = jsonify(queryObject)
+        # # print("This is response : ", response)
+        # response.headers.add('Access-Control-Allow-Origin', '*')
 
         return queryObject
     
