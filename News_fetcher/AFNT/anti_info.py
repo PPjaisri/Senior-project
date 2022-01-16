@@ -8,9 +8,9 @@ from bs4 import BeautifulSoup
 
 class anti_info(object):
     path = os.getcwd()
+    path = os.path.dirname(path) 
     # If directly run this file --> uncomment line 10 and 11.
-    # path = os.path.dirname(path)
-    # path = os.path.dirname(path)
+    path = os.path.dirname(path)
 
     input_path = os.path.join(path, 'result\\Anti\\anti_thread.csv')
     save_path = os.path.join(path, 'result\\Anti\\anti_info.csv')

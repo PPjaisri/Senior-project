@@ -8,9 +8,9 @@ from bs4 import BeautifulSoup
 
 class sure_info(object):
     path = os.getcwd()
+    path = os.path.dirname(path)
     # If directly run this file --> uncomment line 16 and 17.
-    # path = os.path.dirname(path)
-    # path = os.path.dirname(path)
+    path = os.path.dirname(path)
 
     input_path = os.path.join(path, 'result\\Sure\\sure_thread.csv')
     save_path = os.path.join(path, 'result\\Sure\\sure_info.csv')
