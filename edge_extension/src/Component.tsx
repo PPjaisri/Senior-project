@@ -256,12 +256,12 @@ function ReturnResult(obj: any) {
   console.log(obj)
 
   return (
-    <div id={obj.index}>
+    <div id={obj.obj.index}>
       <hr />
       <div className='jumbotron'>
         <p>
           <span>Link: </span>
-          <a href={obj.obj.url}><Badge>CLICK HERE</Badge></a>
+          <a href={obj.obj.url} target='_blank'><Badge>CLICK HERE</Badge></a>
         </p>
         <p>{obj.obj.headline}</p>
         <Button

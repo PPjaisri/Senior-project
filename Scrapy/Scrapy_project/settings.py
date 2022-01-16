@@ -43,11 +43,16 @@ COOKIES_ENABLED = False
 #   'Accept-Language': 'en',
 # }
 
+SELENIUM_DRIVER_NAME = 'msedgedriver.exe'
+SELENIUM_DRIVER_EXECUTABLE_PATH = 'Scrapy\Scrapy_project\msedgedriver.exe'
+SELENIUM_DRIVER_ARGUMENTS = ['-headless']
+
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
-# SPIDER_MIDDLEWARES = {
+SPIDER_MIDDLEWARES = {
 #    'Scrapy_project.middlewares.ScrapyProjectSpiderMiddleware': 543,
-# }
+    'scrapy_selenium.SeleniumMiddleware': 800
+}
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
