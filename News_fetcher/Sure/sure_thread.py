@@ -84,11 +84,7 @@ class sure_thread(object):
 
             self.fetch_data.insert(0, data)
 
-# if __name__ == '__main__':
-#     url = 'https://tna.mcot.net/category/sureandshare'
-#     sure = sure_thread()
-#     sure.fetch_page(url)
-
-url = 'https://tna.mcot.net/category/sureandshare'
-sure = sure_thread()
-sure.fetch_page(url)
+if __name__ == '__main__':
+    url = 'https://tna.mcot.net/category/sureandshare'
+    sure = sure_thread()
+    sure.fetch_page(url)
