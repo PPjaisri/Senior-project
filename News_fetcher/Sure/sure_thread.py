@@ -1,6 +1,7 @@
 import os
 import re
 import csv
+import time
 import logging
 import requests
 import pandas as pd
@@ -9,8 +10,8 @@ from bs4 import BeautifulSoup
 class sure_thread(object):
     path = os.getcwd()
     # If directly run this file --> uncomment line 16 and 17.
-    path = os.path.dirname(path)
-    path = os.path.dirname(path)
+    # path = os.path.dirname(path)
+    # path = os.path.dirname(path)
 
     save_path = os.path.join(path, 'result\\Sure\\sure_thread.csv')
 
@@ -52,6 +53,7 @@ class sure_thread(object):
                 break
             else:
                 next_url = f'{url}/page/{i}'
+                time.sleep(0.5)
                 self.crawl_page(next_url)
 
         self.finished_crawl()
@@ -65,6 +67,8 @@ class sure_thread(object):
         for item in items:
             link = item.a['href']
             header = item.h2.a.text.strip()
+            header = re.sub(',', '', header)
+            header = re.sub('"', '', header)
             time = item.find('div', class_='time').text.strip()
             time = ' '.join(time.split())
 

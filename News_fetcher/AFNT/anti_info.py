@@ -1,5 +1,6 @@
 import os
 import csv
+import time
 import logging
 import requests
 import pandas as pd
@@ -40,6 +41,8 @@ class anti_info(object):
             else:
                 writer.writeheader()
                 writer.writerows(self.fetch_data)
+                
+        logging.info('finished crawling')
 
     def fetch_page(self):
         urls = []
@@ -62,6 +65,7 @@ class anti_info(object):
                 break
             else:
                 self.count += 1
+                time.sleep(0.5)
                 self.crawl_page(url)
                 
         self.finished_crawl()
@@ -72,6 +76,7 @@ class anti_info(object):
         soup = BeautifulSoup(response.text, 'html.parser')
 
         header = soup.h1.text.strip()
+        time = soup.time.text.strip()
         category = soup.find_all('div', class_='blog-tag')[0].text.strip()
         content_blog = soup.select('div.tdb-block-inner p')
         content = [i.text for i in content_blog]
@@ -83,7 +88,8 @@ class anti_info(object):
             'header': header,
             'content': content,
             'link': url,
-            'image': image
+            'image': image,
+            'time': time
         }
 
         self.fetch_data.insert(0, data)

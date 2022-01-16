@@ -1,6 +1,8 @@
+import logging
 import os
 import re
 import csv
+import time
 import pandas as pd
 from bs4 import BeautifulSoup
 from selenium.webdriver import Edge
@@ -37,6 +39,7 @@ class anti_thread(object):
         while self.current_page <= last_page:
             if self.finish:
                 break
+            time.sleep(0.5)
             self.crawl_page()
             self.change_page()
 
@@ -67,6 +70,7 @@ class anti_thread(object):
                 writer.writerows(self.fetch_data)
 
         self.browser.close()
+        logging.info('finished crawling')
 
     def crawl_page(self):
         response = self.browser.page_source
