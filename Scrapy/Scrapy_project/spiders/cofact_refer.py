@@ -12,11 +12,13 @@ class cofact_reference(Spider):
     name = 'cofact_refer'
 
     path = os.getcwd()
+    path = os.path.dirname(path)
+    path = os.path.dirname(path)
     file_path = os.path.join(
-        path, 'spiders\\results\\cofact\\cofact_info_ref.csv')
+        path, 'result\\Cofact\\cofact_info_ref.csv')
     save_path = os.path.join(
-        path, 'spiders\\results\\cofact\\cofact_refer.csv')
-    test_path = os.path.join(path, 'spiders\\test\\test.csv')
+        path, 'result\\Cofact\\cofact_refer.csv')
+    test_path = os.path.join(path, 'test\\test.csv')
 
     fetch_data = []
     last_link = ''

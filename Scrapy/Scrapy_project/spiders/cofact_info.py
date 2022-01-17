@@ -10,9 +10,11 @@ class cofact_info(Spider):
     name = 'cofact_info'
 
     path = os.getcwd()
-    file_path = os.path.join(path, 'spiders\\results\\cofact\\cofact_thread.csv')
-    save_path = os.path.join(path, 'spiders\\results\\cofact\\cofact_info.csv')
-    save_path_ref = os.path.join(path, 'spiders\\results\\cofact\\cofact_info_ref.csv')
+    path = os.path.dirname(path)
+    path = os.path.dirname(path)
+    file_path = os.path.join(path, 'result\\Cofact\\cofact_thread.csv')
+    save_path = os.path.join(path, 'result\\Cofact\\cofact_info.csv')
+    save_path_ref = os.path.join(path, 'result\\Cofact\\cofact_info_ref.csv')
 
     fetch_data = []
     fetch_data_ref = []

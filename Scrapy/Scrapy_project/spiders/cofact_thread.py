@@ -9,8 +9,10 @@ import os
 class cofact_thread(Spider):
     name = 'cofact_thread'
     path = os.getcwd()
+    path = os.path.dirname(path)
+    path = os.path.dirname(path)
     save_path = os.path.join(
-        path, 'spiders\\results\\cofact\\cofact_thread.csv')
+        path, 'result\\Cofact\\cofact_thread.csv')
 
     start_urls = [
         "https://cofact.org/articles?replyRequestCount=1&before=&after=&filter=solved"
