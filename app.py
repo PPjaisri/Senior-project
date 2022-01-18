@@ -1,12 +1,16 @@
+from email import message
 import os
+import base64
 from flask import Flask, jsonify
 from flask_restful import Api, Resource, abort, reqparse
 from flask_cors import CORS, cross_origin
-# from flask_mongoengine import MongoEngine
 
-
+# import function สำหรับค้นหาหัวข้อข่าวที่เกี่ยวข้องและ similarity check
 from Preprocess.tf_idf_all_headline_news_similarity import cosine_similarity_T
 from Preprocess.similarity_check import result_similarity_check
+
+# import function สำหรับ OCR
+from EasyOCR.EasyOCR_model import OCR_with_user_image
 
 # Replace your URL here. Don't forget to replace the password.
 # Pass_link = ""
@@ -50,7 +54,7 @@ class UserExtension(Resource):
         #เพิ่ม if-condition กรณี search ผ่านรูป + ลิงค์ 
 
         if args["message_type"] == "content":
-            all_result_with_url = cosine_similarity_T(30, args["message"])
+            all_result_with_url = cosine_similarity_T(50, args["message"])
             result = result_similarity_check(all_result_with_url)
             
             queryObject = {
@@ -58,6 +62,25 @@ class UserExtension(Resource):
                 "message": args["message"],
                 "message_type": args["message_type"],
                 "result": result
+            }
+            
+        if args["message_type"] == "image":
+            photo = args["message"]
+    
+            photo_data = base64.b64decode(photo)
+            
+            with open("OCR_backend_Sample.jpg", "wb") as file:
+                file.write(photo_data)
+            
+            # text_from_image = OCR_with_user_image(args["message"])
+            # all_result_with_url = cosine_similarity_T(30, text_from_image)
+            # result = result_similarity_check(all_result_with_url)
+            
+            queryObject = {
+                # "input_id": 1,
+                "message": args["message"],
+                "message_type": args["message_type"],
+                "result": args["message"]
             }
     
         # # print("This is queryObject : ", queryObject)

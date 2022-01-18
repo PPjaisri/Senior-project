@@ -66,7 +66,7 @@ def remove_emojis(data):
 def read_cofact_refer(): #สำหรับดึงข้อมูลของ cofact csv
     # Opening CSV file
     root_path = os.getcwd()
-    path = os.path.join(root_path, 'Scrapy\\Scrapy_project\\spiders\\results\\cofact\\cofact_refer.csv')
+    path = os.path.join(root_path, 'result\\Cofact\\cofact_refer.csv')
     
     f = open(path, encoding="utf8")
     
@@ -107,7 +107,7 @@ def read_cofact_refer(): #สำหรับดึงข้อมูลของ
 def read_anti_refer(): #สำหรับดึงข้อมูลของ anti fake news csv
     # Opening CSV file
     root_path = os.getcwd()
-    path = os.path.join(root_path, 'Scrapy\\Scrapy_project\\spiders\\results\\anti\\anti_info.csv')
+    path = os.path.join(root_path, 'result\\Anti\\anti_info.csv')
     f = open(path, encoding="utf8")
     
     # returns CSV object as
@@ -135,6 +135,13 @@ def read_anti_refer(): #สำหรับดึงข้อมูลของ a
         
         # เพิ่ม link
         tmp.append(row[3])
+        
+        # เพิ่ม datetime
+        tmp.append(row[5])
+        
+        # เพิ่ม domain
+        tmp.append("ศูนย์ต่อต้านข่าวปลอม ประเทศไทย")
+        
         rows.append(tmp)
 
     # Closing file
@@ -142,31 +149,50 @@ def read_anti_refer(): #สำหรับดึงข้อมูลของ a
     
     return rows
 
-def read_sure_refer(): #สำหรับอ่านข้อมูลของ sure ก่อน share ***JSON***
-    # Opening JSON file
+def read_sure_refer(): #สำหรับดึงข้อมูลของ sure and share csv
+    # Opening CSV file
     root_path = os.getcwd()
-    path = os.path.join(root_path, 'Scrapy/Scrapy_project/spiders//fetch file/sure_info.json')
+    path = os.path.join(root_path, 'result\\Sure\\sure_info.csv')
     f = open(path, encoding="utf8")
     
-    # returns JSON object as
+    # returns CSV object as
     # a dictionary
-    sure_refer_text_data = json.load(f)
+    csvreader = csv.reader(f)
+    
+    # read header from CSV file
+    header = []
+    header = next(csvreader)
+
+    rows = []
+    for row in csvreader:
+        tmp = []
+        
+        content_parts = []
+        content = ''
+        
+        # เพิ่ม header
+        tmp.append(row[1])
+        
+        # เพิ่ม content
+        content_parts = literal_eval(row[2])
+        content = ''.join(filter(None, content_parts))
+        tmp.append(content)
+        
+        # เพิ่ม link
+        tmp.append(row[3])
+        
+        # เพิ่ม datetime
+        tmp.append(row[5])
+        
+        # เพิ่ม domain
+        tmp.append("ชัวร์ก่อนแชร์")
+        
+        rows.append(tmp)
 
     # Closing file
     f.close()
-    return sure_refer_text_data
-
-def get_sure_refer_info(sure_refer_text_data): #สำหรับดึงหัวข้อข่าวอ้างอิง (header) และลิงของข่าวอ้างอิง (link)
-    refer_text_list = []
-
-    for refer_text in range(len(sure_refer_text_data)):
-        tmp = []
-        tmp.append(sure_refer_text_data[refer_text]['header'])
-        tmp.append(''.join(filter(None, sure_refer_text_data[refer_text]['content'])))
-        tmp.append(sure_refer_text_data[refer_text]['link'])
-        refer_text_list.append(tmp)
-
-    return refer_text_list
+    
+    return rows
 
 def combine_every_headline():
     refer_text_list = []
@@ -174,8 +200,7 @@ def combine_every_headline():
 
     anti_refer_text_list = read_anti_refer()
 
-    sure_refer_text_data = read_sure_refer()
-    sure_refer_text_list = get_sure_refer_info(sure_refer_text_data)
+    sure_refer_text_list = read_sure_refer()
 
     refer_text_list = cofact_refer_text_list + anti_refer_text_list + sure_refer_text_list
     
