@@ -33,7 +33,7 @@ matplotlib==3.3.2
 numpy==1.20.0
 numba==0.52.0rc2
 pandas==1.1.2
-pillow==8.1.0
+pillow==8.1.2
 pyarrow
 python-levenshtein==0.12.1
 pytz==2021.1
@@ -46,6 +46,9 @@ umap-learn==0.5.0
 umap-learn[plot]
 auxlib
 conda
-cytoolz
+opencv-python==4.5.4.60
 easyocr
-torch==1.10.1+cu113 torchvision==0.11.2+cu113 torchaudio===0.10.1+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
+-f https://download.pytorch.org/whl/cu113/torch_stable.html
+torch==1.10.1+cu113 
+torchvision==0.11.2+cu113 
+torchaudio===0.10.1+cu113 

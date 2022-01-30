@@ -62,6 +62,11 @@ def result_similarity_check(all_result_with_url):
     for index in range(len(all_result_with_url)):
         result_headline.append(all_result_with_url[index]["headline"])
     
+    if len(result_headline) <= 10:
+        result = final_result_with_url.to_dict('records')
+        
+        return result
+    
     result_headline_encodings = model.encode(result_headline)
     
     umap_embs = mapper.transform(result_headline_encodings)

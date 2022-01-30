@@ -17,7 +17,7 @@ from sklearn.preprocessing import normalize
 from sklearn.feature_extraction.text import TfidfVectorizer
 from ast import literal_eval
 
-from Preprocess.similarity_check import train_similarity_check_model
+# from Preprocess.similarity_check import train_similarity_check_model
 
 nltk.download('words')
 th_stop = thai_stopwords()
@@ -66,7 +66,7 @@ def remove_emojis(data):
 def read_cofact_refer(): #สำหรับดึงข้อมูลของ cofact csv
     # Opening CSV file
     root_path = os.getcwd()
-    path = os.path.join(root_path, 'result\\Cofact\\cofact_refer.csv')
+    path = os.path.join(root_path, 'result\\Cofact\\cofact_refer_old.csv')
     
     f = open(path, encoding="utf8")
     
@@ -79,14 +79,21 @@ def read_cofact_refer(): #สำหรับดึงข้อมูลของ
     header = next(csvreader)
     
     rows = []
+    dup_check = []
+    
     for row in csvreader:
         tmp = []
         
         content_parts = []
         content = ''
         
-        # เพิ่ม header
-        tmp.append(row[1]) 
+        # เพิ่ม header + ตรวจสอบว่า header ซ้ำหรือไม่
+        if row[1] in dup_check:
+            continue
+        
+        elif row[1] not in dup_check:
+            dup_check.append(row[1])
+            tmp.append(row[1]) 
 
         # เพิ่ม content
         content_parts = literal_eval(row[2])
@@ -119,14 +126,21 @@ def read_anti_refer(): #สำหรับดึงข้อมูลของ a
     header = next(csvreader)
 
     rows = []
+    dup_check = []
+    
     for row in csvreader:
         tmp = []
         
         content_parts = []
         content = ''
         
-        # เพิ่ม header
-        tmp.append(row[1])
+        # เพิ่ม header + ตรวจสอบว่า header ซ้ำหรือไม่
+        if row[1] in dup_check:
+            continue
+        
+        elif row[1] not in dup_check:
+            dup_check.append(row[1])
+            tmp.append(row[1]) 
         
         # เพิ่ม content
         content_parts = literal_eval(row[2])
@@ -164,14 +178,21 @@ def read_sure_refer(): #สำหรับดึงข้อมูลของ s
     header = next(csvreader)
 
     rows = []
+    dup_check = []
+    
     for row in csvreader:
         tmp = []
         
         content_parts = []
         content = ''
         
-        # เพิ่ม header
-        tmp.append(row[1])
+        # เพิ่ม header + ตรวจสอบว่า header ซ้ำหรือไม่
+        if row[1] in dup_check:
+            continue
+        
+        elif row[1] not in dup_check:
+            dup_check.append(row[1])
+            tmp.append(row[1]) 
         
         # เพิ่ม content
         content_parts = literal_eval(row[2])
@@ -219,7 +240,7 @@ def create_df_for_backtrack(all_refer_text_list):
     #ทำ list ให้เป็น dataframe
     all_original_text_and_headline_news_df = pd.DataFrame(list(zip(all_refer_header, all_refer_content, all_refer_url)), columns=["All_headline_from_every_reference", "All_content_from_every_reference", "All_URL_from_every_reference"])
     
-    start_train_similarity_check_model()    
+    # start_train_similarity_check_model()    
         
     return all_original_text_and_headline_news_df, all_refer_header
 
@@ -319,9 +340,9 @@ def cosine_similarity_T(k, query):
             all_result_with_url.loc[i,'url'] = all_original_text_and_headline_news_df["All_URL_from_every_reference"][int(all_result.iloc[i]["index"])]
             all_result_with_url.loc[i,'content'] = all_original_text_and_headline_news_df["All_content_from_every_reference"][int(all_result.iloc[i]["index"])]
 
-    #append user input เข้าไปใน all_result_with_url ด้วย
-    query_df = {'index': '-1', 'headline': query, 'url': '', 'content': ''}
-    all_result_with_url = all_result_with_url.append(query_df, ignore_index = True)
+    # #append user input เข้าไปใน all_result_with_url ด้วย
+    # query_df = {'index': '-1', 'headline': query, 'url': '', 'content': ''}
+    # all_result_with_url = all_result_with_url.append(query_df, ignore_index = True)
     
     js = all_result_with_url.to_dict('records')
         
@@ -342,10 +363,10 @@ def preprocess():
     
     return None
 
-def start_train_similarity_check_model():
-    global all_original_text_and_headline_news_df
-    #นำ dataframe ที่ได้ ไป train กับ model similarity check
-    train_similarity_check_model(all_original_text_and_headline_news_df)
+# def start_train_similarity_check_model():
+#     global all_original_text_and_headline_news_df
+#     #นำ dataframe ที่ได้ ไป train กับ model similarity check
+#     train_similarity_check_model(all_original_text_and_headline_news_df)
 
 # Main
 all_refer_text_list = []

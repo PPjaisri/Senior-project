@@ -7,7 +7,6 @@ from flask_cors import CORS, cross_origin
 
 # import function สำหรับค้นหาหัวข้อข่าวที่เกี่ยวข้องและ similarity check
 from Preprocess.tf_idf_all_headline_news_similarity import cosine_similarity_T
-from Preprocess.similarity_check import result_similarity_check
 
 # import function สำหรับ OCR
 from EasyOCR.EasyOCR_model import OCR_with_user_image
@@ -54,14 +53,14 @@ class UserExtension(Resource):
         #เพิ่ม if-condition กรณี search ผ่านรูป + ลิงค์ 
 
         if args["message_type"] == "content":
-            all_result_with_url = cosine_similarity_T(50, args["message"])
-            result = result_similarity_check(all_result_with_url)
+            all_result_with_url = cosine_similarity_T(10, args["message"])
+            # result = result_similarity_check(all_result_with_url)
             
             queryObject = {
                 # "input_id": 1,
                 "message": args["message"],
                 "message_type": args["message_type"],
-                "result": result
+                "result": all_result_with_url
             }
             
         if args["message_type"] == "image":
@@ -69,10 +68,12 @@ class UserExtension(Resource):
     
             photo_data = base64.b64decode(photo)
             
-            with open("OCR_backend_Sample.jpg", "wb") as file:
+            print("This is photo :",photo)
+            
+            with open("EasyOCR/OCR_User_Pic/tmp.jpg", "wb") as file:
                 file.write(photo_data)
             
-            # text_from_image = OCR_with_user_image(args["message"])
+            text_from_image = OCR_with_user_image("EasyOCR/OCR_User_Pic/tmp.jpg")
             # all_result_with_url = cosine_similarity_T(30, text_from_image)
             # result = result_similarity_check(all_result_with_url)
             
@@ -80,7 +81,7 @@ class UserExtension(Resource):
                 # "input_id": 1,
                 "message": args["message"],
                 "message_type": args["message_type"],
-                "result": args["message"]
+                "result": text_from_image
             }
     
         # # print("This is queryObject : ", queryObject)
