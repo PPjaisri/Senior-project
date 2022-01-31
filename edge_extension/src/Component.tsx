@@ -9,7 +9,8 @@ import {
 import './Component.css';
 import './Barloader.css';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { sendLink } from './Service';
+import { sendImage, sendLink } from './Service';
+import { base64encode } from 'nodejs-base64';
 
 function SearchBar() {
   return (
@@ -127,15 +128,41 @@ function ContentSearch() {
 }
 
 function ImageSearch() {
-  const [image, getImage] = useState('');
+  const [image, getImage] = useState<any>([] || {} || '');
   let navigate = useNavigate();
+  const reader = new FileReader();
 
-  function passImage() {
-    const data = {
-      type: 'image',
-      data: image
+  function abc() {
+    reader.onload = async (e: any) => {
+      const text = (e.target.result)
+      // console.log(text)
+      // console.log(base64encode(text))
     };
-    navigate('/load', { state: data });
+    reader.readAsText(image.target.files[0])
+    // console.log(reader)
+    return reader
+  };
+
+  async function passImage() {
+    const result = abc();
+
+    const image_fd = new FormData();
+    // image_fd.append(
+    //   'image',
+    //   btoa(image)
+    // );
+    const passImage = {
+      message_type: 'image',
+      message: result
+    };
+
+    let res = await sendImage(passImage);
+    if (res) {
+      navigate('/load', { state: res });
+    } else {
+      console.log('failed');
+    };
+    navigate('/load', { state: passImage });
   };
 
   return (
@@ -147,12 +174,13 @@ function ImageSearch() {
           type="file"
           aria-label="news image"
           accept='image/*'
-          onChange={(event: any) => getImage(event.target.value)}
+          onChange={(event: any) => getImage(event)}
         />
       </InputGroup>
       <Button
         variant="primary"
         id="content_submit"
+        // onClick={abc}
         onClick={passImage}
       >
         Search

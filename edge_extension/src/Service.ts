@@ -1,5 +1,6 @@
+import axios from "axios";
 import { config } from "./config";
-import { post_body } from "./types";
+import { post_body, post_image_body } from "./types";
 
 const baseUrl = config.baseUrl;
 
@@ -23,7 +24,22 @@ async function getLink() {
     return result;
 }
 
+async function sendImage(body: post_image_body) {
+    const res = await fetch(`${baseUrl}`, {
+        method: 'post',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(body)
+    });
+
+    const result = res.json();
+    console.log(result)
+    return result;
+}
+
 export {
     sendLink,
-    getLink
+    getLink,
+    sendImage
 };
