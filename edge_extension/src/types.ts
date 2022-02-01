@@ -5,7 +5,7 @@ interface post_body {
 
 interface post_image_body {
     message_type: string,
-    message: FileReader
+    message: FormData | FileReader
 }
 
 export type {

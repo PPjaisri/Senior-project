@@ -25,6 +25,7 @@ async function getLink() {
 }
 
 async function sendImage(body: post_image_body) {
+    console.log(body);
     const res = await fetch(`${baseUrl}`, {
         method: 'post',
         headers: {
@@ -33,9 +34,11 @@ async function sendImage(body: post_image_body) {
         body: JSON.stringify(body)
     });
 
-    const result = res.json();
-    console.log(result)
-    return result;
+    // const res = await axios.post(`${baseUrl}`, JSON.stringify(body))
+
+    // const result = res.json();
+    console.log(res)
+    return res;
 }
 
 export {

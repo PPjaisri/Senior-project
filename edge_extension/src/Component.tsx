@@ -130,21 +130,8 @@ function ContentSearch() {
 function ImageSearch() {
   const [image, getImage] = useState<any>([] || {} || '');
   const [image_link, getImageLink] = useState('');
-  const [text, getText] = useState<any>('');
 
   let navigate = useNavigate();
-  const reader = new FileReader();
-
-  function abc() {
-    reader.onload = async (e: any) => {
-      const image_text = await (e.target.result);
-      getText(image_text)
-      // console.log(base64encode(text))
-    };
-    reader.readAsText(image.target.files[0])
-    // console.log(reader.onload)
-    return reader
-  };
 
   function onKeyPress(code: string) {
     if (code === 'Enter') {
@@ -155,18 +142,11 @@ function ImageSearch() {
   };
 
   async function passImage() {
-    const result = abc();
-    console.log(text)
-
-    // const image_fd = new FormData();
-    // // image_fd.append(
-    // //   'image',
-    // //   btoa(image)
-    // // );
     const passImage = {
       message_type: 'image',
-      message: text
+      message: image
     };
+    // console.log(passImage);
 
     let res = await sendImage(passImage);
     if (res) {
@@ -174,7 +154,7 @@ function ImageSearch() {
     } else {
       console.log('failed');
     };
-    // // navigate('/load', { state: passImage });
+    // navigate('/load', { state: passImage });
   };
 
   return (
@@ -186,7 +166,9 @@ function ImageSearch() {
           type="file"
           aria-label="news image"
           accept='image/*'
-          onChange={(event: any) => getImage(event)}
+          onChange={(event: any) => {
+            getImage(event.target.files[0])
+          }}
         />
       </InputGroup>
       <label>or, Enter the image URL</label>
