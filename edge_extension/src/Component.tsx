@@ -129,31 +129,43 @@ function ContentSearch() {
 
 function ImageSearch() {
   const [image, getImage] = useState<any>([] || {} || '');
+  const [image_link, getImageLink] = useState('');
+  const [text, getText] = useState<any>('');
+
   let navigate = useNavigate();
   const reader = new FileReader();
 
   function abc() {
     reader.onload = async (e: any) => {
-      const text = (e.target.result)
-      // console.log(text)
+      const image_text = await (e.target.result);
+      getText(image_text)
       // console.log(base64encode(text))
     };
     reader.readAsText(image.target.files[0])
-    // console.log(reader)
+    // console.log(reader.onload)
     return reader
+  };
+
+  function onKeyPress(code: string) {
+    if (code === 'Enter') {
+      passImage();
+    } else if (code === 'NumpadEnter') {
+      passImage();
+    }
   };
 
   async function passImage() {
     const result = abc();
+    console.log(text)
 
-    const image_fd = new FormData();
-    // image_fd.append(
-    //   'image',
-    //   btoa(image)
-    // );
+    // const image_fd = new FormData();
+    // // image_fd.append(
+    // //   'image',
+    // //   btoa(image)
+    // // );
     const passImage = {
       message_type: 'image',
-      message: result
+      message: text
     };
 
     let res = await sendImage(passImage);
@@ -162,7 +174,7 @@ function ImageSearch() {
     } else {
       console.log('failed');
     };
-    navigate('/load', { state: passImage });
+    // // navigate('/load', { state: passImage });
   };
 
   return (
@@ -175,6 +187,16 @@ function ImageSearch() {
           aria-label="news image"
           accept='image/*'
           onChange={(event: any) => getImage(event)}
+        />
+      </InputGroup>
+      <label>or, Enter the image URL</label>
+      <p />
+      <InputGroup className="mb-3">
+        <FormControl
+          placeholder="Paste link here"
+          aria-label="News link"
+          onChange={(event: any) => getImageLink(event.target.value)}
+          onKeyPress={(event: any) => onKeyPress(event.code)}
         />
       </InputGroup>
       <Button
