@@ -1,38 +1,34 @@
 import re
+import logging
 import requests
 from bs4 import BeautifulSoup
 
-def sanook(url, refer_link):
+
+def sanook(url, reference):
+    logging.debug(f'Crawing at {url}')
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'lxml')
 
     header = soup.find('h1').text
     header = re.sub(',', '', header)
-    # time = response.css('time::text').get()
-    # time = re.sub('(|)', '', time)
 
-    # content = []
-    # for paragraph in response.css('div#EntryReader_0').css('p *::text'):
-    #     res = paragraph.get().strip()
-    #     if res != '':
-    #         content.append(res)
+    time = soup.find('time')['datetime']
 
-    # image = response.css('div.EntryContent').css(
-    #     'div.thumbnail').css('img::attr("src")').getall()
+    content = soup.find('div', id='EntryReader_0').text.strip()
+    content = ' '.join(content.split())
+    content = re.sub(',', ' ', content)
 
-    # data = {
-    #     "category": "ข่าวจริง",
-    #     "header": header,
-    #     "content": content,
-    #     "link": url,
-    #     "img": image,
-    #     "reference": refer_link,
-    #     "time": time
-    # }
+    div = soup.find('div', class_='jsx-2954975791')
+    image = div.find('img')['src']
 
-    # return data
+    data = {
+        "category": "ข่าวจริง",
+        "header": header,
+        "content": content,
+        "link": url,
+        "img": image,
+        "reference": reference,
+        "time": time
+    }
 
-
-url = 'https://www.sanook.com/health/10505/'
-
-sanook(url, 'a')
+    return data

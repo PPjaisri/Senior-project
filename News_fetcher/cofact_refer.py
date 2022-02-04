@@ -1,10 +1,10 @@
 import os
 import re
+import sys
 import csv
 import logging
-import requests
 import pandas as pd
-from bs4 import BeautifulSoup
+import fetch_each_site as site
 
 class cofact_refer(object):
     path = os.getcwd()
@@ -14,13 +14,14 @@ class cofact_refer(object):
 
     def __init__(self):
         self.fetch_data = []
+        self.saved_data = []
         self.last_link = ''
         self.count = 0
         self.add = False
 
     def read_latest_save(self):
         try:
-            data = pd.read_csv(self.file_path, encoding='utf-8')
+            data = pd.read_csv(self.save_path, encoding='utf-8')
             last_link = data.iloc[-1]['link']
             return last_link
         except:
@@ -51,40 +52,48 @@ class cofact_refer(object):
             domain = re.sub('www.', '', domain)
         return domain
 
-    def checkDuplicate(self, refer_link):
+    def checkDuplicate(self, reference):
         result = False
-        refer_data = self.saved_data['reference'].array
-        if refer_link in refer_data:
-            result = True
+        try:
+            refer_data = self.saved_data['reference'].array
+            if reference in refer_data:
+                result = True
+        except:
+            pass
+        
         return result
 
     def fetch_page(self):
         self.last_link = self.read_latest_save()
+        try:
+            self.saved_data = pd.read_csv(self.save_path, encoding='utf-8')
+        except:
+            pass
         urls = []
         with open(self.file_path, 'r', encoding='utf-8') as fp:
             data = fp.readlines()
 
         for data_dict in data:
-            urls.append(data_dict.split(',')[-1])
+            urls.append(
+                (data_dict.split(',')[-1].strip(), data_dict.split(',')[-2]))
 
         new_urls = []
         for url in range(len(urls) - 1, 0, -1):
             new_urls.append(urls[url])
-
-        for url in new_urls:
-            for url_ref in url[1]:
-                self.count += 1
-                ref = url[0]
-                try:
-                    if self.last_link == url_ref.strip():
-                        break
-                    self.crawl_page(url_ref, ref)
-                except:
-                    continue
-
+            
+        for url, ref in new_urls:
+            self.count += 1
+            try:
+                if self.last_link == url.strip():
+                    break
+                self.crawl_page(url, ref)
+            except:
+                continue
+            
         self.finished_crawl()
 
     def crawl_page(self, url, reference):
+        print(f'Crawing at {url}')
         link = self.check_domain(url)
         isDuplicate = self.checkDuplicate(reference)
 
@@ -92,65 +101,61 @@ class cofact_refer(object):
             return
 
         if link == 'sanook.com':
-            res = self.parse_sanook(url, refer_link)
+            res = site.sanook(url, reference)
             if res != None:
                 self.fetch_data.insert(0, res)
-        # elif link == 'bbc.com':
-        #     res = self.parse_bbc(url, refer_link)
-        #     if res != None:
-        #         self.fetch_data.insert(0, res)
-        # elif link == 'pptvhd36.com':
-        #     res = self.parse_pptv(url, refer_link)
-        #     if res != None:
-        #         self.fetch_data.insert(0, res)
-        # elif link == 'dailynews.co.th':
-        #     res = self.parse_dailynews(url, refer_link)
-        #     if res != None:
-        #         self.fetch_data.insert(0, res)
-        # elif link == 'komchadluek.net':
-        #     res = self.parse_komchadluek(url, refer_link)
-        #     if res != None:
-        #         self.fetch_data.insert(0, res)
-        # elif link == 'oryor.com':
-        #     res = self.parse_oryor(url, refer_link)
-        #     if res != None:
-        #         self.fetch_data.insert(0, res)
-        # elif link == 'sure.oryor.com':
-        #     res = self.parse_sure_oryor(url, refer_link)
-        #     if res != None:
-        #         self.fetch_data.insert(0, res)
-        # elif link == 'prachachat.net':
-        #     res = self.parse_prachachat(url, refer_link)
-        #     if res != None:
-        #         self.fetch_data.insert(0, res)
-        # elif link == 'matichon.co.th':
-        #     res = self.parse_matichon(url, refer_link)
-        #     if res != None:
-        #         self.fetch_data.insert(0, res)
-        # elif link == 'thansettakij.com':
-        #     res = self.parse_thansettakij(url, refer_link)
-        #     if res != None:
-        #         self.fetch_data.insert(0, res)
-        # elif link == 'thairath.co.th':
-        #     res = self.parse_thairath(url, refer_link)
-        #     if res != None:
-        #         self.fetch_data.insert(0, res)
-        # elif link == 'tnnthailand.com':
-        #     res = self.parse_tnn(url, refer_link)
-        #     if res != None:
-        #         self.fetch_data.insert(0, res)
-        # elif link == 'mgronline.com':
-        #     res = self.parse_mgronline(url, refer_link)
-        #     if res != None:
-        #         self.fetch_data.insert(0, res)
-        # elif link == 'news.thaipbs.or.th':
-        #     res = self.parse_thaipbs(url, refer_link)
-        #     if res != None:
-        #         self.fetch_data.insert(0, res)
-        # elif link == 'antifakenewscenter.com':
-        #     res = self.parse_antifakenews(url, refer_link)
-        #     if res != None:
-        #         self.fetch_data.insert(0, res)
+        elif link == 'bbc.com':
+            res = site.bbc(url, reference)
+            if res != None:
+                self.fetch_data.insert(0, res)
+        elif link == 'pptvhd36.com':
+            res = site.pptv(url, reference)
+            if res != None:
+                self.fetch_data.insert(0, res)
+        elif link == 'dailynews.co.th':
+            res = site.dailyNews(url, reference)
+            if res != None:
+                self.fetch_data.insert(0, res)
+        elif link == 'komchadluek.net':
+            res = site.komchadluek(url, reference)
+            if res != None:
+                self.fetch_data.insert(0, res)
+        elif link == 'oryor.com':
+            res = site.oryor(url, reference)
+            if res != None:
+                self.fetch_data.insert(0, res)
+        elif link == 'sure.oryor.com':
+            res = site.sureOryor(url, reference)
+            if res != None:
+                self.fetch_data.insert(0, res)
+        elif link == 'matichon.co.th':
+            res = site.matichon(url, reference)
+            if res != None:
+                self.fetch_data.insert(0, res)
+        elif link == 'thansettakij.com':
+            res = site.thanSettakij(url, reference)
+            if res != None:
+                self.fetch_data.insert(0, res)
+        elif link == 'thairath.co.th':
+            res = site.thairath(url, reference)
+            if res != None:
+                self.fetch_data.insert(0, res)
+        elif link == 'tnnthailand.com':
+            res = site.tnn(url, reference)
+            if res != None:
+                self.fetch_data.insert(0, res)
+        elif link == 'mgronline.com':
+            res = site.mgr(url, reference)
+            if res != None:
+                self.fetch_data.insert(0, res)
+        elif link == 'news.thaipbs.or.th':
+            res = site.thaipbs(url, reference)
+            if res != None:
+                self.fetch_data.insert(0, res)
+        elif link == 'antifakenewscenter.com':
+            res = site.antifakenews(url, reference)
+            if res != None:
+                self.fetch_data.insert(0, res)
         else:
             return
 
