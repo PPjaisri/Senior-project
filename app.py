@@ -1,6 +1,7 @@
 from email import message
 import os
 import base64
+import werkzeug
 from flask import Flask, jsonify
 from flask_restful import Api, Resource, abort, reqparse
 from flask_cors import CORS, cross_origin
@@ -31,7 +32,8 @@ api = Api(app)
 
 #Request Parser สำหรับเพิ่มข้อมูลลง db (ใน post method)
 input_add_args = reqparse.RequestParser()
-input_add_args.add_argument("message", type=str, help="กรุณาป้อนข้อความเป็นตัวอักษรและมีความยาวไม่เกิน 1000 ตัวอักษร")
+# input_add_args.add_argument("message", type=str, help="กรุณาป้อนข้อความเป็นตัวอักษรและมีความยาวไม่เกิน 1000 ตัวอักษร")
+input_add_args.add_argument('message', type=werkzeug.datastructures.FileStorage, location='files')
 input_add_args.add_argument("message_type", type=str, help="กรุณาระบุประเภท Input เป็นตัวอักษร")
 
 #design
@@ -63,17 +65,28 @@ class UserExtension(Resource):
                 "result": all_result_with_url
             }
             
+            
         if args["message_type"] == "image":
-            photo = args["message"]
+            # The image is retrieved as a file
+            
+            print("This is args :",args["message"])
+            
+            image_file = args(strict=True).get("message", None)
+            if image_file:
+                image = image_file.read()
+                image.save("EasyOCR/OCR_User_Pic/tmp.jpg")
+                
+            # photo = args["message"]
+            
     
-            photo_data = base64.b64decode(photo)
+            # photo_data = base64.b64decode(photo)
             
-            print("This is photo :",photo)
+            # print("This is photo :",args)
             
-            with open("EasyOCR/OCR_User_Pic/tmp.jpg", "wb") as file:
-                file.write(photo_data)
+            # with open("EasyOCR/OCR_User_Pic/tmp.jpg", "w") as file:
+            #     file.write(photo)
             
-            text_from_image = OCR_with_user_image("EasyOCR/OCR_User_Pic/tmp.jpg")
+            # text_from_image = OCR_with_user_image("EasyOCR/OCR_User_Pic/tmp.jpg")
             # all_result_with_url = cosine_similarity_T(30, text_from_image)
             # result = result_similarity_check(all_result_with_url)
             
@@ -81,7 +94,7 @@ class UserExtension(Resource):
                 # "input_id": 1,
                 "message": args["message"],
                 "message_type": args["message_type"],
-                "result": text_from_image
+                "result": args["message"]
             }
     
         # # print("This is queryObject : ", queryObject)
