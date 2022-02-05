@@ -10,7 +10,6 @@ import {
 } from 'react-bootstrap';
 import { Starter, SearchBar, BarLoader, ReturnResult } from './Component'
 import './App.css';
-import { useEffect, useState } from 'react'
 
 function App() {
 

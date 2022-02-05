@@ -8,7 +8,20 @@ interface post_image_body {
     message: FormData | FileReader
 }
 
+interface fb_response {
+    status: string,
+    authResponse: {
+        accessToken: string,
+        data_access_expiration_time: number,
+        expiresIn: number,
+        reauthorize_required_in: string,
+        signedRequest: string,
+        userID: string
+    }
+}
+
 export type {
     post_body,
-    post_image_body
+    post_image_body,
+    fb_response
 }

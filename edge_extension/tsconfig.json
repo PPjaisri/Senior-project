@@ -20,6 +20,9 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "importHelpers": true,
+    "types": [
+      "@types/facebook-js-sdk"
+    ]
   },
   "include": [
     "src"

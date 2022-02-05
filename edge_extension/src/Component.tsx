@@ -4,15 +4,48 @@ import {
   InputGroup,
   FormControl,
   Button,
-  Badge
+  Badge,
+  Container
 } from 'react-bootstrap';
 import './Component.css';
 import './Barloader.css';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { Messaging } from 'react-cssfx-loading';
+import { useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { sendImage, sendLink } from './Service';
-import { base64encode } from 'nodejs-base64';
+import { config } from './config';
+import 'facebook-js-sdk';
+import { fb_response } from './types';
 
 function SearchBar() {
+  const [authResponse, setAuthResponse] = useState<fb_response | undefined>(undefined)
+
+  window.fbAsyncInit = function () {
+    FB.init({
+      appId: config.CLIENT_ID_FB,
+      cookie: true,
+      xfbml: true,
+      version: '{api-version}'
+    });
+
+    FB.AppEvents.logPageView();
+
+  };
+
+  function getStatus() {
+    FB.getLoginStatus(function (response: any) {
+      setAuthResponse(response)
+    });
+    
+    if (authResponse?.status === 'connected') {
+      localStorage.setItem('FB_Access_token', authResponse.authResponse.accessToken)
+    } 
+  }
+  console.log(authResponse?.authResponse);
+
+  useEffect(() => {
+    getStatus()
+  }, []);
+
   return (
     <Tabs
       defaultActiveKey="link"
@@ -20,7 +53,9 @@ function SearchBar() {
       className="mb-3"
     >
       <Tab eventKey="link" title="Link">
-        <LinkSearch />
+        {
+          authResponse?.status === 'connected' ? <LinkSearch /> : <FacebookLogin />
+        }
       </Tab>
       <Tab eventKey="content" title="Content">
         <ContentSearch />
@@ -32,8 +67,25 @@ function SearchBar() {
   );
 };
 
+function FacebookLogin() {
+  return (
+    <Container className='text-center'>
+      <div id="fb-root" />
+      <div
+        className="fb-login-button"
+        data-width="" data-size="large"
+        data-button-type="login_with"
+        data-layout="rounded"
+        data-auto-logout-link="true"
+        data-use-continue-as="true"
+      />
+    </Container>
+  );
+};
+
 function LinkSearch() {
   const [link, getLink] = useState('');
+  const [status, getStatus] = useState('')
   let navigate = useNavigate();
 
   function click() {
@@ -64,7 +116,7 @@ function LinkSearch() {
 
   return (
     <div>
-      <label>Paste link here</label>
+      <label>Paste facebook link here</label>
       <p />
       <InputGroup className="mb-3">
         <FormControl
@@ -94,10 +146,10 @@ function ContentSearch() {
       message_type: 'content',
       message: content
     };
-    
+
     let res = await sendLink(passContent);
     if (res) {
-      navigate('/load', { state: res });
+      // navigate('/load', { state: res });
     } else {
       console.log('failed');
     };
@@ -235,7 +287,8 @@ function BarLoader() {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <g id="loader_bars">
+        <Messaging />
+        {/* <g id="loader_bars">
           <g id="upperbar">
             <rect
               id="1_2"
@@ -264,7 +317,7 @@ function BarLoader() {
               fill="#FD0098"
             />
           </g>
-        </g>
+        </g> */}
       </svg>
       <p>Loading</p>
     </div>

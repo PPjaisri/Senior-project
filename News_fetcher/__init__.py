@@ -5,3 +5,4 @@ from .sure_info import sure_info
 from .cofact_thread import cofact_thread
 from .cofact_info import cofact_info
 from .cofact_refer import cofact_refer
+from .facebook import facebook
