@@ -1,6 +1,7 @@
 from email import message
 import os
 import base64
+from urllib import request
 import werkzeug
 from flask import Flask, jsonify
 from flask_restful import Api, Resource, abort, reqparse
@@ -32,8 +33,8 @@ api = Api(app)
 
 #Request Parser สำหรับเพิ่มข้อมูลลง db (ใน post method)
 input_add_args = reqparse.RequestParser()
-# input_add_args.add_argument("message", type=str, help="กรุณาป้อนข้อความเป็นตัวอักษรและมีความยาวไม่เกิน 1000 ตัวอักษร")
-input_add_args.add_argument('message', type=werkzeug.datastructures.FileStorage, location='files')
+input_add_args.add_argument("message", type=str, help="กรุณาป้อนข้อความเป็นตัวอักษรและมีความยาวไม่เกิน 1000 ตัวอักษร")
+# input_add_args.add_argument('message', type=werkzeug.datastructures.FileStorage, location='files')
 input_add_args.add_argument("message_type", type=str, help="กรุณาระบุประเภท Input เป็นตัวอักษร")
 
 #design
@@ -45,6 +46,7 @@ class UserExtension(Resource):
     @cross_origin(supports_credentials=True)
     def post(self):
         args = input_add_args.parse_args() #ข้อมูลที่ได้รับอยู่ในนี้
+        print(args)
             
         if (args["message_type"] != "link") and (args["message_type"] != "content") and (args["message_type"] != "image"):
             abort(400 ,message = "กรุณาระบุประเภทของ input เป็น link , content หรือ image")
@@ -55,6 +57,7 @@ class UserExtension(Resource):
         #เพิ่ม if-condition กรณี search ผ่านรูป + ลิงค์ 
 
         if args["message_type"] == "content":
+            print(args["message"])
             all_result_with_url = cosine_similarity_T(10, args["message"])
             # result = result_similarity_check(all_result_with_url)
             
