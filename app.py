@@ -33,8 +33,9 @@ api = Api(app)
 #Request Parser สำหรับเพิ่มข้อมูลลง db (ใน post method)
 input_add_args = reqparse.RequestParser()
 # input_add_args.add_argument("message", type=str, help="กรุณาป้อนข้อความเป็นตัวอักษรและมีความยาวไม่เกิน 1000 ตัวอักษร")
-input_add_args.add_argument('message', type=werkzeug.datastructures.FileStorage, location='files')
+input_add_args.add_argument("message", type=werkzeug.datastructures.FileStorage, location='files', help="กรุณา upload file รูปภาพ")
 input_add_args.add_argument("message_type", type=str, help="กรุณาระบุประเภท Input เป็นตัวอักษร")
+input_add_args.add_argument("facebook_access_token", type=str, help="กรุณาระบุประเภท Facebook Access Token เป็นตัวอักษร")
 
 #design
 class UserExtension(Resource):
@@ -69,7 +70,7 @@ class UserExtension(Resource):
         if args["message_type"] == "image":
             # The image is retrieved as a file
             
-            print("This is args :",args["message"])
+            print("This is args :",args["message"]["lastModified"])
             
             image_file = args(strict=True).get("message", None)
             if image_file:
@@ -94,7 +95,7 @@ class UserExtension(Resource):
                 # "input_id": 1,
                 "message": args["message"],
                 "message_type": args["message_type"],
-                "result": args["message"]
+                "result": args["image_file"]
             }
     
         # # print("This is queryObject : ", queryObject)
