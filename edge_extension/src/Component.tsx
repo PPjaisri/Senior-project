@@ -146,10 +146,10 @@ function ContentSearch() {
       message_type: 'content',
       message: content
     };
-
+    
     let res = await sendLink(passContent);
     if (res) {
-      // navigate('/load', { state: res });
+      navigate('/load', { state: res });
     } else {
       console.log('failed');
     };
@@ -279,16 +279,19 @@ function BarLoader() {
   }, []);
 
   return (
-    <div className="spinner-container">
-      <svg
+    <div
+      className="spinner-container"
+    >
+
+      <Messaging />
+      {/* <svg
         width="87"
         height="50"
         viewBox="0 0 87 50"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <Messaging />
-        {/* <g id="loader_bars">
+        <g id="loader_bars">
           <g id="upperbar">
             <rect
               id="1_2"
@@ -317,9 +320,9 @@ function BarLoader() {
               fill="#FD0098"
             />
           </g>
-        </g> */}
+        </g>
       </svg>
-      <p>Loading</p>
+      <p>Loading</p> */}
     </div>
   )
 }
