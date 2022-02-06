@@ -33,7 +33,7 @@ api = Api(app)
 
 #Request Parser สำหรับเพิ่มข้อมูลลง db (ใน post method)
 input_add_args = reqparse.RequestParser()
-input_add_args.add_argument("message", type=str, help="กรุณาป้อนข้อความเป็นตัวอักษรและมีความยาวไม่เกิน 1000 ตัวอักษร")
+input_add_args.add_argument("message", help="กรุณาป้อนข้อความเป็นตัวอักษร หรืออัพโหลดรูปภาพ")
 # input_add_args.add_argument('message', type=werkzeug.datastructures.FileStorage, location='files')
 input_add_args.add_argument("message_type", type=str, help="กรุณาระบุประเภท Input เป็นตัวอักษร")
 input_add_args.add_argument("facebook_access_token", type=str, help="กรุณาระบุประเภท Facebook Access Token เป็นตัวอักษร")
