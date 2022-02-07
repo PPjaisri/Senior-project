@@ -11,8 +11,8 @@ import './Component.css';
 import './Barloader.css';
 import { Messaging } from 'react-cssfx-loading';
 import { useNavigate, useLocation, Navigate } from 'react-router-dom';
-import { sendImage, sendLink } from './Service';
-import { config } from './config';
+import { sendImage, sendLink } from './services/Service';
+import config from './services/config';
 import 'facebook-js-sdk';
 import { fb_response } from './types';
 
@@ -24,7 +24,7 @@ function SearchBar() {
       appId: config.CLIENT_ID_FB,
       cookie: true,
       xfbml: true,
-      version: '{api-version}'
+      version: '12.0'
     });
 
     FB.AppEvents.logPageView();
@@ -35,12 +35,27 @@ function SearchBar() {
     FB.getLoginStatus(function (response: any) {
       setAuthResponse(response)
     });
-    
+
     if (authResponse?.status === 'connected') {
       localStorage.setItem('FB_Access_token', authResponse.authResponse.accessToken)
-    } 
+    }
   }
-  console.log(authResponse?.authResponse);
+  // console.log(authResponse?.authResponse);
+
+  function RenderElement() {
+    if (authResponse?.status === 'connected') {
+      return (
+        <div>
+          <LinkSearch />
+          <FacebookLogin />
+        </div>
+      );
+    } else {
+      return (
+        <FacebookLogin />
+      );
+    }
+  }
 
   useEffect(() => {
     getStatus()
@@ -53,9 +68,7 @@ function SearchBar() {
       className="mb-3"
     >
       <Tab eventKey="link" title="Link">
-        {
-          authResponse?.status === 'connected' ? <LinkSearch /> : <FacebookLogin />
-        }
+        <RenderElement />
       </Tab>
       <Tab eventKey="content" title="Content">
         <ContentSearch />
@@ -68,6 +81,12 @@ function SearchBar() {
 };
 
 function FacebookLogin() {
+  function FB_login() {
+    FB.login(function (response) {
+      console.log(response)
+    });
+  };
+
   return (
     <Container className='text-center'>
       <div id="fb-root" />
@@ -78,6 +97,7 @@ function FacebookLogin() {
         data-layout="rounded"
         data-auto-logout-link="true"
         data-use-continue-as="true"
+        onClick={FB_login}
       />
     </Container>
   );
@@ -146,7 +166,7 @@ function ContentSearch() {
       message_type: 'content',
       message: content
     };
-    
+
     let res = await sendLink(passContent);
     if (res) {
       navigate('/load', { state: res });
@@ -182,6 +202,7 @@ function ContentSearch() {
 function ImageSearch() {
   const [image, getImage] = useState<any>([] || {} || '');
   const [image_link, getImageLink] = useState('');
+  let imageData = new FormData();
 
   let navigate = useNavigate();
 
@@ -194,15 +215,17 @@ function ImageSearch() {
   };
 
   async function passImage() {
+    imageData.append('image', image, image.name)
+    imageData.append('text', 'hello')
+    console.log(imageData)
     const passImage = {
       message_type: 'image',
-      message: image
+      message: imageData
     };
-    // console.log(passImage);
 
-    let res = await sendImage(passImage);
+    let res = await sendImage(imageData);
     if (res) {
-      navigate('/load', { state: res });
+      // navigate('/load', { state: res });
     } else {
       console.log('failed');
     };
