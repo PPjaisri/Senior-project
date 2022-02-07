@@ -2,6 +2,7 @@ from email import message
 import os
 import base64
 from urllib import request
+import requests
 import werkzeug
 from flask import Flask, jsonify
 from flask_restful import Api, Resource, abort, reqparse
@@ -31,13 +32,6 @@ api = Api(app)
 # Table
 # TestUserInput = Database.TestUserInput
 
-#Request Parser สำหรับเพิ่มข้อมูลลง db (ใน post method)
-input_add_args = reqparse.RequestParser()
-input_add_args.add_argument("message", help="กรุณาป้อนข้อความเป็นตัวอักษร หรืออัพโหลดรูปภาพ")
-# input_add_args.add_argument('message', type=werkzeug.datastructures.FileStorage, location='files')
-input_add_args.add_argument("message_type", type=str, help="กรุณาระบุประเภท Input เป็นตัวอักษร")
-input_add_args.add_argument("facebook_access_token", type=str, help="กรุณาระบุประเภท Facebook Access Token เป็นตัวอักษร")
-
 #design
 class UserExtension(Resource):
     
@@ -46,65 +40,67 @@ class UserExtension(Resource):
     # as an argument.
     @cross_origin(supports_credentials=True)
     def post(self):
-        args = input_add_args.parse_args() #ข้อมูลที่ได้รับอยู่ในนี้
+        
+        # Request Parser สำหรับรับข้อมูลจาก frontend
+        input_add_args = reqparse.RequestParser()
+        input_add_args.add_argument("message", type=str, help="กรุณาระบุข้อความ input เป็นตัวอักษรความยาวไม่เกิน 1000 ตัวอักษร")
+        input_add_args.add_argument("image", type=werkzeug.datastructures.FileStorage, location='files')
+        input_add_args.add_argument("message_type", type=str, help="กรุณาระบุประเภท Input เป็นตัวอักษร")
+        input_add_args.add_argument("facebook_access_token", type=str, help="กรุณาระบุประเภท Facebook Access Token เป็นตัวอักษร")
+        args = input_add_args.parse_args()
+        
         print(args)
-            
-        if (args["message_type"] != "link") and (args["message_type"] != "content") and (args["message_type"] != "image"):
-            abort(400 ,message = "กรุณาระบุประเภทของ input เป็น link , content หรือ image")
-    
-        if (args["message_type"] == "content" or args["message_type"] == "link") and (not args["message"]):
-            abort(422, message = "กรุณาใส่ข้อความ , ลิงค์ หรือ รูปภาพ")
+        
+        # กรณีไม่ได้ระบุประเภทของ input
+        if (args["message_type"] != "link") and (args["message_type"] != "content") and (args["message_type"] != "image") and (args["message_type"] != "image_url"):
+            abort(400 ,message = "กรุณาระบุประเภทของ input เป็น link , content , image หรือ image_url")
+
+        # กรณีไม่มีข้อความ (message) แนบมาด้วย 
+        if (args["message_type"] == "content" or args["message_type"] == "link" or args["message_type"] == "image_url") and (not args["message"]):
+            abort(422, message = "กรุณาใส่ข้อความ , ลิงค์ หรือ URL ของรูปภาพ")
+        
+        # กรณีไม่มีรูปภาพ (image) แนบมาด้วย 
+        if (args["message_type"] == "image_url") and (not args["image"]):
+            abort(422, message = "กรุณาอัพโหลดรูปภาพ")
     
         #เพิ่ม if-condition กรณี search ผ่านรูป + ลิงค์ 
 
         if args["message_type"] == "content":
             print(args["message"])
             all_result_with_url = cosine_similarity_T(10, args["message"])
-            # result = result_similarity_check(all_result_with_url)
             
             queryObject = {
-                # "input_id": 1,
                 "message": args["message"],
                 "message_type": args["message_type"],
                 "result": all_result_with_url
             }
             
+        elif args["message_type"] == "image":
+            image_file = args['image']
+            image_file.save("EasyOCR/OCR_User_Pic/tmp.jpg")
             
-        if args["message_type"] == "image":
-            # The image is retrieved as a file
-            
-            print("This is args :",args["message"]["lastModified"])
-            
-            image_file = args(strict=True).get("message", None)
-            if image_file:
-                image = image_file.read()
-                image.save("EasyOCR/OCR_User_Pic/tmp.jpg")
-                
-            # photo = args["message"]
-            
-    
-            # photo_data = base64.b64decode(photo)
-            
-            # print("This is photo :",args)
-            
-            # with open("EasyOCR/OCR_User_Pic/tmp.jpg", "w") as file:
-            #     file.write(photo)
-            
-            # text_from_image = OCR_with_user_image("EasyOCR/OCR_User_Pic/tmp.jpg")
-            # all_result_with_url = cosine_similarity_T(30, text_from_image)
-            # result = result_similarity_check(all_result_with_url)
+            text_from_image = OCR_with_user_image("EasyOCR/OCR_User_Pic/tmp.jpg")
+            all_result_with_url = cosine_similarity_T(10, text_from_image)
             
             queryObject = {
-                # "input_id": 1,
-                "message": args["message"],
+                "message": text_from_image,
                 "message_type": args["message_type"],
-                "result": args["image_file"]
+                "result": all_result_with_url
             }
-    
-        # # print("This is queryObject : ", queryObject)
-        # response = jsonify(queryObject)
-        # # print("This is response : ", response)
-        # response.headers.add('Access-Control-Allow-Origin', '*')
+            
+        elif args["message_type"] == "image_url":
+            queryObject = {
+                "message": args["message_type"],
+                "message_type": args["message_type"],
+                "result": args["message"]
+            }
+            
+        elif args["message_type"] == "link":
+            queryObject = {
+                "message": args["message_type"],
+                "message_type": args["message_type"],
+                "result": args["message"]
+            }
 
         return queryObject
     
