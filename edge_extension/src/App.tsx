@@ -8,7 +8,7 @@ import {
   Button,
   Container
 } from 'react-bootstrap';
-import { Starter, SearchBar, BarLoader, ReturnResult } from './Component'
+import { Starter, SearchBar, Loader, ReturnResult } from './Component'
 import './App.css';
 
 function App() {
@@ -24,7 +24,7 @@ function App() {
     },
     {
       path: "/load",
-      element: <BarLoader />
+      element: <Loader />
     }
   ];
 

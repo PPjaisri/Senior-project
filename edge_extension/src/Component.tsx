@@ -17,49 +17,49 @@ import 'facebook-js-sdk';
 import { fb_response } from './types';
 
 function SearchBar() {
-  const [authResponse, setAuthResponse] = useState<fb_response | undefined>(undefined)
+  // const [authResponse, setAuthResponse] = useState<fb_response | undefined>(undefined)
 
-  window.fbAsyncInit = function () {
-    FB.init({
-      appId: config.CLIENT_ID_FB,
-      cookie: true,
-      xfbml: true,
-      version: '12.0'
-    });
+  // window.fbAsyncInit = function () {
+  //   FB.init({
+  //     appId: config.CLIENT_ID_FB,
+  //     cookie: true,
+  //     xfbml: true,
+  //     version: '12.0'
+  //   });
 
-    FB.AppEvents.logPageView();
+  //   FB.AppEvents.logPageView();
 
-  };
+  // };
 
-  function getStatus() {
-    FB.getLoginStatus(function (response: any) {
-      setAuthResponse(response)
-    });
+  // function getStatus() {
+  //   FB.getLoginStatus(function (response: any) {
+  //     setAuthResponse(response)
+  //   });
 
-    if (authResponse?.status === 'connected') {
-      localStorage.setItem('FB_Access_token', authResponse.authResponse.accessToken)
-    }
-  }
-  // console.log(authResponse?.authResponse);
+  //   if (authResponse?.status === 'connected') {
+  //     localStorage.setItem('FB_Access_token', authResponse.authResponse.accessToken)
+  //   }
+  // }
+  // // console.log(authResponse?.authResponse);
 
-  function RenderElement() {
-    if (authResponse?.status === 'connected') {
-      return (
-        <div>
-          <LinkSearch />
-          <FacebookLogin />
-        </div>
-      );
-    } else {
-      return (
-        <FacebookLogin />
-      );
-    }
-  }
+  // function RenderElement() {
+  //   if (authResponse?.status === 'connected') {
+  //     return (
+  //       <div>
+  //         <LinkSearch />
+  //         <FacebookLogin />
+  //       </div>
+  //     );
+  //   } else {
+  //     return (
+  //       <FacebookLogin />
+  //     );
+  //   }
+  // }
 
-  useEffect(() => {
-    getStatus()
-  }, []);
+  // useEffect(() => {
+  //   getStatus()
+  // }, []);
 
   return (
     <Tabs
@@ -68,7 +68,8 @@ function SearchBar() {
       className="mb-3"
     >
       <Tab eventKey="link" title="Link">
-        <RenderElement />
+        {/* <RenderElement /> */}
+        <LinkSearch />
       </Tab>
       <Tab eventKey="content" title="Content">
         <ContentSearch />
@@ -112,26 +113,30 @@ function LinkSearch() {
     passLink('link', link);
   };
 
-  async function passLink(type: string, data: string) {
-    const passLink = {
-      message_type: 'link',
-      message: link
-    };
-
-    let res = await sendLink(passLink);
-    if (res) {
-      navigate('/load', { state: res });
-    } else {
-      console.log('failed');
-    };
-  };
-
   function onKeyPress(code: string) {
     if (code === 'Enter') {
-      passLink('link', link);
+      passLink();
     } else if (code === 'NumpadEnter') {
-      passLink('link', link);
+      passLink();
     }
+  };
+
+  async function passLink() {
+    if (link !== '') {
+      const passLink = {
+        message_type: 'link',
+        message: link
+      };
+
+      navigate('/load', {
+        state: {
+          type: 'string',
+          data: passLink
+        }
+      });
+    }
+    else
+      console.log('error');
   };
 
   return (
@@ -167,12 +172,12 @@ function ContentSearch() {
       message: content
     };
 
-    let res = await sendLink(passContent);
-    if (res) {
-      navigate('/load', { state: res });
-    } else {
-      console.log('failed');
-    };
+    navigate('/load', {
+      state: {
+        type: 'string',
+        data: passContent
+      }
+    });
   };
 
   return (
@@ -208,28 +213,50 @@ function ImageSearch() {
 
   function onKeyPress(code: string) {
     if (code === 'Enter') {
-      passImage();
+      passImageSite();
     } else if (code === 'NumpadEnter') {
-      passImage();
+      passImageSite();
     }
   };
 
+  function passer() {
+    if (image.length == 0)
+      if (image_link === '')
+        console.log('error')
+      else
+        passImageSite()
+    else
+      passImageData()
+  }
+
+  async function passImageSite() {
+    const passImageData = {
+      message_type: 'image',
+      message: image_link
+    };
+
+    navigate('/load', {
+      state: {
+        type: 'string',
+        data: passImageData
+      }
+    });
+  }
+
   async function passImage() {
-    imageData.append('image', image, image.name)
-    imageData.append('text', 'hello')
-    console.log(imageData)
-    const passImage = {
+    imageData.append('message_type', 'image')
+    imageData.append('image', image)
+    const passImageData = {
       message_type: 'image',
       message: imageData
     };
 
-    let res = await sendImage(imageData);
-    if (res) {
-      // navigate('/load', { state: res });
-    } else {
-      console.log('failed');
-    };
-    // navigate('/load', { state: passImage });
+    navigate('/load', {
+      state: {
+        type: 'file',
+        data: passImageData
+      }
+    });
   };
 
   return (
@@ -259,8 +286,7 @@ function ImageSearch() {
       <Button
         variant="primary"
         id="content_submit"
-        // onClick={abc}
-        onClick={passImage}
+        onClick={passer}
       >
         Search
       </Button>
@@ -281,20 +307,57 @@ function Starter() {
   );
 };
 
-function BarLoader() {
+function Loader() {
   let { state }: any = useLocation();
   let navigate = useNavigate();
 
-  function loading() {
-    setTimeout(() => {
+  async function upLoadLink(data: any) {
+    console.log(data);
+  }
+
+  async function upLoadContent(data: any) {
+    let res = await sendLink(data);
+    if (res) {
       navigate('/result', {
         state: {
-          type: state.message_type,
-          search: state.message,
-          result: state.result
+          type: res.message_type,
+          search: res.message,
+          result: res.result
         }
       });
-    }, 2000);
+    } else {
+      console.log('failed');
+    };
+  }
+
+  async function upLoadImageSite(data: any) {
+    console.log(data);
+  }
+
+  function upLoadImage(data: any) {
+    sendImage(data.message)
+      .then((res: any) => {
+        navigate('/result', {
+          state: {
+            type: res.data.message_type,
+            search: res.data.message,
+            result: res.data.result
+          }
+        });
+      })
+  };
+
+  function loading() {
+    if (state.type === 'string') {
+      if (state.data.message_type === 'link')
+        upLoadLink(state.data)
+      else if (state.data.message_type === 'content')
+        upLoadContent(state.data)
+      else if (state.data.message_type === 'image')
+        upLoadImageSite(state.data)
+    }
+    else if (state.type === 'file')
+      upLoadImage(state.data);
   };
 
   useEffect(() => {
@@ -303,49 +366,10 @@ function BarLoader() {
 
   return (
     <div
-      className="spinner-container"
+      // className="spinner-container"
+      className="centered"
     >
-
       <Messaging />
-      {/* <svg
-        width="87"
-        height="50"
-        viewBox="0 0 87 50"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <g id="loader_bars">
-          <g id="upperbar">
-            <rect
-              id="1_2"
-              width="67"
-              height="14"
-              rx="7"
-              fill="#FF72C6"
-            />
-          </g>
-          <g id="middlebar">
-            <rect
-              id="Rectangle 2"
-              x="20" y="18"
-              width="67"
-              height="14"
-              rx="7"
-              fill="#FF3AB0"
-            />
-          </g>
-          <g id="bottombar">
-            <rect
-              id="3_2" y="36"
-              width="67"
-              height="14"
-              rx="7"
-              fill="#FD0098"
-            />
-          </g>
-        </g>
-      </svg>
-      <p>Loading</p> */}
     </div>
   )
 }
@@ -364,8 +388,6 @@ function ReturnResult(obj: any) {
     };
   };
 
-  console.log(obj)
-
   return (
     <div id={obj.obj.index}>
       <hr />
@@ -376,6 +398,7 @@ function ReturnResult(obj: any) {
         </p>
         <p>{obj.obj.headline}</p>
         <Button
+          size='sm'
           onClick={showContent}
           className='show_content'
         >
@@ -393,6 +416,6 @@ function ReturnResult(obj: any) {
 export {
   SearchBar,
   Starter,
-  BarLoader,
+  Loader,
   ReturnResult
 };
