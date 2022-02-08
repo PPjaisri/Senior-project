@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 class sure_thread(object):
     path = os.getcwd()
     path = os.path.dirname(path)
-
+    path = os.path.dirname(path)
     save_path = os.path.join(path, 'result\\Sure\\sure_thread.csv')
 
     logging.basicConfig(level=logging.DEBUG)

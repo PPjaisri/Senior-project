@@ -14,6 +14,7 @@ from selenium.webdriver.edge.service import Service
 class anti_thread(object):
     path = os.getcwd()
     path = os.path.dirname(path)
+    path = os.path.dirname(path)
     binary_location = os.path.join(path, 'msedgedriver.exe')
     binary_location = Service(binary_location)
 

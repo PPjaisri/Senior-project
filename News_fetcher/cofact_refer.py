@@ -9,6 +9,7 @@ import fetch_each_site as site
 class cofact_refer(object):
     path = os.getcwd()
     path = os.path.dirname(path)
+    path = os.path.dirname(path)
     file_path = os.path.join(path, 'result\\Cofact\\cofact_info_ref.csv')
     save_path = os.path.join(path, 'result\\Cofact\\cofact_refer.csv')
 
