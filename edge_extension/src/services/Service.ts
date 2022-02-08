@@ -1,10 +1,10 @@
 import axios from "axios";
 import config from "./config";
-import { post_body, post_image_body } from "../types";
+import { send_file, send_text } from "./types";
 
 const baseUrl = config.baseUrl;
 
-async function sendLink(body: post_body) {
+async function sendLink(body: send_text) {
     const res = await fetch(`${baseUrl}`, {
         method: 'post',
         headers: {
@@ -24,7 +24,8 @@ async function getLink() {
     return result;
 }
 
-async function sendImage(body: any) {
+async function sendImage(body: send_file) {
+    console.log('service: ', body)
     const config = {
         headers: {
             "Accept": "application/json",

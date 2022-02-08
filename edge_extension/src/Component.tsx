@@ -14,7 +14,7 @@ import { useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { sendImage, sendLink } from './services/Service';
 import config from './services/config';
 import 'facebook-js-sdk';
-import { fb_response } from './types';
+import { send_file, send_image_file, send_text } from './services/types';
 
 function SearchBar() {
   // const [authResponse, setAuthResponse] = useState<fb_response | undefined>(undefined)
@@ -234,8 +234,10 @@ function ImageSearch() {
   }
 
   async function passImageSite() {
+    imageData.append('message_type', 'image')
+    imageData.append('image', image)
     const passImageData = {
-      message_type: 'image',
+      message_type: 'image_url',
       message: image_link
     };
 
@@ -315,12 +317,12 @@ function Loader() {
   let { state }: any = useLocation();
   let navigate = useNavigate();
 
-  async function upLoadLink(data: any) {
+  async function upLoadLink(data: send_text) {
     console.log(data);
   }
 
-  async function upLoadContent(data: any) {
-    let res = await sendLink(data);
+  async function upLoadContent(data: send_text) {
+    const res = await sendLink(data);
     if (res) {
       navigate('/result', {
         state: {
@@ -334,11 +336,24 @@ function Loader() {
     };
   }
 
-  async function upLoadImageSite(data: any) {
-    console.log(data);
+  async function upLoadImageSite(data: send_text) {
+    // console.log(data.message);
+    const res = await sendLink(data);
+    if (res) {
+      navigate('/result', {
+        state: {
+          type: res.message_type,
+          search: res.message,
+          result: res.result
+        }
+      });
+    }
+    else
+      console.log('error');
   }
 
-  function upLoadImage(data: any) {
+  function upLoadImage(data: send_image_file) {
+    console.log('component: ', data.message)
     sendImage(data.message)
       .then((res: any) => {
         navigate('/result', {
@@ -357,7 +372,7 @@ function Loader() {
         upLoadLink(state.data)
       else if (state.data.message_type === 'content')
         upLoadContent(state.data)
-      else if (state.data.message_type === 'image')
+      else if (state.data.message_type === 'image_url')
         upLoadImageSite(state.data)
     }
     else if (state.type === 'file')

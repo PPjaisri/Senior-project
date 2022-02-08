@@ -1,11 +1,16 @@
-interface post_body {
+interface send_text {
     message_type: string,
-    message: string | FileReader
+    message: string
 }
 
-interface post_image_body {
+interface send_file {
     message_type: string,
-    message: FormData | FileReader
+    message: FormData
+}
+
+interface send_image_file {
+    message_type: string,
+    message: send_file
 }
 
 interface fb_response {
@@ -21,7 +26,7 @@ interface fb_response {
 }
 
 export type {
-    post_body,
-    post_image_body,
-    fb_response
+    send_text,
+    send_file,
+    send_image_file
 }
