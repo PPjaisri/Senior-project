@@ -47,8 +47,8 @@ class UserExtension(Resource):
         args = input_add_args.parse_args()
         
         # กรณีไม่ได้ระบุประเภทของ input
-        if (args["message_type"] != "link") and (args["message_type"] != "content") and (args["message_type"] != "image") and (args["message_type"] != "image_url"):
-            abort(400 ,message = "กรุณาระบุประเภทของ input เป็น link , content , image หรือ image_url")
+        if (args["message_type"] != "link") and (args["message_type"] != "content") and (args["message_type"] != "image") and (args["message_type"] != "image_url") and (args["message_type"] != "token"):
+            abort(400 ,message = "กรุณาระบุประเภทของ input เป็น link , content , image , image_url หรือ facebook token")
 
         # กรณีไม่มีข้อความ (message) แนบมาด้วย 
         if (args["message_type"] == "content" or args["message_type"] == "link" or args["message_type"] == "image_url") and (not args["message"]):
@@ -57,6 +57,9 @@ class UserExtension(Resource):
         # กรณีไม่มีรูปภาพ (image) แนบมาด้วย 
         if (args["message_type"] == "image") and (not args["image"]):
             abort(422, message = "กรุณาอัพโหลดรูปภาพ")
+            
+        if (args["message_type"] == "token") and (not args["facebook_access_token"]):
+            abort(422, message = "กรุณาแนบ facebook token มาพร้อมกับ request")
     
         #เพิ่ม if-condition กรณี search ผ่านรูป + ลิงค์ 
 
@@ -102,6 +105,14 @@ class UserExtension(Resource):
                 "message_type": args["message_type"],
                 "result": args["message"]
             }
+            
+        elif args["message_type"] == "token":
+            queryObject = {
+                "message": args["facebook_access_token"],
+                "message_type": args["message_type"],
+                "result": args["message"]
+            }
+            
 
         return queryObject
     
