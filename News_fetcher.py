@@ -12,10 +12,13 @@ logging.basicConfig(
     )
 
 SCRAPE_LIST = [
-    'AFNT\\anti_thread',
-    'AFNT\\anti_info',
-    'Sure\\sure_thread',
-    'Sure\\sure_info'
+    'anti_thread',
+    'anti_info',
+    'sure_thread',
+    'sure_info',
+    'cofact_thread',
+    'cofact_info',
+    'cofact_refer'
 ]
 
 #! before compile to .exe need to compile at ~/exe first !!
@@ -27,7 +30,7 @@ def run_file():
     for i in SCRAPE_LIST:
         file_path = os.path.join(PATH, 'News_fetcher')
         file_path = os.path.join(file_path, i)
-        logging.info(f'\nCrawling {i}.py\n')
+        logging.info(f'\n\nCrawling {i}.py\n')
         os.system(f'py -3.7 "{file_path}.py"')
         print(file_path)
 
