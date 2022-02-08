@@ -110,7 +110,7 @@ function LinkSearch() {
   let navigate = useNavigate();
 
   function click() {
-    passLink('link', link);
+    passLink();
   };
 
   function onKeyPress(code: string) {
@@ -167,17 +167,21 @@ function ContentSearch() {
   let navigate = useNavigate();
 
   async function passContent() {
-    const passContent = {
-      message_type: 'content',
-      message: content
-    };
+    if (content !== '') {
+      const passContent = {
+        message_type: 'content',
+        message: content
+      };
 
-    navigate('/load', {
-      state: {
-        type: 'string',
-        data: passContent
-      }
-    });
+      navigate('/load', {
+        state: {
+          type: 'string',
+          data: passContent
+        }
+      });
+    }
+    else
+      console.log('error')
   };
 
   return (
@@ -226,7 +230,7 @@ function ImageSearch() {
       else
         passImageSite()
     else
-      passImageData()
+      passImage()
   }
 
   async function passImageSite() {
