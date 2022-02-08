@@ -2,7 +2,6 @@ import numpy as np
 import nltk
 import re
 import pandas as pd 
-import json
 import os
 import pickle
 import csv
@@ -17,7 +16,7 @@ from sklearn.preprocessing import normalize
 from sklearn.feature_extraction.text import TfidfVectorizer
 from ast import literal_eval
 
-# from Preprocess.similarity_check import train_similarity_check_model
+from urllib.parse import urlparse
 
 nltk.download('words')
 th_stop = thai_stopwords()
@@ -66,7 +65,7 @@ def remove_emojis(data):
 def read_cofact_refer(): #สำหรับดึงข้อมูลของ cofact csv
     # Opening CSV file
     root_path = os.getcwd()
-    path = os.path.join(root_path, 'result\\Cofact\\cofact_refer_old.csv')
+    path = os.path.join(root_path, 'result\\Cofact\\cofact_refer.csv')
     
     f = open(path, encoding="utf8")
     
@@ -96,13 +95,16 @@ def read_cofact_refer(): #สำหรับดึงข้อมูลของ
             tmp.append(row[1]) 
 
         # เพิ่ม content
-        content_parts = literal_eval(row[2])
-        content = ''.join(filter(None, content_parts))
-        
-        tmp.append(content)
+        tmp.append(row[2])
         
         # เพิ่ม link (ข่าวต้นทางสุด)
         tmp.append(row[3])
+        
+        # เพิ่ม datetime
+        if (len(row) == 7):
+            tmp.append(row[6])
+        else:
+            tmp.append("")
         
         rows.append(tmp)
 
@@ -153,9 +155,6 @@ def read_anti_refer(): #สำหรับดึงข้อมูลของ a
         # เพิ่ม datetime
         tmp.append(row[5])
         
-        # เพิ่ม domain
-        tmp.append("ศูนย์ต่อต้านข่าวปลอม ประเทศไทย")
-        
         rows.append(tmp)
 
     # Closing file
@@ -205,9 +204,6 @@ def read_sure_refer(): #สำหรับดึงข้อมูลของ s
         # เพิ่ม datetime
         tmp.append(row[5])
         
-        # เพิ่ม domain
-        tmp.append("ชัวร์ก่อนแชร์")
-        
         rows.append(tmp)
 
     # Closing file
@@ -232,15 +228,18 @@ def create_df_for_backtrack(all_refer_text_list):
     
     all_refer_content = []
     all_refer_url = []
+    all_refer_datetime = []
+    all_refer_domain = []
+    
     for i in range(len(all_refer_text_list)):
         all_refer_header.append(all_refer_text_list[i][0]) #list ของส่วนหัวข้อข่าว
         all_refer_content.append(all_refer_text_list[i][1]) #list ของส่วนเนื้อหาเท่านั้น
         all_refer_url.append(all_refer_text_list[i][2]) #list ของ url เท่านั้น
+        all_refer_datetime.append(all_refer_text_list[i][3]) #list ของ datetime เท่านั้น
+        all_refer_domain.append(urlparse(all_refer_text_list[i][2]).hostname) #list ของ domain เท่านั้น
         
     #ทำ list ให้เป็น dataframe
-    all_original_text_and_headline_news_df = pd.DataFrame(list(zip(all_refer_header, all_refer_content, all_refer_url)), columns=["All_headline_from_every_reference", "All_content_from_every_reference", "All_URL_from_every_reference"])
-    
-    # start_train_similarity_check_model()    
+    all_original_text_and_headline_news_df = pd.DataFrame(list(zip(all_refer_header, all_refer_content, all_refer_url, all_refer_datetime, all_refer_domain)), columns=["All_headline_from_every_reference", "All_content_from_every_reference", "All_URL_from_every_reference", "All_datatime_from_every_reference", "All_domain_from_every_reference"])
         
     return all_original_text_and_headline_news_df, all_refer_header
 
@@ -339,10 +338,8 @@ def cosine_similarity_T(k, query):
             all_result_with_url.loc[i,'headline'] = all_result.iloc[i]["headline"]
             all_result_with_url.loc[i,'url'] = all_original_text_and_headline_news_df["All_URL_from_every_reference"][int(all_result.iloc[i]["index"])]
             all_result_with_url.loc[i,'content'] = all_original_text_and_headline_news_df["All_content_from_every_reference"][int(all_result.iloc[i]["index"])]
-
-    # #append user input เข้าไปใน all_result_with_url ด้วย
-    # query_df = {'index': '-1', 'headline': query, 'url': '', 'content': ''}
-    # all_result_with_url = all_result_with_url.append(query_df, ignore_index = True)
+            all_result_with_url.loc[i,'datetime'] = all_original_text_and_headline_news_df["All_datatime_from_every_reference"][int(all_result.iloc[i]["index"])]
+            all_result_with_url.loc[i,'domain'] = all_original_text_and_headline_news_df["All_domain_from_every_reference"][int(all_result.iloc[i]["index"])]
     
     js = all_result_with_url.to_dict('records')
         
@@ -356,17 +353,11 @@ def preprocess():
     vocabulary, all_tokens_list_j, data2 = tokenize_and_create_vocabulary(all_refer_header) #ตัดคำจากหัวข่าว (headline) และสร้าง list ของคำศัพท์ (vocabulary)
     original_c_feat, tvec = create_tfidf_matrix(all_tokens_list_j) #สร้าง vector tfidf สำหรับแต่ละข่าว
 
-    #Pre-calculated original_c_feat (TFIDF matrix) for cosine similarity
     norm_original_c_feat = normalize(original_c_feat)
     norm_original_c_feat = norm_original_c_feat.toarray()
     norm_original_c_feat = norm_original_c_feat.T
     
     return None
-
-# def start_train_similarity_check_model():
-#     global all_original_text_and_headline_news_df
-#     #นำ dataframe ที่ได้ ไป train กับ model similarity check
-#     train_similarity_check_model(all_original_text_and_headline_news_df)
 
 # Main
 all_refer_text_list = []

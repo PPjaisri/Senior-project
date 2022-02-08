@@ -1,7 +1,4 @@
 from email import message
-import os
-import base64
-from urllib import request
 import requests
 import werkzeug
 from flask import Flask, jsonify
@@ -49,8 +46,6 @@ class UserExtension(Resource):
         input_add_args.add_argument("facebook_access_token", type=str, help="กรุณาระบุประเภท Facebook Access Token เป็นตัวอักษร")
         args = input_add_args.parse_args()
         
-        print(args)
-        
         # กรณีไม่ได้ระบุประเภทของ input
         if (args["message_type"] != "link") and (args["message_type"] != "content") and (args["message_type"] != "image") and (args["message_type"] != "image_url"):
             abort(400 ,message = "กรุณาระบุประเภทของ input เป็น link , content , image หรือ image_url")
@@ -60,13 +55,12 @@ class UserExtension(Resource):
             abort(422, message = "กรุณาใส่ข้อความ , ลิงค์ หรือ URL ของรูปภาพ")
         
         # กรณีไม่มีรูปภาพ (image) แนบมาด้วย 
-        if (args["message_type"] == "image_url") and (not args["image"]):
+        if (args["message_type"] == "image") and (not args["image"]):
             abort(422, message = "กรุณาอัพโหลดรูปภาพ")
     
         #เพิ่ม if-condition กรณี search ผ่านรูป + ลิงค์ 
 
         if args["message_type"] == "content":
-            print(args["message"])
             all_result_with_url = cosine_similarity_T(10, args["message"])
             
             queryObject = {
@@ -89,10 +83,17 @@ class UserExtension(Resource):
             }
             
         elif args["message_type"] == "image_url":
+            response = requests.get(args["message"])
+            with open('EasyOCR/OCR_User_Pic/tmp.jpg', 'wb') as file:
+                file.write(response.content)
+            
+            text_from_image = OCR_with_user_image("EasyOCR/OCR_User_Pic/tmp.jpg")
+            all_result_with_url = cosine_similarity_T(10, text_from_image)
+            
             queryObject = {
-                "message": args["message_type"],
+                "message": text_from_image,
                 "message_type": args["message_type"],
-                "result": args["message"]
+                "result": all_result_with_url
             }
             
         elif args["message_type"] == "link":
