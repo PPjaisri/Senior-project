@@ -32,7 +32,7 @@ api = Api(app)
 # Table
 # TestUserInput = Database.TestUserInput
 
-#design
+#design 
 class UserExtension(Resource):
     
     # To find the first document that matches a defined query,
