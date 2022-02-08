@@ -110,7 +110,7 @@ class UserExtension(Resource):
             queryObject = {
                 "message": args["facebook_access_token"],
                 "message_type": args["message_type"],
-                "result": args["message"]
+                "result": 200
             }
             
 
