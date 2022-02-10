@@ -29,7 +29,7 @@ def split_word(text):
     tokens = word_tokenize(text,engine='newmm')
     
     # Remove stop words ภาษาไทย และอักขระพิเศษ
-    tokens = [i for i in tokens if (not i in th_stop) & (not i in en_stop) & (not i in punctuation) & (not i in ["'",'"','“','”','‘','’','\n',"None", ' '])] 
+    tokens = [i for i in tokens if (not i in th_stop) & (not i in en_stop) & (not i in punctuation) & (not i in ["'",'"','“','”','‘','’','\n',"None", ' ', ";", ":"])] 
     
     # ลบตัวเลข
     tokens = [i for i in tokens if not i.isnumeric()]
@@ -86,13 +86,13 @@ def read_cofact_refer(): #สำหรับดึงข้อมูลของ
         content_parts = []
         content = ''
         
-        # เพิ่ม header + ตรวจสอบว่า header ซ้ำหรือไม่
+        # เพิ่ม header + content และตรวจสอบว่า header ซ้ำหรือไม่
         if row[1] in dup_check:
             continue
         
         elif row[1] not in dup_check:
             dup_check.append(row[1])
-            tmp.append(row[1]) 
+            tmp.append(row[1] + row[2]) 
 
         # เพิ่ม content
         tmp.append(row[2])
@@ -105,6 +105,9 @@ def read_cofact_refer(): #สำหรับดึงข้อมูลของ
             tmp.append(row[6])
         else:
             tmp.append("")
+        
+        # เพิ่ม header
+        tmp.append(row[1])
         
         rows.append(tmp)
 
@@ -136,13 +139,15 @@ def read_anti_refer(): #สำหรับดึงข้อมูลของ a
         content_parts = []
         content = ''
         
-        # เพิ่ม header + ตรวจสอบว่า header ซ้ำหรือไม่
+        # เพิ่ม header + content และตรวจสอบว่า header ซ้ำหรือไม่
         if row[1] in dup_check:
             continue
         
         elif row[1] not in dup_check:
             dup_check.append(row[1])
-            tmp.append(row[1]) 
+            content_parts = literal_eval(row[2])
+            content = ''.join(filter(None, content_parts))
+            tmp.append(row[1] + content) 
         
         # เพิ่ม content
         content_parts = literal_eval(row[2])
@@ -154,6 +159,9 @@ def read_anti_refer(): #สำหรับดึงข้อมูลของ a
         
         # เพิ่ม datetime
         tmp.append(row[5])
+        
+        # เพิ่ม header
+        tmp.append(row[1])
         
         rows.append(tmp)
 
@@ -185,13 +193,15 @@ def read_sure_refer(): #สำหรับดึงข้อมูลของ s
         content_parts = []
         content = ''
         
-        # เพิ่ม header + ตรวจสอบว่า header ซ้ำหรือไม่
+        # เพิ่ม header + content และตรวจสอบว่า header ซ้ำหรือไม่
         if row[1] in dup_check:
             continue
         
         elif row[1] not in dup_check:
             dup_check.append(row[1])
-            tmp.append(row[1]) 
+            content_parts = literal_eval(row[2])
+            content = ''.join(filter(None, content_parts))
+            tmp.append(row[1] + content) 
         
         # เพิ่ม content
         content_parts = literal_eval(row[2])
@@ -203,6 +213,9 @@ def read_sure_refer(): #สำหรับดึงข้อมูลของ s
         
         # เพิ่ม datetime
         tmp.append(row[5])
+        
+        # เพิ่ม header
+        tmp.append(row[1])
         
         rows.append(tmp)
 
@@ -224,28 +237,30 @@ def combine_every_headline():
     return refer_text_list
 
 def create_df_for_backtrack(all_refer_text_list):
-    global all_original_text_and_headline_news_df, all_refer_header, all_refer_content
+    global all_original_text_and_headline_news_df, all_refer_header_and_content, all_refer_content
     
     all_refer_content = []
     all_refer_url = []
     all_refer_datetime = []
     all_refer_domain = []
+    all_refer_header = []
     
     for i in range(len(all_refer_text_list)):
-        all_refer_header.append(all_refer_text_list[i][0]) #list ของส่วนหัวข้อข่าว
+        all_refer_header_and_content.append(all_refer_text_list[i][0]) #list ของส่วนหัวข้อข่าว + เนื้อหา
         all_refer_content.append(all_refer_text_list[i][1]) #list ของส่วนเนื้อหาเท่านั้น
         all_refer_url.append(all_refer_text_list[i][2]) #list ของ url เท่านั้น
         all_refer_datetime.append(all_refer_text_list[i][3]) #list ของ datetime เท่านั้น
         all_refer_domain.append(urlparse(all_refer_text_list[i][2]).hostname) #list ของ domain เท่านั้น
+        all_refer_header.append(all_refer_text_list[i][4]) #list ของส่วนหัวข้อข่าวเท่านั้น
         
     #ทำ list ให้เป็น dataframe
-    all_original_text_and_headline_news_df = pd.DataFrame(list(zip(all_refer_header, all_refer_content, all_refer_url, all_refer_datetime, all_refer_domain)), columns=["All_headline_from_every_reference", "All_content_from_every_reference", "All_URL_from_every_reference", "All_datatime_from_every_reference", "All_domain_from_every_reference"])
+    all_original_text_and_headline_news_df = pd.DataFrame(list(zip(all_refer_header_and_content, all_refer_content, all_refer_url, all_refer_datetime, all_refer_domain, all_refer_header)), columns=["All_headline_and_content_from_every_reference", "All_content_from_every_reference", "All_URL_from_every_reference", "All_datatime_from_every_reference", "All_domain_from_every_reference", "All_headline_from_every_reference"])
         
-    return all_original_text_and_headline_news_df, all_refer_header
+    return all_original_text_and_headline_news_df, all_refer_header_and_content
 
-def tokenize_and_create_vocabulary(all_refer_header):
-    all_headline_tokens_list = [split_word(txt) for txt in all_refer_header] #นำ list ของเนื้อหามาตัดคำ
-    local_all_tokens_list_j = [','.join(tkn) for tkn in all_headline_tokens_list]
+def tokenize_and_create_vocabulary(all_refer_header_and_content):
+    all_headline_and_content_tokens_list = [split_word(txt) for txt in all_refer_header_and_content] #นำ list ของเนื้อหามาตัดคำ
+    local_all_tokens_list_j = [','.join(tkn) for tkn in all_headline_and_content_tokens_list]
     
     ## Create Vocabulary
     tokens_list = []
@@ -300,6 +315,7 @@ def gen_vector_T(tokens):
 def cosine_similarity_T(k, query):
     global tvec
     tokens = split_word(str(query))
+    
     q_df = pd.DataFrame(columns=['q_clean'])
     q_df.loc[0,'q_clean'] =str(tokens)
 
@@ -323,7 +339,7 @@ def cosine_similarity_T(k, query):
     a = pd.DataFrame()
     for i in out:
         a.loc[i,'index'] = str(i)
-        a.loc[i,'headline'] = all_original_text_and_headline_news_df['All_headline_from_every_reference'][i]
+        a.loc[i,'headline_and_content'] = all_original_text_and_headline_news_df["All_headline_and_content_from_every_reference"][i]
         
     list_d_cosines.sort(reverse=True)
     
@@ -333,13 +349,14 @@ def cosine_similarity_T(k, query):
     all_result = a
     all_result_with_url = pd.DataFrame()
     for i in range(len(all_result)):
-        if float(all_result.iloc[i]["Score"]) != 0.0:
+        if float(all_result.iloc[i]["Score"]) > 0.2:
             all_result_with_url.loc[i,'index'] = all_result.iloc[i]["index"]
-            all_result_with_url.loc[i,'headline'] = all_result.iloc[i]["headline"]
+            all_result_with_url.loc[i,'headline'] = all_original_text_and_headline_news_df["All_headline_from_every_reference"][int(all_result.iloc[i]["index"])]
             all_result_with_url.loc[i,'url'] = all_original_text_and_headline_news_df["All_URL_from_every_reference"][int(all_result.iloc[i]["index"])]
             all_result_with_url.loc[i,'content'] = all_original_text_and_headline_news_df["All_content_from_every_reference"][int(all_result.iloc[i]["index"])]
             all_result_with_url.loc[i,'datetime'] = all_original_text_and_headline_news_df["All_datatime_from_every_reference"][int(all_result.iloc[i]["index"])]
             all_result_with_url.loc[i,'domain'] = all_original_text_and_headline_news_df["All_domain_from_every_reference"][int(all_result.iloc[i]["index"])]
+            all_result_with_url.loc[i,'score'] = all_result.iloc[i]["Score"]
     
     js = all_result_with_url.to_dict('records')
         
@@ -349,8 +366,8 @@ def cosine_similarity_T(k, query):
 def preprocess():
     global original_c_feat, norm_original_c_feat, tvec, all_refer_text_list, vocabulary, all_original_text_and_headline_news_df, data2
     all_refer_text_list = combine_every_headline() #เก็บหัวข้อข่าวและ URL ใน list
-    all_original_text_and_headline_news_df, all_refer_header = create_df_for_backtrack(all_refer_text_list) #สร้าง dataframe สำหรับอ้างถึงตอนค้นคืนข่าว
-    vocabulary, all_tokens_list_j, data2 = tokenize_and_create_vocabulary(all_refer_header) #ตัดคำจากหัวข่าว (headline) และสร้าง list ของคำศัพท์ (vocabulary)
+    all_original_text_and_headline_news_df, all_refer_header_and_content = create_df_for_backtrack(all_refer_text_list) #สร้าง dataframe สำหรับอ้างถึงตอนค้นคืนข่าว
+    vocabulary, all_tokens_list_j, data2 = tokenize_and_create_vocabulary(all_refer_header_and_content) #ตัดคำจากหัวข่าว (headline) และสร้าง list ของคำศัพท์ (vocabulary)
     original_c_feat, tvec = create_tfidf_matrix(all_tokens_list_j) #สร้าง vector tfidf สำหรับแต่ละข่าว
 
     norm_original_c_feat = normalize(original_c_feat)
@@ -361,7 +378,7 @@ def preprocess():
 
 # Main
 all_refer_text_list = []
-all_refer_header = []
+all_refer_header_and_content = []
 
 vocabulary = []
 all_tokens_list_j = []
