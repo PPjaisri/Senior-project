@@ -5,61 +5,46 @@ import {
   FormControl,
   Button,
   Badge,
-  Container
+  Container,
+  Card,
+  Image
 } from 'react-bootstrap';
 import './Component.css';
 import './Barloader.css';
+import 'facebook-js-sdk';
 import { Messaging } from 'react-cssfx-loading';
 import { useNavigate, useLocation, Navigate } from 'react-router-dom';
-import { sendImage, sendLink } from './services/Service';
+import { sendImage, sendLink, sendToken } from './services/Service';
 import config from './services/config';
-import 'facebook-js-sdk';
 import { send_file, send_image_file, send_text } from './services/types';
-
+import FacebookLogin from 'react-facebook-login';
 function SearchBar() {
-  // const [authResponse, setAuthResponse] = useState<fb_response | undefined>(undefined)
+  const [login, setLogin] = useState<any>(false);
+  const [data, setData] = useState<any>({});
 
-  // window.fbAsyncInit = function () {
-  //   FB.init({
-  //     appId: config.CLIENT_ID_FB,
-  //     cookie: true,
-  //     xfbml: true,
-  //     version: '12.0'
-  //   });
+  const responseFacebook = async (response: any) => {
+    setData(response);
 
-  //   FB.AppEvents.logPageView();
+    if (response.accessToken) {
+      setLogin(true);
 
-  // };
+      const tokenData = {
+        'message_type': 'token',
+        'facebook_access_token': response.accessToken
+      }
+      console.log(response.accessToken);
 
-  // function getStatus() {
-  //   FB.getLoginStatus(function (response: any) {
-  //     setAuthResponse(response)
-  //   });
+      const res = await sendToken(tokenData);
+      if (res.result === 200)
+        console.log('OK');
+      else
+        console.log('error');
+    } else {
+      setLogin(false);
+    }
+  }
 
-  //   if (authResponse?.status === 'connected') {
-  //     localStorage.setItem('FB_Access_token', authResponse.authResponse.accessToken)
-  //   }
-  // }
-  // // console.log(authResponse?.authResponse);
-
-  // function RenderElement() {
-  //   if (authResponse?.status === 'connected') {
-  //     return (
-  //       <div>
-  //         <LinkSearch />
-  //         <FacebookLogin />
-  //       </div>
-  //     );
-  //   } else {
-  //     return (
-  //       <FacebookLogin />
-  //     );
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   getStatus()
-  // }, []);
+  const custom_button = <div className="facebppk_button" />
 
   return (
     <Tabs
@@ -68,8 +53,20 @@ function SearchBar() {
       className="mb-3"
     >
       <Tab eventKey="link" title="Link">
-        {/* <RenderElement /> */}
-        <LinkSearch />
+        {!login &&
+          <FacebookLogin
+            appId="1009901223209735"
+            autoLoad={true}
+            fields="name,email,picture"
+            scope="public_profile"
+            callback={responseFacebook}
+            icon={custom_button}
+          />
+        }
+        {
+          login &&
+          <LinkSearch />
+        }
       </Tab>
       <Tab eventKey="content" title="Content">
         <ContentSearch />
@@ -78,29 +75,6 @@ function SearchBar() {
         <ImageSearch />
       </Tab>
     </Tabs>
-  );
-};
-
-function FacebookLogin() {
-  function FB_login() {
-    FB.login(function (response) {
-      console.log(response)
-    });
-  };
-
-  return (
-    <Container className='text-center'>
-      <div id="fb-root" />
-      <div
-        className="fb-login-button"
-        data-width="" data-size="large"
-        data-button-type="login_with"
-        data-layout="rounded"
-        data-auto-logout-link="true"
-        data-use-continue-as="true"
-        onClick={FB_login}
-      />
-    </Container>
   );
 };
 

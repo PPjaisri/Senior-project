@@ -13,20 +13,14 @@ interface send_image_file {
     message: send_file
 }
 
-interface fb_response {
-    status: string,
-    authResponse: {
-        accessToken: string,
-        data_access_expiration_time: number,
-        expiresIn: number,
-        reauthorize_required_in: string,
-        signedRequest: string,
-        userID: string
-    }
+interface fb_token {
+    message_type: string,
+    facebook_access_token: string
 }
 
 export type {
     send_text,
     send_file,
-    send_image_file
+    send_image_file,
+    fb_token
 }

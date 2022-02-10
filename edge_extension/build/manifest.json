@@ -11,18 +11,18 @@
     "default_title": "Thai news matcher"
   },
 
-  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+  "content_security_policy": "script-src 'self' 'unsafe-eval' https://connect.facebook.net/en_US/sdk.js; object-src 'self';",
   "optional_permissions": [
     "<all_urls>"
   ],
+  "content_scripts": [{
+    "js": ["https://connect.facebook.net/en_US/sdk.js"],
+    "match": [
+      "http://*/*",
+      "https://*/*"]
+  }],
 
   "permission": [
     "tabs"
-  ],
-
-  "icons": {
-    "64": "favicon.ico",
-    "192": "logo192.png",
-    "512": "logo512.png"
-  }
+  ]
 }

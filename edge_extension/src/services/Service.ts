@@ -1,6 +1,6 @@
 import axios from "axios";
 import config from "./config";
-import { send_file, send_text } from "./types";
+import { fb_token, send_file, send_text } from "./types";
 
 const baseUrl = config.baseUrl;
 
@@ -14,7 +14,7 @@ async function sendLink(body: send_text) {
     });
 
     const result = res.json();
-    return result
+    return result;
 };
 
 async function getLink() {
@@ -40,51 +40,25 @@ async function sendImage(body: send_file) {
             result = res;
         })
     
-    return result
+    return result;
 }
 
-// function authenticate() {
-//     const { accessToken } = body();
+async function sendToken(body: fb_token) {
+    const res = await fetch(`${baseUrl}`, {
+        method: 'post',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(body)
+    });
 
-//     axios.get(`https://graph.facebook.com/v8.0/me?access_token=${accessToken}`)
-//         .then(response => {
-//             const { data } = response;
-//             if (data.error)
-//                 // return unauthorized(data.error.message);
-//                 console.log('error')
-
-//             let account = accounts.find(x => x.facebookId === data.id);
-//             if (!account) {
-//                 // create new account if first time logging in
-//                 account = {
-//                     id: newAccountId(),
-//                     facebookId: data.id,
-//                     name: data.name,
-//                     extraInfo: `This is some extra info about ${data.name} that is saved in the API`
-//                 }
-//                 accounts.push(account);
-//                 localStorage.setItem(accountsKey, JSON.stringify(accounts));
-//             }
-
-//             return ok({
-//                 ...account,
-//                 token: generateJwtToken(account)
-//             });
-//         });
-// }
-
-// async function apiAuthenticate(accessToken: string) {
-//     // authenticate with the api using a facebook access token,
-//     // on success the api returns an account object with a JWT auth token
-//     const response = await axios.post(`${baseUrl}/authenticate`, { accessToken });
-//     const account = response.data;
-//     accountSubject.next(account);
-//     startAuthenticateTimer();
-//     return account;
-// }
+    const result = res.json();
+    return result;
+};
 
 export {
     sendLink,
     getLink,
-    sendImage
+    sendImage,
+    sendToken
 };
