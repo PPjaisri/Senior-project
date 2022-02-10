@@ -44,7 +44,7 @@ function SearchBar() {
     }
   }
 
-  const custom_button = <div className="facebppk_button" />
+  const custom_button = <div className="facebook_button" />
 
   return (
     <Tabs
