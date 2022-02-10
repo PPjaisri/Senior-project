@@ -51,7 +51,7 @@ class UserExtension(Resource):
             abort(400 ,message = "กรุณาระบุประเภทของ input เป็น link , content , image , image_url หรือ facebook token")
 
         # กรณีไม่มีข้อความ (message) แนบมาด้วย 
-        if (args["message_type"] == "content" or args["message_type"] == "link" or args["message_type"] == "image_url") and (not args["message"]):
+        if (args["message_type"] == "content" or args["message_type"] == "link" or args["message_type"] == "image_url") and (not args["message"] or args["message"].isspace()):
             abort(422, message = "กรุณาใส่ข้อความ , ลิงค์ หรือ URL ของรูปภาพ")
         
         # กรณีไม่มีรูปภาพ (image) แนบมาด้วย 
