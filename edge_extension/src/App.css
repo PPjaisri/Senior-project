@@ -39,10 +39,10 @@ html {
 
 .headline {
   /* background-color: #CFF4FC; */
-  background: linear-gradient(180deg, rgba(248,249,250,1) 0%, rgba(207,244,252,1) 35%, rgba(13,202,240,1) 100%);
+  background: linear-gradient(180deg, rgba(248, 249, 250, 1) 0%, rgba(189, 245, 197, 1) 100%);
   padding: 15px 0px;
 }
 
 .content {
-  background-color: rgba(13,202,240,1);
+  background-color: rgba(189, 245, 197, 1);
 }

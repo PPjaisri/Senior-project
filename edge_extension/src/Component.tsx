@@ -376,7 +376,7 @@ function NavBar(res: any) {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             <Nav.Link href={res.res.url} target='_blank'>Link: { res.res.domain }</Nav.Link>
-            <Nav.Link>Time: { res.res.datetime }</Nav.Link>
+            <Nav.Link>Date: { res.res.datetime }</Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>
