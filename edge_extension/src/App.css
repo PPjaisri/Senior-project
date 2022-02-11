@@ -35,6 +35,7 @@ html {
 .show_content {
   display: block;
   width: 100%;
+  background-color: rgba(189, 245, 197, 1);
 }
 
 .headline {
