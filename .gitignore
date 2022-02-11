@@ -29,3 +29,7 @@ __pycache__
 
 # hbdscan model (1.04 GB)
 output
+
+# cert for https
+edge_extension/cert/localhost-key.pem
+edge_extension/cert/localhost.pem

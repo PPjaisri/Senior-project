@@ -410,7 +410,7 @@ function ReturnResult(obj: any) {
           size='sm'
           onClick={showContent}
           className='show_content'
-          // variant='info'
+          variant='success'
         >
           <strong>{buttonName} Content</strong>
         </Button>
