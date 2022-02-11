@@ -7,7 +7,9 @@ import {
   Badge,
   Container,
   Card,
-  Image
+  Image,
+  Navbar,
+  Nav
 } from 'react-bootstrap';
 import './Component.css';
 import './Barloader.css';
@@ -291,12 +293,15 @@ function Loader() {
   let { state }: any = useLocation();
   let navigate = useNavigate();
 
+  const reCheck = 'หากใช้เวลานานเกินไป กรุณาตรวจสอบว่าลิงค์ URL ถูกต้อง หรือทำการค้นหาผ่าน Content แทน';
+
   async function upLoadLink(data: send_text) {
     console.log(data);
-  }
+  };
 
   async function upLoadContent(data: send_text) {
     const res = await sendLink(data);
+    console.log(res.message)
     if (res) {
       navigate('/result', {
         state: {
@@ -304,15 +309,15 @@ function Loader() {
           search: res.message,
           result: res.result
         }
-      });
+      });      
     } else {
       console.log('failed');
     };
-  }
+  };
 
   async function upLoadImageSite(data: send_text) {
-    // console.log(data.message);
     const res = await sendLink(data);
+    console.log(res);
     if (res) {
       navigate('/result', {
         state: {
@@ -324,10 +329,9 @@ function Loader() {
     }
     else
       console.log('error');
-  }
+  };
 
   function upLoadImage(data: send_image_file) {
-    console.log('component: ', data.message)
     sendImage(data.message)
       .then((res: any) => {
         navigate('/result', {
@@ -359,13 +363,29 @@ function Loader() {
 
   return (
     <div
-      // className="spinner-container"
       className="centered"
     >
       <Messaging />
     </div>
   )
-}
+};
+
+function NavBar(res: any) {
+  console.log(res.res);
+  return (
+    <Navbar bg="light" expand={true}>
+      <Container>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="me-auto">
+            <Nav.Link href={res.res.url} target='_blank'>Link: { res.res.domain }</Nav.Link>
+            <Nav.Link>Time: { res.res.datetime }</Nav.Link>
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
+  );
+};
 
 function ReturnResult(obj: any) {
 
@@ -383,24 +403,24 @@ function ReturnResult(obj: any) {
 
   return (
     <div id={obj.obj.index}>
-      <hr />
+      <br />
       <div className='jumbotron'>
-        <p>
-          <span>Link: </span>
-          <a href={obj.obj.url} target='_blank'><Badge>CLICK HERE</Badge></a>
-        </p>
-        <p>{obj.obj.headline}</p>
+        <NavBar res={obj.obj} />
+        <Container className='headline'>
+          <Container>{obj.obj.headline}</Container>
+        </Container>
         <Button
           size='sm'
           onClick={showContent}
           className='show_content'
+          variant='info'
         >
-          {buttonName} Content
+          <strong>{buttonName} Content</strong>
         </Button>
-        {show ? <div>
+        {show ? <Container className='content'>
           <br />
-          <p>{obj.obj.content}</p>
-        </div> : null}
+          <Container>{obj.obj.content}</Container>
+        </Container> : null}
       </div>
     </div>
   );

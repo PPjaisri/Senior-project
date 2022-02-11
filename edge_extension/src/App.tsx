@@ -51,22 +51,32 @@ function Result() {
   let navigate = useNavigate();
   const { state }: any = useLocation();
   const res = state.result;
+  console.log(state)
 
   function RenderResult() {
-    if (res.length > 0) {
-      return res.map((obj: any) => {
+    if (res) {
+      if (res.length > 0) {
+        return res.map((obj: any) => {
+          return (
+            <ReturnResult obj={obj} />
+          );
+        });
+      } else {
         return (
-          <ReturnResult obj={ obj }/>
+          <div>
+            <hr />
+            <div className='jumbotron text-center'>
+              <p> ไม่พบข่าวที่ต้องการค้นหา </p>
+            </div>
+          </div>
         );
-      });
+      }
     } else {
       return (
         <div>
           <hr />
           <div className='jumbotron text-center'>
-            <p>
-              ไม่พบข่าวที่ต้องการค้นหา
-            </p>
+            <p>{ state.search }</p>
           </div>
         </div>
       );
@@ -75,12 +85,10 @@ function Result() {
 
   return (
     <div>
-      <Container>
-        <Starter />
-        <RenderResult />
-        <br />
-        <br />
-      </Container>
+      <Starter />
+      <RenderResult />
+      <br />
+      <br />
       <Button
         variant='success'
         className='full'

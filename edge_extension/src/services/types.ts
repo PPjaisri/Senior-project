@@ -18,9 +18,17 @@ interface fb_token {
     facebook_access_token: string
 }
 
+interface result {
+    size: number,
+    type: string,
+    search: string,
+    result: string
+}
+
 export type {
     send_text,
     send_file,
     send_image_file,
-    fb_token
+    fb_token,
+    result
 }

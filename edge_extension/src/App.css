@@ -4,47 +4,7 @@ html {
   font-family: 'Nunito', sans-serif;
 }
 
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 .jumbotron {
-  background-color: #CFF4FC;
   border: none;
   border-radius: 10px;
   padding: 5px;
@@ -74,4 +34,15 @@ html {
 
 .show_content {
   display: block;
+  width: 100%;
+}
+
+.headline {
+  /* background-color: #CFF4FC; */
+  background: linear-gradient(180deg, rgba(248,249,250,1) 0%, rgba(207,244,252,1) 35%, rgba(13,202,240,1) 100%);
+  padding: 15px 0px;
+}
+
+.content {
+  background-color: rgba(13,202,240,1);
 }

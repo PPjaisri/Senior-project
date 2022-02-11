@@ -25,13 +25,12 @@ async function getLink() {
 }
 
 async function sendImage(body: send_file) {
-    console.log('service: ', body)
     const config = {
         headers: {
             "Accept": "application/json",
             "Content-Type": "multipart/form-data"
         }
-    }
+    };
 
     let result;
 

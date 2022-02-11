@@ -14,15 +14,5 @@
   "content_security_policy": "script-src 'self' 'unsafe-eval' https://connect.facebook.net/en_US/sdk.js; object-src 'self';",
   "optional_permissions": [
     "<all_urls>"
-  ],
-  "content_scripts": [{
-    "js": ["https://connect.facebook.net/en_US/sdk.js"],
-    "match": [
-      "http://*/*",
-      "https://*/*"]
-  }],
-
-  "permission": [
-    "tabs"
   ]
 }
