@@ -1,6 +1,10 @@
 import axios from "axios";
 import config from "./config";
-import { fb_token, send_file, send_text } from "./types";
+import {
+    fb_token,
+    send_file,
+    send_text
+} from "./types";
 
 const baseUrl = config.baseUrl;
 

@@ -8,7 +8,12 @@ import {
   Button,
   Container
 } from 'react-bootstrap';
-import { Starter, SearchBar, Loader, ReturnResult } from './Component'
+import {
+  Starter,
+  SearchBar,
+  Loader,
+  ReturnResult
+} from './Component'
 import './App.css';
 
 function App() {

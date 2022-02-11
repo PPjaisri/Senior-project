@@ -4,10 +4,7 @@ import {
   InputGroup,
   FormControl,
   Button,
-  Badge,
   Container,
-  Card,
-  Image,
   Navbar,
   Nav
 } from 'react-bootstrap';
@@ -15,38 +12,38 @@ import './Component.css';
 import './Barloader.css';
 import 'facebook-js-sdk';
 import { Messaging } from 'react-cssfx-loading';
-import { useNavigate, useLocation, Navigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { sendImage, sendLink, sendToken } from './services/Service';
-import config from './services/config';
-import { send_file, send_image_file, send_text } from './services/types';
-import FacebookLogin from 'react-facebook-login';
+import { send_image_file, send_text } from './services/types';
+// import FacebookLogin from 'react-facebook-login';
+
 function SearchBar() {
-  const [login, setLogin] = useState<any>(false);
-  const [data, setData] = useState<any>({});
+  // const [login, setLogin] = useState<any>(false);
+  // const [data, setData] = useState<any>({});
 
-  const responseFacebook = async (response: any) => {
-    setData(response);
+  // const responseFacebook = async (response: any) => {
+  //   setData(response);
 
-    if (response.accessToken) {
-      setLogin(true);
+  //   if (response.accessToken) {
+  //     setLogin(true);
 
-      const tokenData = {
-        'message_type': 'token',
-        'facebook_access_token': response.accessToken
-      }
-      console.log(response.accessToken);
+  //     const tokenData = {
+  //       'message_type': 'token',
+  //       'facebook_access_token': response.accessToken
+  //     }
+  //     console.log(response.accessToken);
 
-      const res = await sendToken(tokenData);
-      if (res.result === 200)
-        console.log('OK');
-      else
-        console.log('error');
-    } else {
-      setLogin(false);
-    }
-  }
+  //     const res = await sendToken(tokenData);
+  //     if (res.result === 200)
+  //       console.log('OK');
+  //     else
+  //       console.log('error');
+  //   } else {
+  //     setLogin(false);
+  //   }
+  // }
 
-  const custom_button = <div className="facebook_button" />
+  // const custom_button = <div className="facebook_button" />
 
   return (
     <Tabs
@@ -55,7 +52,7 @@ function SearchBar() {
       className="mb-3"
     >
       <Tab eventKey="link" title="Link">
-        {!login &&
+        {/* {!login &&
           <FacebookLogin
             appId="1009901223209735"
             autoLoad={true}
@@ -68,7 +65,8 @@ function SearchBar() {
         {
           login &&
           <LinkSearch />
-        }
+        } */}
+        <LinkSearch />
       </Tab>
       <Tab eventKey="content" title="Content">
         <ContentSearch />
@@ -82,7 +80,6 @@ function SearchBar() {
 
 function LinkSearch() {
   const [link, getLink] = useState('');
-  const [status, getStatus] = useState('')
   let navigate = useNavigate();
 
   function click() {

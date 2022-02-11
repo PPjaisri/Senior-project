@@ -26,24 +26,26 @@ class facebook(object):
     def fetch_page(self):
         self.browser.get(self.url)
 
-        email = self.browser.find_element(By.NAME, 'email')
-        password = self.browser.find_element(By.NAME, 'pass')
-        login = self.browser.find_element(By.NAME, 'login')
+        # email = self.browser.find_element(By.NAME, 'email')
+        # password = self.browser.find_element(By.NAME, 'pass')
+        # login = self.browser.find_element(By.NAME, 'login')
 
-        email.send_keys(self.username)
-        password.send_keys(self.password)
+        # email.send_keys(self.username)
+        # password.send_keys(self.password)
 
-        # self.crawl_page()
+        self.crawl_page()
         self.finished_crawl()
 
     def crawl_page(self):
         self.browser.get(self.url)
         response = self.browser.page_source
-        soup = BeautifulSoup(response.text, 'lxml')
+        soup = BeautifulSoup(response, 'lxml')
 
-        header = soup.find('span', class_='nc684nl6')
+        header = soup.find('span', class_='fwb')
         # header = header.text
         print(header)
+        with open('test.html', 'w', encoding='utf-8') as file:
+            file.write(soup.text)
 
     def finished_crawl(self):
         self.browser.close()
