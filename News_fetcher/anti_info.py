@@ -1,4 +1,5 @@
 import os
+import re
 import csv
 import time
 import logging
@@ -75,12 +76,15 @@ class anti_info(object):
         soup = BeautifulSoup(response.text, 'html.parser')
 
         header = soup.h1.text.strip()
+        header = ' '.join(header.split())
+        header = re.sub(',', ' ', header)
         time = soup.time.text.strip()
         category = soup.find_all('div', class_='blog-tag')[0].text.strip()
         content_blog = soup.select('div.tdb-block-inner p')
-        content = [i.text for i in content_blog]
+        content = [i.text.strip() for i in content_blog]
+        content = ' '.join(content)
         image_list = soup.select('div.tdb-block-inner p img')
-        image = [i['src'] for i in image_list]
+        image = [re.sub('', '', i['src']) for i in image_list]
 
         data = {
             'category': category,

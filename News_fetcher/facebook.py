@@ -1,6 +1,5 @@
 import os
 import re
-import logging
 from bs4 import BeautifulSoup
 from selenium.webdriver import Edge
 from selenium.webdriver.support.ui import WebDriverWait
@@ -31,8 +30,8 @@ class facebook(object):
 
         main = soup.find('div', class_='_1dwg _1w_m _q7o')
 
-        poster = main.find('span', class_='fwb').text.strip()
-        poster = re.sub(',', ' ', poster)
+        post_creator = main.find('span', class_='fwb').text.strip()
+        post_creator = re.sub(',', ' ', post_creator)
         content = main.find('div', class_='userContent').text.strip()
         content = ' '.join(content.split())
         content = re.sub(',', ' ', content)
@@ -40,7 +39,7 @@ class facebook(object):
         images = [image['src'] for image in images]
         
         data = {
-            "poster": poster,
+            "post_creator": post_creator,
             "content": content,
             "link": self.url.strip(),
             "img": images
