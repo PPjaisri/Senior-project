@@ -259,7 +259,7 @@ def create_df_for_backtrack(all_refer_text_list):
     return all_original_text_and_headline_news_df, all_refer_header_and_content
 
 def tokenize_and_create_vocabulary(all_refer_header_and_content):
-    all_headline_and_content_tokens_list = [split_word(txt) for txt in all_refer_header_and_content] #นำ list ของเนื้อหามาตัดคำ
+    all_headline_and_content_tokens_list = [split_word(txt) for txt in all_refer_header_and_content] #list ของส่วนหัวข้อข่าว + เนื้อหา
     local_all_tokens_list_j = [','.join(tkn) for tkn in all_headline_and_content_tokens_list]
     
     ## Create Vocabulary

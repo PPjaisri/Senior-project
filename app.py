@@ -11,6 +11,9 @@ from Preprocess.tf_idf_all_headline_news_similarity import cosine_similarity_T
 # import function สำหรับ OCR
 from EasyOCR.EasyOCR_model import OCR_with_user_image
 
+# import function สำหรับดึง user input ของ user จาก facebook
+from News_fetcher.facebook import facebook
+
 # Replace your URL here. Don't forget to replace the password.
 # Pass_link = ""
 # with open('MongoPassword.txt') as Passfile:
@@ -100,10 +103,15 @@ class UserExtension(Resource):
             }
             
         elif args["message_type"] == "link":
+            facebook_fetch = facebook(args["message"])
+            post_facebook = facebook_fetch.fetch_page()
+            print("post_facebook", post_facebook)
+            all_result_with_url = cosine_similarity_T(10, post_facebook["content"])
+
             queryObject = {
-                "message": args["message_type"],
+                "message": post_facebook["content"],
                 "message_type": args["message_type"],
-                "result": args["message"]
+                "result": all_result_with_url
             }
             
         elif args["message_type"] == "token":
