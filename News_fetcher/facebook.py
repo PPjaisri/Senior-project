@@ -17,12 +17,13 @@ class facebook(object):
     def __init__(self, url) -> None:
         self.url = url
         self.browser = Edge(service=self.binary_location)
-        self,fetch_result = {}
 
     def fetch_page(self):
         self.browser.get(self.url)
-        self.fetch_result = self.crawl_page()
+        fetch_result = self.crawl_page()
         self.finished_crawl()
+
+        return fetch_result
 
     def crawl_page(self):
         self.browser.get(self.url)
