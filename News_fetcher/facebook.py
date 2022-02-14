@@ -10,7 +10,7 @@ from selenium.webdriver.edge.service import Service
 
 class facebook(object):
     path = os.getcwd()
-    path = os.path.dirname(path)
+    # path = os.path.dirname(path)
     binary_location = os.path.join(path, 'msedgedriver.exe')
     binary_location = Service(binary_location)
     fetch_result = {}
@@ -21,7 +21,7 @@ class facebook(object):
     def fetch_page(self):
         self.browser.get(self.url)
 
-        fetch_result = self.crawl_page()
+        self.crawl_page()
         self.finished_crawl()
 
     def crawl_page(self):
