@@ -293,12 +293,22 @@ function Loader() {
   const reCheck = 'หากใช้เวลานานเกินไป กรุณาตรวจสอบว่าลิงค์ URL ถูกต้อง หรือทำการค้นหาผ่าน Content แทน';
 
   async function upLoadLink(data: send_text) {
-    console.log(data);
+    const res = await sendLink(data);
+    if (res) {
+      navigate('/result', {
+        state: {
+          type: res.message_type,
+          search: res.message,
+          result: res.result
+        }
+      });
+    }
+    else
+      console.log('error');
   };
 
   async function upLoadContent(data: send_text) {
     const res = await sendLink(data);
-    console.log(res.message)
     if (res) {
       navigate('/result', {
         state: {
@@ -314,7 +324,6 @@ function Loader() {
 
   async function upLoadImageSite(data: send_text) {
     const res = await sendLink(data);
-    console.log(res);
     if (res) {
       navigate('/result', {
         state: {
@@ -368,7 +377,6 @@ function Loader() {
 };
 
 function NavBar(res: any) {
-  console.log(res.res);
   return (
     <Navbar bg="light" expand={true}>
       <Container>
