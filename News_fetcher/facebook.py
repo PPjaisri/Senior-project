@@ -17,21 +17,9 @@ class facebook(object):
 
     def __init__(self, url) -> None:
         self.url = url
-        self.start_url = 'https://www.facebook.com/'
         self.browser = Edge(service=self.binary_location)
-
-        self.username = 'ppjaisri@gmail.com'
-        self.password = '@Pp045403'
-
     def fetch_page(self):
         self.browser.get(self.url)
-
-        # email = self.browser.find_element(By.NAME, 'email')
-        # password = self.browser.find_element(By.NAME, 'pass')
-        # login = self.browser.find_element(By.NAME, 'login')
-
-        # email.send_keys(self.username)
-        # password.send_keys(self.password)
 
         self.crawl_page()
         self.finished_crawl()
@@ -41,16 +29,24 @@ class facebook(object):
         response = self.browser.page_source
         soup = BeautifulSoup(response, 'lxml')
 
-        header = soup.find('span', class_='fwb')
-        # header = header.text
-        print(header)
-        with open('test.html', 'w', encoding='utf-8') as file:
-            file.write(soup.text)
+        main = soup.find('div', class_='_1dwg _1w_m _q7o')
+
+        poster = main.find('span', class_='fwb').text.strip()
+        poster = re.sub(',', ' ', poster)
+        content = main.find('div', class_='userContent').text.strip()
+        content = ' '.join(content.split())
+        content = re.sub(',', ' ', content)
+        images = main.find_all('img', class_='scaledImageFitHeight')
+        images = [image['src'] for image in images]
+        
+        data = {
+            "poster": poster,
+            "content": content,
+            "link": self.url.strip(),
+            "img": images
+        }
+
+        return data
 
     def finished_crawl(self):
         self.browser.close()
-
-if __name__ == '__main__':
-    link = r'https://www.facebook.com/sheapgamer/posts/1090517985062860'
-    face = facebook(link)
-    face.fetch_page()
