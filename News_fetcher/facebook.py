@@ -13,6 +13,7 @@ class facebook(object):
     path = os.path.dirname(path)
     binary_location = os.path.join(path, 'msedgedriver.exe')
     binary_location = Service(binary_location)
+    fetch_result = {}
 
     def __init__(self, url) -> None:
         self.url = url
@@ -20,7 +21,7 @@ class facebook(object):
     def fetch_page(self):
         self.browser.get(self.url)
 
-        self.crawl_page()
+        fetch_result = self.crawl_page()
         self.finished_crawl()
 
     def crawl_page(self):
