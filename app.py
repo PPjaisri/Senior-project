@@ -14,6 +14,9 @@ from EasyOCR.EasyOCR_model import OCR_with_user_image
 # import function สำหรับดึง user input ของ user จาก facebook
 from News_fetcher.facebook import facebook
 
+# import function สำหรับตรวจ link ที่ต้องมี domain เป็น www.facebook.com
+from urllib.parse import urlparse
+
 # Replace your URL here. Don't forget to replace the password.
 # Pass_link = ""
 # with open('MongoPassword.txt') as Passfile:
@@ -52,6 +55,10 @@ class UserExtension(Resource):
         # กรณีไม่ได้ระบุประเภทของ input
         if (args["message_type"] != "link") and (args["message_type"] != "content") and (args["message_type"] != "image") and (args["message_type"] != "image_url") and (args["message_type"] != "token"):
             abort(400 ,message = "กรุณาระบุประเภทของ input เป็น link , content , image , image_url หรือ facebook token")
+
+        # กรณีใส่ link ที่ domain ไม่ใช่ post ของ facebook
+        if (args["message_type"] == "link") and (urlparse(args["message"]).hostname != "www.facebook.com"):
+            abort(400 ,message = "กรุณาระบุลิงค์ของโพสต์ Facebook")
 
         # กรณีไม่มีข้อความ (message) แนบมาด้วย 
         if (args["message_type"] == "content" or args["message_type"] == "link" or args["message_type"] == "image_url") and (not args["message"] or args["message"].isspace()):
@@ -103,16 +110,19 @@ class UserExtension(Resource):
             }
             
         elif args["message_type"] == "link":
-            facebook_fetch = facebook(args["message"])
-            post_facebook = facebook_fetch.fetch_page()
-            print("post_facebook", post_facebook)
-            all_result_with_url = cosine_similarity_T(10, post_facebook["content"])
+            try:
+                facebook_fetch = facebook(args["message"])
+                post_facebook = facebook_fetch.fetch_page()
+                print("post_facebook", post_facebook)
+                all_result_with_url = cosine_similarity_T(10, post_facebook["content"])
 
-            queryObject = {
-                "message": post_facebook["content"],
-                "message_type": args["message_type"],
-                "result": all_result_with_url
-            }
+                queryObject = {
+                    "message": post_facebook["content"],
+                    "message_type": args["message_type"],
+                    "result": all_result_with_url
+                }
+            except:
+                abort(400 ,message = "กรุณาระบุลิงค์ของโพสต์ให้ถูกต้อง")
             
         elif args["message_type"] == "token":
             queryObject = {
