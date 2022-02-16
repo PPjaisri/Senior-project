@@ -1,4 +1,10 @@
+import sys
 import os
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+SCRIPT_DIR = os.path.join(SCRIPT_DIR, 'News_fetcher')
+sys.path.append(SCRIPT_DIR)
+
 import logging
 from msvcrt import getch
 
