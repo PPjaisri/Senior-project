@@ -2,6 +2,7 @@ import re
 import logging
 import requests
 from bs4 import BeautifulSoup
+from tools import tools
 
 
 def mgr(url, reference):
@@ -22,7 +23,10 @@ def mgr(url, reference):
     images = main.find_all('img')
     images = [image['src'] for image in images]
     
-    time = soup.find_all('time')[-1].text.strip()
+    time = soup.find_all('time')[-1].text.strip().split()
+    time[1] = re.sub(time[1], tools.return_month(time[1]), time[1])
+    time = ' '.join(time[:-2])
+    time = tools.time_format(time)
     
     data = {
         "category": "ข่าวจริง",
@@ -35,3 +39,4 @@ def mgr(url, reference):
     }
 
     return data
+

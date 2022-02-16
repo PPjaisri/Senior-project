@@ -1,7 +1,9 @@
 import re
 import logging
+from matplotlib.image import thumbnail
 import requests
 from bs4 import BeautifulSoup
+from tools import tools
 
 
 def thaipbs(url, reference):
@@ -22,7 +24,10 @@ def thaipbs(url, reference):
     images = [image['src'] for image in images]
 
     time = soup.find('div', class_='content-meta').text.strip()
-    time = ' '.join(time.split()[:-3]).strip()
+    time = time.split('|')[1].strip().split()
+    time[1] = re.sub(time[1], tools.return_month(time[1]), time[1])
+    time = ' '.join(time)
+    time = tools.time_format(time)
 
     data = {
         "category": "ข่าวจริง",

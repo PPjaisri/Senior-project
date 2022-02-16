@@ -3,6 +3,8 @@ import logging
 import requests
 from bs4 import BeautifulSoup
 
+from .tools import tools
+
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36 Edg/97.0.1072.76'
 }
@@ -26,6 +28,7 @@ def matichon(url, reference):
     images = [image['src'] for image in images]
 
     time = soup.find('time')['datetime']
+    time = tools.time_format(time)
     
     data = {
         "category": "ข่าวจริง",

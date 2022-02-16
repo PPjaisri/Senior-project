@@ -2,6 +2,7 @@ import re
 import logging
 import requests
 from bs4 import BeautifulSoup
+from tools import tools
 
 
 def thanSettakij(url, reference):
@@ -15,8 +16,11 @@ def thanSettakij(url, reference):
     
     main = soup.find('div', id='contents')
     time_raw = main.find('div', class_='info').text
-    time = time_raw.split()[:-1]
+    time = time_raw.split('|')[1]
+    time = time.split()[:3]
+    time[1] = re.sub(time[1], tools.return_month(time[1]), time[1])
     time = ' '.join(time)
+    time = tools.time_format(time)
 
     div = main.find('div', class_='content-related')
     div.decompose()
@@ -39,3 +43,4 @@ def thanSettakij(url, reference):
     }
 
     return data
+    

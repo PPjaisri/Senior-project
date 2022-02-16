@@ -2,6 +2,7 @@ import re
 import logging
 import requests
 from bs4 import BeautifulSoup
+from tools import tools
 
 
 def komchadluek(url, reference):
@@ -23,7 +24,10 @@ def komchadluek(url, reference):
     images = main.find_all('picture')
     images = [image.find('img')['src'] for image in images]
     
-    time = soup.find('div', class_='iRAivw').text.strip()
+    time = soup.find('div', id='date-update').text.strip().split()
+    time[1] = re.sub(time[1], tools.return_month(time[1]), time[1])
+    time = ' '.join(time)
+    time = tools.time_format(time)
     
     data = {
         "category": "ข่าวจริง",

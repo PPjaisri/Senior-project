@@ -2,6 +2,7 @@ import re
 import logging
 import requests
 from bs4 import BeautifulSoup
+from tools import tools
 
 
 def sanook(url, reference):
@@ -13,6 +14,7 @@ def sanook(url, reference):
     header = re.sub(',', '', header)
 
     time = soup.find('time')['datetime']
+    time = tools.time_format(time)
 
     content = soup.find('div', id='EntryReader_0').text.strip()
     content = ' '.join(content.split())

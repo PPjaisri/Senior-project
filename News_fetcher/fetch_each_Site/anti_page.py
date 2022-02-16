@@ -1,7 +1,7 @@
-import os
 import logging
 import requests
 from bs4 import BeautifulSoup
+from tools import tools
 
 
 def antifakenews(url, reference):
@@ -10,7 +10,8 @@ def antifakenews(url, reference):
     soup = BeautifulSoup(response.text, 'html.parser')
 
     header = soup.h1.text.strip()
-    time = soup.time.text.strip()
+    time = soup.time['datetime']
+    time = tools.time_format(time)
     category = soup.find_all('div', class_='blog-tag')[0].text.strip()
     content_blog = soup.select('div.tdb-block-inner p')
     content = [i.text for i in content_blog]

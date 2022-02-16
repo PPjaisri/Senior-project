@@ -1,4 +1,5 @@
 import os
+import re
 import csv
 import time
 import logging
@@ -69,12 +70,13 @@ class sure_info(object):
 
     def crawl_page(self, url):
         response = requests.get(url)
-        # logging.debug(f'Crawling at {url}')
         soup = BeautifulSoup(response.text, 'lxml')
 
         header = soup.h1.text.strip()
+        header = re.sub(',', ' ', header)
         time = (soup.find('div', class_='entry-meta')).text
-        time = ' '.join(time.split())
+        time = ' '.join(time.split()[:-1])
+        time = re.sub(',', ' ', time)
         entry_content = soup.find('div', class_='entry-content')
         
         try:
@@ -82,8 +84,13 @@ class sure_info(object):
         except:
             category = None
         
-        content_blog = entry_content.select('p')
-        content = [(i.text).strip() for i in content_blog]
+        try:
+            content_blog = entry_content.select('p')
+            content = [(i.text).strip() for i in content_blog]
+            content = ' '.join(content)
+            content = re.sub(',', ' ', content)
+        except:
+            content = None
 
         try:
             image = (soup.find('div', class_='thumb').find('img'))['data-src']

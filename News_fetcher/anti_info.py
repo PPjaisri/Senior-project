@@ -6,6 +6,8 @@ import logging
 import requests
 import pandas as pd
 from bs4 import BeautifulSoup
+from fetch_each_site import tools
+
 
 class anti_info(object):
     path = os.getcwd()
@@ -41,7 +43,7 @@ class anti_info(object):
             else:
                 writer.writeheader()
                 writer.writerows(self.fetch_data)
-                
+
         logging.info('finished crawling')
 
     def fetch_page(self):
@@ -67,24 +69,43 @@ class anti_info(object):
                 self.count += 1
                 time.sleep(0.5)
                 self.crawl_page(url)
-                
+
         self.finished_crawl()
 
     def crawl_page(self, url):
-        response = requests.get(url) 
-        # logging.debug(f'Crawling at {url}')
+        response = requests.get(url)
         soup = BeautifulSoup(response.text, 'html.parser')
 
-        header = soup.h1.text.strip()
-        header = ' '.join(header.split())
-        header = re.sub(',', ' ', header)
-        time = soup.time.text.strip()
-        category = soup.find_all('div', class_='blog-tag')[0].text.strip()
-        content_blog = soup.select('div.tdb-block-inner p')
-        content = [i.text.strip() for i in content_blog]
-        content = ' '.join(content)
-        image_list = soup.select('div.tdb-block-inner p img')
-        image = [re.sub('', '', i['src']) for i in image_list]
+        try:
+            header = soup.h1.text.strip()
+            header = ' '.join(header.split())
+            header = re.sub(',', ' ', header)
+        except:
+            header = None
+
+        try:
+            time = soup.time['datetime'].strip()
+            time = tools.time_format(time)
+        except:
+            time = None
+
+        try:
+            category = soup.find_all('div', class_='blog-tag')[0].text.strip()
+        except:
+            category = None
+        
+        try:
+            content_blog = soup.find('div', class_='td-post-content')
+            content = content_blog.text.strip()
+            content = ' '.join(content.split())
+        except:
+            content = None
+            
+        try:
+            image_list = soup.select('div.tdb-block-inner p img')
+            image = [re.sub('', '', i['src']) for i in image_list]
+        except:
+            image = None
 
         data = {
             'category': category,
@@ -96,6 +117,7 @@ class anti_info(object):
         }
 
         self.fetch_data.insert(0, data)
+
 
 if __name__ == '__main__':
     anti = anti_info()

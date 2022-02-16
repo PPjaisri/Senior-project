@@ -4,7 +4,7 @@ import sys
 import csv
 import logging
 import pandas as pd
-import News_fetcher.fetch_each_site as site
+import fetch_each_site as site
 
 class cofact_refer(object):
     path = os.getcwd()
@@ -101,62 +101,111 @@ class cofact_refer(object):
         if isDuplicate:
             return
 
-        if link == 'sanook.com':
-            res = site.sanook(url, reference)
-            if res != None:
-                self.fetch_data.insert(0, res)
+        if link == 'posttoday.com':
+            try:
+                res = site.postToday(url, reference)
+                if res != None:
+                    self.fetch_data.insert(0, res)
+            except:
+                pass
+        elif link == 'sanook.com':
+            try:
+                res = site.sanook(url, reference)
+                if res != None:
+                    self.fetch_data.insert(0, res)
+            except:
+                pass
         elif link == 'bbc.com':
-            res = site.bbc(url, reference)
-            if res != None:
-                self.fetch_data.insert(0, res)
+            try:
+                res = site.bbc(url, reference)
+                if res != None:
+                    self.fetch_data.insert(0, res)
+            except:
+                pass
         elif link == 'pptvhd36.com':
-            res = site.pptv(url, reference)
-            if res != None:
-                self.fetch_data.insert(0, res)
+            try:
+                res = site.pptv(url, reference)
+                if res != None:
+                    self.fetch_data.insert(0, res)
+            except:
+                pass
         elif link == 'dailynews.co.th':
-            res = site.dailyNews(url, reference)
-            if res != None:
-                self.fetch_data.insert(0, res)
+            try:
+                res = site.dailyNews(url, reference)
+                if res != None:
+                    self.fetch_data.insert(0, res)
+            except:
+                pass
         elif link == 'komchadluek.net':
-            res = site.komchadluek(url, reference)
-            if res != None:
-                self.fetch_data.insert(0, res)
-        elif link == 'oryor.com':
-            res = site.oryor(url, reference)
-            if res != None:
-                self.fetch_data.insert(0, res)
-        elif link == 'sure.oryor.com':
-            res = site.sureOryor(url, reference)
-            if res != None:
-                self.fetch_data.insert(0, res)
+            try:
+                res = site.komchadluek(url, reference)
+                if res != None:
+                    self.fetch_data.insert(0, res)
+            except:
+                pass
+        # elif link == 'oryor.com':
+        #     try:
+        #         res = site.oryor(url, reference)
+        #         if res != None:
+        #             self.fetch_data.insert(0, res)
+        #     except:
+        #         pass
+        # elif link == 'sure.oryor.com':
+        #     try:
+        #         res = site.sureOryor(url, reference)
+        #         if res != None:
+        #             self.fetch_data.insert(0, res)
+        #     except:
+        #         pass
         elif link == 'matichon.co.th':
-            res = site.matichon(url, reference)
-            if res != None:
-                self.fetch_data.insert(0, res)
+            try:
+                res = site.matichon(url, reference)
+                if res != None:
+                    self.fetch_data.insert(0, res)
+            except:
+                pass
         elif link == 'thansettakij.com':
-            res = site.thanSettakij(url, reference)
-            if res != None:
-                self.fetch_data.insert(0, res)
+            try:
+                res = site.thanSettakij(url, reference)
+                if res != None:
+                    self.fetch_data.insert(0, res)
+            except:
+                pass
         elif link == 'thairath.co.th':
-            res = site.thairath(url, reference)
-            if res != None:
-                self.fetch_data.insert(0, res)
+            try:
+                res = site.thairath(url, reference)
+                if res != None:
+                    self.fetch_data.insert(0, res)
+            except:
+                pass
         elif link == 'tnnthailand.com':
-            res = site.tnn(url, reference)
-            if res != None:
-                self.fetch_data.insert(0, res)
+            try:
+                res = site.tnn(url, reference)
+                if res != None:
+                    self.fetch_data.insert(0, res)
+            except:
+                pass
         elif link == 'mgronline.com':
-            res = site.mgr(url, reference)
-            if res != None:
-                self.fetch_data.insert(0, res)
+            try:
+                res = site.mgr(url, reference)
+                if res != None:
+                    self.fetch_data.insert(0, res)
+            except:
+                pass
         elif link == 'news.thaipbs.or.th':
-            res = site.thaipbs(url, reference)
-            if res != None:
-                self.fetch_data.insert(0, res)
+            try:
+                res = site.thaipbs(url, reference)
+                if res != None:
+                    self.fetch_data.insert(0, res)
+            except:
+                pass
         elif link == 'antifakenewscenter.com':
-            res = site.antifakenews(url, reference)
-            if res != None:
-                self.fetch_data.insert(0, res)
+            try:
+                res = site.antifakenews(url, reference)
+                if res != None:
+                    self.fetch_data.insert(0, res)
+            except:
+                pass
         else:
             return
 

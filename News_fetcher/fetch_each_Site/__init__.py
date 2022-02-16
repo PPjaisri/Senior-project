@@ -12,3 +12,5 @@ from .tnn import tnn
 from .mgr import mgr
 from .thaipbs import thaipbs
 from .anti_page import antifakenews
+from .posttoday import postToday
+from .tools import tools

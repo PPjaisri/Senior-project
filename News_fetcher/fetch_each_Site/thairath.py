@@ -2,6 +2,7 @@ import re
 import logging
 import requests
 from bs4 import BeautifulSoup
+from .tools import tools
 
 
 def thairath(url, reference):
@@ -21,7 +22,11 @@ def thairath(url, reference):
     images = main.find_all('img')
     images = [image['src'] for image in images]
     
-    time = soup.find('div', class_='css-1nkcd4z').find('p').text
+    time = soup.find('div', class_='css-1nkcd4z').find('p').text.strip()
+    time = time.split()[:3]
+    time[1] = re.sub(time[1], tools.return_month(time[1]), time[1])
+    time = ' '.join(time)
+    time = tools.time_format(time)
 
     data = {
         "category": "ข่าวจริง",
@@ -34,3 +39,4 @@ def thairath(url, reference):
     }
 
     return data
+

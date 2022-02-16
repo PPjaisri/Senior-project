@@ -95,10 +95,11 @@ class cofact_info(object):
         response = self.browser.page_source
         soup = BeautifulSoup(response, 'lxml')
 
-        category = soup.find('div', class_='meter-tag').text
+        category = soup.find('div', class_='meter-tag').text.strip()
         category = re.sub('meter: ', '', category)
         try:
-            header = soup.find('div', class_='item-title').text
+            header = soup.find('div', class_='item-title').text.strip()
+            header = re.sub(',', ' ', header)
         except:
             header = None
 
@@ -109,7 +110,7 @@ class cofact_info(object):
         
         # Thread content
         try:
-            content = soup.find('article', class_='content').text
+            content = soup.find('article', class_='content').text.strip()
             content = ' '.join(content.split())
         except:
             content = None
@@ -123,7 +124,7 @@ class cofact_info(object):
             except:
                 pass
             
-            content_ref = comment.find_element(By.CSS_SELECTOR, 'div.bubble').text
+            content_ref = comment.find_element(By.CSS_SELECTOR, 'div.bubble').text.strip()
             content_ref = re.sub('ย่อรายละเอียด', '', content_ref)
             content_ref = ' '.join(content_ref.split())
 

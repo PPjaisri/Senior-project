@@ -2,6 +2,7 @@ import re
 import logging
 import requests
 from bs4 import BeautifulSoup
+from tools import tools
 
 
 def pptv(url, reference):
@@ -9,12 +10,10 @@ def pptv(url, reference):
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'lxml')
 
-    header = soup.find('h1').text
+    header = soup.find('h1').text.strip()
     header = re.sub(',', ' ', header)
 
-    article = soup.find('article', class_='pptv-container')
-    section = article.find('header')
-    section.decompose()
+    article = soup.find('section', id='content-section')
     
     content = article.text.strip()
     content = ' '.join(content.split())
@@ -26,6 +25,7 @@ def pptv(url, reference):
         'img.', image.find('img')['src'])]
 
     time = soup.find('time')['datetime']
+    time = tools.time_format(time)
     
     data = {
         "category": "ข่าวจริง",
