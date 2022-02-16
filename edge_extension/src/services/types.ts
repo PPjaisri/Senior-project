@@ -13,10 +13,10 @@ interface send_image_file {
     message: send_file
 }
 
-interface fb_token {
-    message_type: string,
-    facebook_access_token: string
-}
+// interface fb_token {
+//     message_type: string,
+//     facebook_access_token: string
+// }
 
 interface result {
     size: number,
@@ -29,6 +29,5 @@ export type {
     send_text,
     send_file,
     send_image_file,
-    fb_token,
     result
 }

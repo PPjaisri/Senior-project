@@ -13,38 +13,10 @@ import './Barloader.css';
 import 'facebook-js-sdk';
 import { Messaging } from 'react-cssfx-loading';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { sendImage, sendLink, sendToken } from './services/Service';
+import { sendImage, sendLink } from './services/Service';
 import { send_image_file, send_text } from './services/types';
-// import FacebookLogin from 'react-facebook-login';
 
 function SearchBar() {
-  // const [login, setLogin] = useState<any>(false);
-  // const [data, setData] = useState<any>({});
-
-  // const responseFacebook = async (response: any) => {
-  //   setData(response);
-
-  //   if (response.accessToken) {
-  //     setLogin(true);
-
-  //     const tokenData = {
-  //       'message_type': 'token',
-  //       'facebook_access_token': response.accessToken
-  //     }
-  //     console.log(response.accessToken);
-
-  //     const res = await sendToken(tokenData);
-  //     if (res.result === 200)
-  //       console.log('OK');
-  //     else
-  //       console.log('error');
-  //   } else {
-  //     setLogin(false);
-  //   }
-  // }
-
-  // const custom_button = <div className="facebook_button" />
-
   return (
     <Tabs
       defaultActiveKey="link"
@@ -52,20 +24,6 @@ function SearchBar() {
       className="mb-3"
     >
       <Tab eventKey="link" title="Link">
-        {/* {!login &&
-          <FacebookLogin
-            appId="1009901223209735"
-            autoLoad={true}
-            fields="name,email,picture"
-            scope="public_profile"
-            callback={responseFacebook}
-            icon={custom_button}
-          />
-        }
-        {
-          login &&
-          <LinkSearch />
-        } */}
         <LinkSearch />
       </Tab>
       <Tab eventKey="content" title="Content">
@@ -197,7 +155,7 @@ function ImageSearch() {
   };
 
   function passer() {
-    if (image.length == 0)
+    if (image.length === 0)
       if (image_link === '')
         console.log('error')
       else
@@ -290,7 +248,7 @@ function Loader() {
   let { state }: any = useLocation();
   let navigate = useNavigate();
 
-  const reCheck = 'หากใช้เวลานานเกินไป กรุณาตรวจสอบว่าลิงค์ URL ถูกต้อง หรือทำการค้นหาผ่าน Content แทน';
+  // const reCheck = 'หากใช้เวลานานเกินไป กรุณาตรวจสอบว่าลิงค์ URL ถูกต้อง หรือทำการค้นหาผ่าน Content แทน';
 
   async function upLoadLink(data: send_text) {
     const res = await sendLink(data);
@@ -399,7 +357,7 @@ function ReturnResult(obj: any) {
 
   function showContent() {
     showElement(!show)
-    if (buttonName == 'Show') {
+    if (buttonName === 'Show') {
       setButtonName('Close')
     } else {
       setButtonName('Show')

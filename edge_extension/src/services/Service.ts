@@ -1,7 +1,6 @@
 import axios from "axios";
 import config from "./config";
 import {
-    fb_token,
     send_file,
     send_text
 } from "./types";
@@ -46,22 +45,21 @@ async function sendImage(body: send_file) {
     return result;
 }
 
-async function sendToken(body: fb_token) {
-    const res = await fetch(`${baseUrl}`, {
-        method: 'post',
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(body)
-    });
+// async function sendToken(body: fb_token) {
+//     const res = await fetch(`${baseUrl}`, {
+//         method: 'post',
+//         headers: {
+//             "Content-Type": "application/json"
+//         },
+//         body: JSON.stringify(body)
+//     });
 
-    const result = res.json();
-    return result;
-};
+//     const result = res.json();
+//     return result;
+// };
 
 export {
     sendLink,
     getLink,
-    sendImage,
-    sendToken
+    sendImage
 };
