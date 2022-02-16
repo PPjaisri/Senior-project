@@ -2,7 +2,7 @@ import re
 import logging
 import requests
 from bs4 import BeautifulSoup
-from tools import tools
+from . import tools
 
 
 def postToday(url, reference):
@@ -16,9 +16,9 @@ def postToday(url, reference):
 
     time = head.find('div').text.strip()
     time = time.split()
-    time[2] = re.sub(time[2], tools.return_month(time[2]), time[2])
+    time[2] = re.sub(time[2], tools.tools.return_month(time[2]), time[2])
     time = ' '.join(time[1:4])
-    time = tools.time_format(time)
+    time = tools.tools.time_format(time)
 
     content = soup.find('div', class_='article-content').text.strip()
     content = ' '.join(content.split())

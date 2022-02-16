@@ -2,7 +2,7 @@ import re
 import logging
 import requests
 from bs4 import BeautifulSoup
-from tools import tools
+from . import tools
 
 
 def dailyNews(url, reference):
@@ -24,9 +24,9 @@ def dailyNews(url, reference):
 
     time = soup.find('span', class_='date').text
     time = time.strip().split()
-    time[2] = re.sub(time[2], tools.return_month(time[2]), time[2])
+    time[2] = re.sub(time[2], tools.tools.return_month(time[2]), time[2])
     time = ' '.join(time[1:4])
-    time = tools.time_format(time)
+    time = tools.tools.time_format(time)
     
     data = {
         "category": "ข่าวจริง",

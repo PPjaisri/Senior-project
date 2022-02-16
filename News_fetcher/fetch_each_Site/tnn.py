@@ -1,7 +1,7 @@
 import re
 import logging
 import requests
-from tools import tools
+from . import tools
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse, urljoin
 
@@ -31,9 +31,9 @@ def tnn(url, reference):
     time = soup.find('div', class_='section--read')
     time = time.find('span').text
     time = re.sub(',', ' ', time).strip().split()
-    time[1] = re.sub(time[1], tools.return_month(time[1]), time[1])
+    time[1] = re.sub(time[1], tools.tools.return_month(time[1]), time[1])
     time = ' '.join(time[:-1])
-    time = tools.time_format(time)
+    time = tools.tools.time_format(time)
     
     data = {
         "category": "ข่าวจริง",

@@ -2,7 +2,7 @@ import re
 import logging
 import requests
 from bs4 import BeautifulSoup
-from tools import tools
+from . import tools
 
 
 def pptv(url, reference):
@@ -25,7 +25,7 @@ def pptv(url, reference):
         'img.', image.find('img')['src'])]
 
     time = soup.find('time')['datetime']
-    time = tools.time_format(time)
+    time = tools.tools.time_format(time)
     
     data = {
         "category": "ข่าวจริง",

@@ -2,7 +2,7 @@ import re
 import logging
 import requests
 from bs4 import BeautifulSoup
-from .tools import tools
+from . import tools
 
 
 def thairath(url, reference):
@@ -24,9 +24,9 @@ def thairath(url, reference):
     
     time = soup.find('div', class_='css-1nkcd4z').find('p').text.strip()
     time = time.split()[:3]
-    time[1] = re.sub(time[1], tools.return_month(time[1]), time[1])
+    time[1] = re.sub(time[1], tools.tools.return_month(time[1]), time[1])
     time = ' '.join(time)
-    time = tools.time_format(time)
+    time = tools.tools.time_format(time)
 
     data = {
         "category": "ข่าวจริง",
