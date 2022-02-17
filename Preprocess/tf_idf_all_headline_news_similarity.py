@@ -120,6 +120,7 @@ def read_anti_refer(): #สำหรับดึงข้อมูลของ a
     # Opening CSV file
     root_path = os.getcwd()
     path = os.path.join(root_path, 'result\\Anti\\anti_info.csv')
+    
     f = open(path, encoding="utf8")
     
     # returns CSV object as
@@ -145,14 +146,10 @@ def read_anti_refer(): #สำหรับดึงข้อมูลของ a
         
         elif row[1] not in dup_check:
             dup_check.append(row[1])
-            content_parts = literal_eval(row[2])
-            content = ''.join(filter(None, content_parts))
-            tmp.append(row[1] + content) 
+            tmp.append(row[1] + row[2]) 
         
         # เพิ่ม content
-        content_parts = literal_eval(row[2])
-        content = ''.join(filter(None, content_parts))
-        tmp.append(content)
+        tmp.append(row[2])
         
         # เพิ่ม link
         tmp.append(row[3])
@@ -199,14 +196,10 @@ def read_sure_refer(): #สำหรับดึงข้อมูลของ s
         
         elif row[1] not in dup_check:
             dup_check.append(row[1])
-            content_parts = literal_eval(row[2])
-            content = ''.join(filter(None, content_parts))
-            tmp.append(row[1] + content) 
+            tmp.append(row[1] + row[2]) 
         
         # เพิ่ม content
-        content_parts = literal_eval(row[2])
-        content = ''.join(filter(None, content_parts))
-        tmp.append(content)
+        tmp.append(row[2])
         
         # เพิ่ม link
         tmp.append(row[3])
