@@ -4,7 +4,7 @@ import sys
 import csv
 import logging
 import pandas as pd
-import fetch_each_site as site
+from . import fetch_each_site as site
 
 class cofact_refer(object):
     path = os.getcwd()
