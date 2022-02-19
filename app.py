@@ -35,7 +35,9 @@ api = Api(app)
 # Table
 # TestUserInput = Database.TestUserInput
 
-#design 
+#design
+IP = ''
+
 class UserExtension(Resource):
     
     # To find the first document that matches a defined query,
@@ -160,4 +162,4 @@ class UserExtension(Resource):
 api.add_resource(UserExtension,"/extension")
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host=IP)
