@@ -1,3 +1,4 @@
+from .tools import tools
 from .sanook import sanook
 from .bbc import bbc
 from .pptv import pptv
@@ -13,4 +14,3 @@ from .mgr import mgr
 from .thaipbs import thaipbs
 from .anti_page import antifakenews
 from .posttoday import postToday
-from .tools import tools

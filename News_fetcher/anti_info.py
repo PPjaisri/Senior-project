@@ -85,7 +85,7 @@ class anti_info(object):
 
         try:
             time = soup.time['datetime'].strip()
-            time = tools.time_format(time)
+            time = tools.tools.time_format(time)
         except:
             time = None
 
