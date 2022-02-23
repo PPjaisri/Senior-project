@@ -30,16 +30,16 @@ def extension():
         "image", type=werkzeug.datastructures.FileStorage, location='files')
     input_add_args.add_argument(
         "message_type", type=str, help="กรุณาระบุประเภท Input เป็นตัวอักษร")
-    input_add_args.add_argument("facebook_access_token", type=str,
-                                help="กรุณาระบุประเภท Facebook Access Token เป็นตัวอักษร")
     args = input_add_args.parse_args()
 
     message_type = ['link', 'content', 'image', 'image_url']
 
     # กรณีไม่ได้ระบุประเภทของ input
     if args['message_type'] not in message_type:
-        abort(400, message="กรุณาระบุประเภทของ input เป็น link , content , image , image_url หรือ facebook token")
+        abort(400, message="กรุณาระบุประเภทของ input เป็น link, content, image หรือ image_url")
     else:
+        if args['message'].isspace():
+            abort(422, message="กรุณาใส่ข้อความ , ลิงค์ หรือ URL ของรูปภาพ")
         # กรณีไม่มีข้อความ (message) แนบมาด้วย
         if args['message_type'] == 'link':
             # กรณีไม่มีลิงค์ (link) แนบมาด้วย
@@ -117,3 +117,4 @@ def extension():
 
 if __name__ == '__main__':
     app.run()
+
