@@ -45,19 +45,6 @@ async function sendImage(body: send_file) {
     return result;
 }
 
-// async function sendToken(body: fb_token) {
-//     const res = await fetch(`${baseUrl}`, {
-//         method: 'post',
-//         headers: {
-//             "Content-Type": "application/json"
-//         },
-//         body: JSON.stringify(body)
-//     });
-
-//     const result = res.json();
-//     return result;
-// };
-
 export {
     sendLink,
     getLink,
