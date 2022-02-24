@@ -1,12 +1,3 @@
-# folder Scrapy
-# ignore pycache in Spiders
-
-Scrapy/Scrapy_project/spiders/__pycache__/
-
-# ignore test file
-
-Scrapy/Scrapy_project/spiders/test/
-
 # folder Extension
 # Edge extension vscode config
 
@@ -14,22 +5,17 @@ Edge Extension/.vscode
 
 # test file and folder
 
-Scrapy/Scrapy_project/spiders/fetch file/cofact_refer_test.json
-Scrapy/Scrapy_project/spiders/fetch file/test.json
 Playground
 
 # ignore node modules
 edge_extension/node_modules/
 
-# ignore database password
-MongoPassword.txt
-
 #ignore main folder pycache
 __pycache__
-
-# hbdscan model (1.04 GB)
-output
 
 # cert for https
 edge_extension/cert/localhost-key.pem
 edge_extension/cert/localhost.pem
+
+# backen server for deploying
+backend_server/
