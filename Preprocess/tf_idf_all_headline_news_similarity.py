@@ -24,6 +24,7 @@ en_stop = get_stop_words('en')
 p_stemmer = PorterStemmer()
 
 query_vector = []
+dup_check = []
 
 def split_word(text):
     tokens = word_tokenize(text,engine='newmm')
@@ -63,6 +64,8 @@ def remove_emojis(data):
     return re.sub(emoj, '', data)
 
 def read_cofact_refer(): #สำหรับดึงข้อมูลของ cofact csv
+    global dup_check
+    
     # Opening CSV file
     root_path = os.getcwd()
     path = os.path.join(root_path, 'result\\Cofact\\cofact_refer.csv')
@@ -78,7 +81,6 @@ def read_cofact_refer(): #สำหรับดึงข้อมูลของ
     header = next(csvreader)
     
     rows = []
-    dup_check = []
     
     for row in csvreader:
         tmp = []
@@ -117,6 +119,8 @@ def read_cofact_refer(): #สำหรับดึงข้อมูลของ
     return rows
 
 def read_anti_refer(): #สำหรับดึงข้อมูลของ anti fake news csv
+    global dup_check
+    
     # Opening CSV file
     root_path = os.getcwd()
     path = os.path.join(root_path, 'result\\Anti\\anti_info.csv')
@@ -132,7 +136,6 @@ def read_anti_refer(): #สำหรับดึงข้อมูลของ a
     header = next(csvreader)
 
     rows = []
-    dup_check = []
     
     for row in csvreader:
         tmp = []
@@ -168,6 +171,8 @@ def read_anti_refer(): #สำหรับดึงข้อมูลของ a
     return rows
 
 def read_sure_refer(): #สำหรับดึงข้อมูลของ sure and share csv
+    global dup_check
+    
     # Opening CSV file
     root_path = os.getcwd()
     path = os.path.join(root_path, 'result\\Sure\\sure_info.csv')
@@ -182,7 +187,6 @@ def read_sure_refer(): #สำหรับดึงข้อมูลของ s
     header = next(csvreader)
 
     rows = []
-    dup_check = []
     
     for row in csvreader:
         tmp = []
