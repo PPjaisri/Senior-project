@@ -137,8 +137,7 @@ class UserExtension(Resource):
                 "message_type": args["message_type"],
                 "result": 200
             }
-            
-
+             
         return queryObject
     
     # To insert a single document into the database,
