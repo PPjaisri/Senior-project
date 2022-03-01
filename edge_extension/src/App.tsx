@@ -56,7 +56,6 @@ function Result() {
   let navigate = useNavigate();
   const { state }: any = useLocation();
   const res = state.result;
-  console.log(state)
 
   function RenderResult() {
     if (res) {

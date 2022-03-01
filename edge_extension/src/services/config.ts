@@ -1,4 +1,4 @@
-const url = 'https://361a-124-121-4-210.ngrok.io/extension'
+const url = 'http://localhost:5000/extension'
 
 const baseUrl: string = (process.env.NODE_ENV) === 'development' ? url : url;
 

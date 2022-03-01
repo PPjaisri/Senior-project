@@ -248,8 +248,6 @@ function Loader() {
   let { state }: any = useLocation();
   let navigate = useNavigate();
 
-  // const reCheck = 'หากใช้เวลานานเกินไป กรุณาตรวจสอบว่าลิงค์ URL ถูกต้อง หรือทำการค้นหาผ่าน Content แทน';
-
   async function upLoadLink(data: send_text) {
     const res = await sendLink(data);
     if (res) {

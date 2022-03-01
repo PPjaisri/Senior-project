@@ -1,5 +1,6 @@
 import sys
 import os
+from time import perf_counter
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 SCRIPT_DIR = os.path.join(SCRIPT_DIR, 'News_fetcher')
@@ -44,6 +45,10 @@ def run_file():
 
 
 if __name__ == '__main__':
+    start_time = perf_counter()
     run_file()
+    end_time = perf_counter()
+    total_time = '{:.2f}'.format(end_time - start_time)
+    print(f'Total time {total_time} seconds')
     print('Crawl finished press any button to close')
     getch()

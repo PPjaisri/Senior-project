@@ -6,7 +6,10 @@ import logging
 import requests
 import pandas as pd
 from bs4 import BeautifulSoup
-from .fetch_each_site import tools
+try:
+    from .fetch_each_site import tools
+except:
+    from fetch_each_site import tools
 
 
 class anti_info(object):
