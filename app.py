@@ -37,12 +37,11 @@ class UserExtension(Resource):
         input_add_args.add_argument("message", type=str, help="กรุณาระบุข้อความ input เป็นตัวอักษรความยาวไม่เกิน 1000 ตัวอักษร")
         input_add_args.add_argument("image", type=werkzeug.datastructures.FileStorage, location='files')
         input_add_args.add_argument("message_type", type=str, help="กรุณาระบุประเภท Input เป็นตัวอักษร")
-        input_add_args.add_argument("facebook_access_token", type=str, help="กรุณาระบุประเภท Facebook Access Token เป็นตัวอักษร")
         args = input_add_args.parse_args()
         
         # กรณีไม่ได้ระบุประเภทของ input
-        if (args["message_type"] != "link") and (args["message_type"] != "content") and (args["message_type"] != "image") and (args["message_type"] != "image_url") and (args["message_type"] != "token"):
-            abort(400 ,message = "กรุณาระบุประเภทของ input เป็น link , content , image , image_url หรือ facebook token")
+        if (args["message_type"] != "link") and (args["message_type"] != "content") and (args["message_type"] != "image") and (args["message_type"] != "image_url"):
+            abort(400 ,message = "กรุณาระบุประเภทของ input เป็น link , content , image หรือ image_url")
 
         # กรณีใส่ link ที่ domain ไม่ใช่ post ของ facebook
         if (args["message_type"] == "link") and (urlparse(args["message"]).hostname != "www.facebook.com"):
@@ -56,8 +55,6 @@ class UserExtension(Resource):
         if (args["message_type"] == "image") and (not args["image"]):
             abort(422, message = "กรุณาอัพโหลดรูปภาพ")
             
-        if (args["message_type"] == "token") and (not args["facebook_access_token"]):
-            abort(422, message = "กรุณาแนบ facebook token มาพร้อมกับ request")
     
         #เพิ่ม if-condition กรณี search ผ่านรูป + ลิงค์ 
 
@@ -117,13 +114,6 @@ class UserExtension(Resource):
                 }
             except:
                 abort(422 ,message = "กรุณาระบุลิงค์ของโพสต์ให้ถูกต้อง")
-            
-        elif args["message_type"] == "token":
-            queryObject = {
-                "message": args["facebook_access_token"],
-                "message_type": args["message_type"],
-                "result": 200
-            }
              
         return queryObject
         
