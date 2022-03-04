@@ -68,11 +68,14 @@ class UserExtension(Resource):
             }
             
         elif args["message_type"] == "image":
+            text_from_image = "default"
             try:
                 image_file = args['image']
                 image_file.save("EasyOCR/OCR_User_Pic/tmp.jpg")
                 
                 text_from_image = OCR_with_user_image("EasyOCR/OCR_User_Pic/tmp.jpg")
+                if (len(text_from_image) == 0):
+                    abort(422 ,message = "ไม่พบข้อความในรูปภาพที่ค้นหา")
                 all_result_with_url = cosine_similarity_T(10, text_from_image)
                 
                 queryObject = {
@@ -81,15 +84,21 @@ class UserExtension(Resource):
                     "result": all_result_with_url
                 }
             except:
-                abort(422 ,message = "กรุณาอัพโหลดไฟล์รูปภาพ .JPG หรือ .PNG")
+                if (len(text_from_image) == 0):
+                    abort(422 ,message = "ไม่พบข้อความในรูปภาพที่ค้นหา")
+                else:
+                    abort(422 ,message = "กรุณาอัพโหลดไฟล์รูปภาพ .JPG หรือ .PNG")
             
         elif args["message_type"] == "image_url":
+            text_from_image = "default"
             try:
                 response = requests.get(args["message"])
                 with open('EasyOCR/OCR_User_Pic/tmp.jpg', 'wb') as file:
                     file.write(response.content)
                 
                 text_from_image = OCR_with_user_image("EasyOCR/OCR_User_Pic/tmp.jpg")
+                if (len(text_from_image) == 0):
+                    abort(422 ,message = "ไม่พบข้อความในรูปภาพที่ค้นหา")
                 all_result_with_url = cosine_similarity_T(10, text_from_image)
                 
                 queryObject = {
@@ -98,7 +107,10 @@ class UserExtension(Resource):
                     "result": all_result_with_url
                 }
             except:
-                abort(422 ,message = "ขออภัย เราไม่รองรับลิงค์รูปภาพนี้ กรุณาตรวจสอบลิงค์ หรือบันทึกรูปภาพแล้วค้นหาผ่านการอัพโหลดแทน")
+                if (len(text_from_image) == 0):
+                    abort(422 ,message = "ไม่พบข้อความในรูปภาพที่ค้นหา")
+                else:
+                    abort(422 ,message = "ขออภัย เราไม่รองรับลิงค์รูปภาพนี้ กรุณาตรวจสอบลิงค์ หรือบันทึกรูปภาพแล้วค้นหาผ่านการอัพโหลดแทน")
             
         elif args["message_type"] == "link":
             try:
