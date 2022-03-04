@@ -98,7 +98,7 @@ class UserExtension(Resource):
                     "result": all_result_with_url
                 }
             except:
-                abort(422 ,message = "ขออภัย เราไม่รองรับลิงค์รูปภาพนี้ กรุณาบันทึกรูปภาพและค้นหาผ่านการอัพโหลดแทน")
+                abort(422 ,message = "ขออภัย เราไม่รองรับลิงค์รูปภาพนี้ กรุณาตรวจสอบลิงค์ หรือบันทึกรูปภาพแล้วค้นหาผ่านการอัพโหลดแทน")
             
         elif args["message_type"] == "link":
             try:
