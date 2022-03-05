@@ -56,6 +56,7 @@ function Result() {
   let navigate = useNavigate();
   const { state }: any = useLocation();
   const res = state.result;
+  console.log(state);
 
   function RenderResult() {
     if (res) {
@@ -66,14 +67,25 @@ function Result() {
           );
         });
       } else {
-        return (
-          <div>
-            <hr />
-            <div className='jumbotron text-center'>
-              <p> ไม่พบข่าวที่ต้องการค้นหา </p>
+        if (state.type === 'image') {
+          return (
+            <div>
+              <hr />
+              <div className='jumbotron text-center'>
+                <p>{state.search}</p>
+              </div>
             </div>
-          </div>
-        );
+          );
+        } else {
+          return (
+            <div>
+              <hr />
+              <div className='jumbotron text-center'>
+                <p>ไม่พบข่าวที่ค้นหา</p>
+              </div>
+            </div>
+          );
+        }
       }
     } else {
       return (

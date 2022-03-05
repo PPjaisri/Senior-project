@@ -266,6 +266,7 @@ function Loader() {
   async function upLoadContent(data: send_text) {
     const res = await sendLink(data);
     if (res) {
+      console.log(res);
       navigate('/result', {
         state: {
           type: res.message_type,

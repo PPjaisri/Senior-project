@@ -23,7 +23,6 @@ async function sendLink(body: send_text) {
 async function getLink() {
     const res = await fetch(`$(baseUrl)`);
     const result = res.json();
-
     return result;
 }
 
@@ -41,6 +40,15 @@ async function sendImage(body: send_file) {
         .then((res: any) => {
             result = res;
         })
+        .catch(() => {
+            result = {
+                "data": {
+                    "message": "ไม่พบข้อความในรูปภาพที่ค้นหา หรือ นามสกุลไฟล์รูปภาพไม่ใช่ jpg หรือ png",
+                    "message_type": "image",
+                    "result": []
+                }
+            };
+    })
     
     return result;
 }
