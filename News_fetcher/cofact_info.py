@@ -22,6 +22,8 @@ class cofact_info(object):
     binary_location = os.path.join(path, 'msedgedriver.exe')
     binary_location = Service(binary_location)
 
+    logging.basicConfig(level=logging.DEBUG)
+
     def __init__(self):
         self.browser = Edge(service=self.binary_location)
         self.fetch_data = []
@@ -32,7 +34,7 @@ class cofact_info(object):
 
     def read_latest_save(self):
         try:
-            data = pd.read_csv(self.file_path, encoding='utf-8')
+            data = pd.read_csv(self.save_path, encoding='utf-8')
             last_link = data.iloc[-1]['link']
             return last_link
         except:
@@ -66,9 +68,9 @@ class cofact_info(object):
         urls = []
         with open(self.file_path, 'r', encoding='utf-8') as fp:
             data = fp.readlines()
-
+        
         for data_dict in data:
-            urls.append(data_dict.split(',')[2])
+            urls.append(data_dict.split(',')[2].strip())
 
         new_urls = []
         for url in range(len(urls) - 1, 0, -1):

@@ -16,6 +16,8 @@ class cofact_refer(object):
     file_path = os.path.join(path, 'result\\Cofact\\cofact_info_ref.csv')
     save_path = os.path.join(path, 'result\\Cofact\\cofact_refer.csv')
 
+    logging.basicConfig(level=logging.DEBUG)
+
     def __init__(self):
         self.fetch_data = []
         self.saved_data = []

@@ -13,14 +13,14 @@ def thanSettakij(url, reference):
     header = soup.find('h1').text.strip()
     header = re.sub(',', ' ', header)
     header = ' '.join(header.split())
-    
+
     main = soup.find('div', id='contents')
     time_raw = main.find('div', class_='info').text
     time = time_raw.split('|')[1]
     time = time.split()[:3]
-    time[1] = re.sub(time[1], tools.tools.return_month(time[1]), time[1])
+    time[1] = re.sub(time[1], tools.return_month(time[1]), time[1])
     time = ' '.join(time)
-    time = tools.tools.time_format(time)
+    time = tools.time_format(time)
 
     div = main.find('div', class_='content-related')
     div.decompose()
@@ -28,10 +28,10 @@ def thanSettakij(url, reference):
     content = main.text.strip()
     content = re.sub(time_raw, '', content)
     content = ' '.join(content.split())
-    
+
     images = main.find_all('img')
     images = [image['src'] for image in images]
-    
+
     data = {
         "category": "ข่าวจริง",
         "header": header,
@@ -43,4 +43,3 @@ def thanSettakij(url, reference):
     }
 
     return data
-    

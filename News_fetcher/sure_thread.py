@@ -19,6 +19,7 @@ class sure_thread(object):
         self.fetch_data = []
         self.finish = False
         self.last_link = ''
+        self.count = 0
 
     def read_latest_save(self):
         try:
@@ -29,6 +30,7 @@ class sure_thread(object):
             return ''
 
     def finished_crawl(self):
+        logging.info(f'Crawled {self.count} pages')
         with open(self.save_path, 'a', encoding='utf-8', newline='') as file:
             fieldnames = ['header', 'link', 'time']
             writer = csv.DictWriter(file, fieldnames=fieldnames)
@@ -58,6 +60,7 @@ class sure_thread(object):
                 
 
     def crawl_page(self, url):
+        self.count += 1
         response = requests.get(url)
         soup = BeautifulSoup(response.text, 'html.parser')
 

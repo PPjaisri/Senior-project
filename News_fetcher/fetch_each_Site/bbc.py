@@ -25,7 +25,7 @@ def bbc(url, reference):
     images = [image['src'] for image in images if image != '']
 
     time = soup.find('time')['datetime']
-    time = tools.tools.time_format(time)
+    time = tools.time_format(time)
 
     data = {
         "category": "ข่าวจริง",

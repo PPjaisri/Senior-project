@@ -88,7 +88,7 @@ class anti_info(object):
 
         try:
             time = soup.time['datetime'].strip()
-            time = tools.tools.time_format(time)
+            time = tools.time_format(time)
         except:
             time = None
 
@@ -96,14 +96,14 @@ class anti_info(object):
             category = soup.find_all('div', class_='blog-tag')[0].text.strip()
         except:
             category = None
-        
+
         try:
             content_blog = soup.find('div', class_='td-post-content')
             content = content_blog.text.strip()
             content = ' '.join(content.split())
         except:
             content = None
-            
+
         try:
             image_list = soup.select('div.tdb-block-inner p img')
             image = [re.sub('', '', i['src']) for i in image_list]

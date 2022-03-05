@@ -12,7 +12,7 @@ def komchadluek(url, reference):
 
     header = soup.find('h1').text.strip()
     header = re.sub(',', ' ', header)
-    
+
     main = soup.find('div', class_='jAUvMO')
     another_news = main.find('div', class_='cdFDeR')
     another_news.decompose()
@@ -20,15 +20,15 @@ def komchadluek(url, reference):
     content = main.text.strip()
     content = ' '.join(content.split())
     content = re.sub('แท็กที่เกี่ยวข้อง', '', content)
-    
+
     images = main.find_all('picture')
     images = [image.find('img')['src'] for image in images]
-    
+
     time = soup.find('div', id='date-update').text.strip().split()
-    time[1] = re.sub(time[1], tools.tools.return_month(time[1]), time[1])
+    time[1] = re.sub(time[1], tools.return_month(time[1]), time[1])
     time = ' '.join(time)
-    time = tools.tools.time_format(time)
-    
+    time = tools.time_format(time)
+
     data = {
         "category": "ข่าวจริง",
         "header": header,

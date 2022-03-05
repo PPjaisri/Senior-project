@@ -14,19 +14,19 @@ def pptv(url, reference):
     header = re.sub(',', ' ', header)
 
     article = soup.find('section', id='content-section')
-    
+
     content = article.text.strip()
     content = ' '.join(content.split())
     content = re.sub(header, '', content)
     content = re.sub(',', ' ', content)
-    
+
     images = article.find_all('picture', class_='')
     images = [image.find('img')['src'] for image in images if re.search(
         'img.', image.find('img')['src'])]
 
     time = soup.find('time')['datetime']
-    time = tools.tools.time_format(time)
-    
+    time = tools.time_format(time)
+
     data = {
         "category": "ข่าวจริง",
         "header": header,

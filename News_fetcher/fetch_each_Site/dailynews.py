@@ -12,22 +12,22 @@ def dailyNews(url, reference):
 
     header = soup.find('h1').text
     header = re.sub(',', ' ', header)
-    
+
     main = soup.find('div', class_='content-all')
 
     content = main.text.strip()
     content = ' '.join(content.split())
     content = re.sub(',', ' ', content)
-    
+
     images = main.find_all('img')
     images = [image['src'] for image in images]
 
     time = soup.find('span', class_='date').text
     time = time.strip().split()
-    time[2] = re.sub(time[2], tools.tools.return_month(time[2]), time[2])
+    time[2] = re.sub(time[2], tools.return_month(time[2]), time[2])
     time = ' '.join(time[1:4])
-    time = tools.tools.time_format(time)
-    
+    time = tools.time_format(time)
+
     data = {
         "category": "ข่าวจริง",
         "header": header,

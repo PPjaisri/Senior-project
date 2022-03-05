@@ -16,9 +16,9 @@ def postToday(url, reference):
 
     time = head.find('div').text.strip()
     time = time.split()
-    time[2] = re.sub(time[2], tools.tools.return_month(time[2]), time[2])
+    time[2] = re.sub(time[2], tools.return_month(time[2]), time[2])
     time = ' '.join(time[1:4])
-    time = tools.tools.time_format(time)
+    time = tools.time_format(time)
 
     content = soup.find('div', class_='article-content').text.strip()
     content = ' '.join(content.split())
@@ -26,7 +26,8 @@ def postToday(url, reference):
 
     image_block = soup.find('picture', class_='img-full')
     images = soup.find_all('img', class_='img-f')
-    images = [image['data-src'] for image in images if image.has_attr('data-src') is True]
+    images = [image['data-src']
+              for image in images if image.has_attr('data-src') is True]
 
     data = {
         "category": "ข่าวจริง",
