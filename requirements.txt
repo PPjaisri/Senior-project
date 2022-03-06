@@ -46,3 +46,5 @@ torchaudio===0.10.1+cu113
 requests
 python-crfsuite
 beautifulsoup4
+matplotlib
+lxml
