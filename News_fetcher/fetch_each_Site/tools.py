@@ -42,4 +42,4 @@ class tools(object):
             return str(-1)
 
     def time_format(time_str):
-        return parse(time_str).strftime('%m/%d/%Y')
+        return parse(time_str).strftime('%d/%m/%Y')
