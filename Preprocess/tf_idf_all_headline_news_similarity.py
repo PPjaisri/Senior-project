@@ -346,7 +346,7 @@ def cosine_similarity_T(k, query):
     all_result = a
     all_result_with_url = pd.DataFrame()
     for i in range(len(all_result)):
-        if float(all_result.iloc[i]["Score"]) > 0.19:
+        if float(all_result.iloc[i]["Score"]) > 0:
             all_result_with_url.loc[i,'index'] = all_result.iloc[i]["index"]
             all_result_with_url.loc[i,'headline'] = all_original_text_and_headline_news_df["All_headline_from_every_reference"][int(all_result.iloc[i]["index"])]
             all_result_with_url.loc[i,'url'] = all_original_text_and_headline_news_df["All_URL_from_every_reference"][int(all_result.iloc[i]["index"])]
